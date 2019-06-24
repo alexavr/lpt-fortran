@@ -32,7 +32,7 @@ Cleaning in case anything went wrong:
 make clean
 ```
 
-## Data reprocessing
+## Data preprocessing
 
 The  source file has to be properly prepared. 
 

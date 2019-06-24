@@ -42,7 +42,7 @@ The time dimension has to be relative (`second/minutes/hours since YYYY-MM-DD HH
 
 If your data is global (reanalyzes?) then vertical velocity (*w*) is expected to have Pa/s unit (as reanalyzes are normally provide) and coordinates are: *longitude* or *lon* and *latitude* or *lat* for horizontal location. For vertical coordinate: *levels* (in Pa). All has to be vector (1D).
 
-If you data is regional (assuming the WRF output for now, but could be anything with little modifications) then coordinates should be names as: *XLONG* and *XLAT* and expected to be 2D (to moving domains allowed for now). 
+If you data is regional (assuming the WRF output for now, but could be anything with little modifications) then coordinates should be names as: *XLONG* and *XLAT* and expected to be 2D (moving domains are not allowed for now). 
 
 All this preparation could be accomplished by using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library.
 

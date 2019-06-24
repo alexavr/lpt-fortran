@@ -1,0 +1,19 @@
+&data
+ stime = "2015-01-01 00:00:00", 
+ etime = "2015-01-08 00:00:00", 
+ regional = .TRUE. ! Default FALSE
+/
+
+&scheme 
+ accuracy = .TRUE.,
+ timestep = 12, 
+ ! horizontal = .FALSE., ! Default FALSE [under development!!!]
+ perfomance = .TRUE. ! Default FALSE [under development!!!]
+ zoutput = .FALSE. ! Default FALSE [under development!!!]
+/
+
+&pacticles
+ pt_grid = .TRUE., ! Default FALSE
+ pt_height = 1000,
+ pt_step = 15
+/

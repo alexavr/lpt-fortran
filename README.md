@@ -1,6 +1,6 @@
 *Detailed description is coming soon...*
 
-[TOC]
+
 
 The Lagrangian Particle Tracing of weightless particles. The scheme is based on pure interpolation (no modeling involved!). Basic idea: take the current particle coordinates and predict the future location base on its current velocity. As simple as that. The scheme uses 3D velocity components and geopotential fields.
 

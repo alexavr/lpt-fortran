@@ -143,9 +143,9 @@ for it in range(0,ntime): # ntime
     clb.set_label('Particle height [km]', labelpad=-33, fontsize=6, y=0.5, rotation=90)
 
     figname = "grid_%s_%07d.png"%(pt_file,it)
-    plt.show()
-    # fig.savefig(figname)
-    # plt.close()
+    # plt.show()
+    fig.savefig(figname)
+    plt.close()
 
     del lons
     del lats

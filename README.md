@@ -13,8 +13,8 @@ The Lagrangian Particle Tracing of weightless particles. The scheme is based on 
 First `vi Makefile` :
 
 ```bash
-NETCDF=/opt/netcdf4-hdf5       # to add path to your NetCDF
-DATETIME=/opt/datetime-fortran # add path to your datetime-fortran libs
+NETCDF=/opt/netcdf4-hdf5       # path to your NetCDF
+DATETIME=/opt/datetime-fortran # path to your datetime-fortran libs
 FC=ifort                       # your FORTRAN compiler
 ```
 

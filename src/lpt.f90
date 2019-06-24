@@ -4,7 +4,7 @@
 ! 2. Add output 
 ! 3. Add perfomance measurement
 ! 
-program pt
+program lpt
   use,intrinsic :: iso_fortran_env,only:real32,real64
   use module_globals
   use module_io
@@ -16,32 +16,32 @@ program pt
   integer  :: ncid_in, ncid_out
 
   character(len=120)  :: tunits, tunit
-  real(8)  :: stimeu,etimeu
+  real(kind=real64)  :: stimeu,etimeu
   integer  :: stimeui,etimeui
 
   integer  :: nlon, nlat, nz, ntime_in
-  real(4),dimension(:,:),allocatable :: lon2d, lat2d
-  real(4),dimension(:),allocatable :: levels
-  real(8),dimension(:),allocatable :: time_in
+  real(kind=real32),dimension(:,:),allocatable :: lon2d, lat2d
+  real(kind=real32),dimension(:),allocatable :: levels
+  real(kind=real64),dimension(:),allocatable :: time_in
 
-  real(8)  :: dt,dtm,dtt
+  real(kind=real64)  :: dt,dtm,dtt
   integer  :: ntimesteps, duration, npoints
 
-  real(4),dimension(:,:),allocatable :: points
+  real(kind=real32),dimension(:,:),allocatable :: points
 
   integer  :: ii, itime, it, ip
 
-  real(4),dimension(:,:,:)      ,allocatable :: result
-  real(8),dimension(:)          ,allocatable :: newtime_ind,newtime
+  real(kind=real32),dimension(:,:,:)      ,allocatable :: result
+  real(kind=real64),dimension(:)          ,allocatable :: newtime_ind,newtime
   character(len=19),dimension(:),allocatable :: newtime_datatime
   
   logical :: update
 
-  real(4),dimension(:,:,:),allocatable :: u,v,w,z
-  real(4),dimension(:,:,:),allocatable :: u1,v1,w1,z1
-  real(4),dimension(:,:,:),allocatable :: u2,v2,w2,z2
-  real(8) :: ditime
-  real(4) :: pu, pv, pw
+  real(kind=real32),dimension(:,:,:),allocatable :: u,v,w,z
+  real(kind=real32),dimension(:,:,:),allocatable :: u1,v1,w1,z1
+  real(kind=real32),dimension(:,:,:),allocatable :: u2,v2,w2,z2
+  real(kind=real64) :: ditime
+  real(kind=real32) :: pu, pv, pw
 
   ! For interpolation used rodust scheme:
   ! horisontal: min distance to 4 points (x,y) [ij(4,2)]
@@ -63,7 +63,7 @@ program pt
 
   print*,"-> Particles..."
   if(pt_grid) then
-    print*,"   Particles are spreaded allover the domain"
+    print*,"   Particles are spread all over the domain"
     print*,"           with step  : ",pt_step
     print*,"           at level(s): ",pt_height(:pt_nlevels)
   else 
@@ -254,4 +254,4 @@ program pt
 
 ! contains 
 
-end program pt
+end program lpt

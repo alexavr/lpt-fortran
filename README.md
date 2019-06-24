@@ -44,7 +44,7 @@ If your data is global (reanalyzes?) then vertical velocity (*w*) is expected to
 
 If you data is regional (assuming the WRF output for now, but could be anything with little modifications) then coordinates should be names as: *XLONG* and *XLAT* and expected to be 2D (moving domains are not allowed for now). 
 
-All this preparation could be accomplished by using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library.
+All this preparation could be accomplished by using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library. For preprocessing of WRF output you could use *prep_wrf.py* script (works, but written in a very hurry). 
 
 ## Configuration
 

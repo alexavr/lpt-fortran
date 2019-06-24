@@ -10,6 +10,12 @@ The Lagrangian Particle Tracing of weightless particles. The scheme is based on 
 
 ## Building 
 
+Copy to your machine:
+
+```bash
+git clone https://github.com/alexavr/lpt-fortran.git
+```
+
 First `vi Makefile` :
 
 ```bash

@@ -259,7 +259,7 @@ implicit none ! religion first
         if (plon .gt. 180) then 
             plon = plon - 360.
         else if (plon .lt. -180) then
-            plon = 360. - plon
+            plon = plon + 360.
         end if
 
         point(1) = plon

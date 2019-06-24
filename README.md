@@ -44,7 +44,7 @@ If your data is global (reanalyzes?) then vertical velocity (*w*) is expected to
 
 If you date is regional (assuming the WRF output for now, but could be anything with little modifications) then coordinates should be names as: *XLONG* and *XLAT* and expected to be 2D (to moving domains allowed for now). 
 
-All this preparation could be accomplished using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library.
+All this preparation could be accomplished by using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library.
 
 ## Configuration
 

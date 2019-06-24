@@ -43,7 +43,7 @@ implicit none
   open(newunit=unit,file=trim(namelist_name))
   read(unit,nml=data)
   read(unit,nml=scheme) 
-  read(unit,nml=pacticles)
+  read(unit,nml=particles)
   close(unit)
 
   pt_nlevels = count(pt_height.ne.fFillValue)

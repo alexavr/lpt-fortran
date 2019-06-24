@@ -26,6 +26,6 @@ implicit none
 
   namelist /data/   stime,etime,regional
   namelist /scheme/ accuracy,timestep,horizontal,perfomance,zoutput
-  namelist /pacticles/ pt_grid,pt_height,pt_step
+  namelist /particles/ pt_grid,pt_height,pt_step
 
 end module module_globals

@@ -12,8 +12,8 @@
  zoutput = .FALSE. ! Default FALSE [under development!!!]
 /
 
-&pacticles
+&particles
  pt_grid = .TRUE., ! Default FALSE
  pt_height = 1000,
- pt_step = 10
+ pt_step = 15
 /

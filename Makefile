@@ -1,6 +1,6 @@
 ################################################
 # Change this part
-NETCDF=/opt/netcdf4-serial
+NETCDF=/opt/netcdf-4
 DATETIME=/opt/datetime-fortran-1.6.0
 FC = ifort
 ################################################
@@ -21,18 +21,18 @@ FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff
 LINKER = $(FC) -o
 
 # Object files
-OBJS = module_io.o module_globals.o module_grid.o module_timetools.o pt.o
+OBJS = module_globals.o module_io.o module_grid.o module_timetools.o lpt.o
 
-model: $(PROG)
+LPT: $(PROG)
 
-# Creates the model
+# Create the LPT
 $(PROG): $(OBJS)
 	@echo "--------------------------------------"
-	@echo "Creating the executable for the PT"
+	@echo "Creating the executable for the LPT"
 	@echo "--------------------------------------"
 	$(LINKER) $(PROG) $(OBJS) $(FLINK)
 	mv *.o *.mod $(VPATH)
-	ln -sf $(VPATH)${PROG} .
+# 	ln -sf $(VPATH)${PROG} .
 
 %.o: %.f90
 	@echo "--------------------------------------"
@@ -40,15 +40,15 @@ $(PROG): $(OBJS)
 	@echo "--------------------------------------"
 	$(FC) -c $(FFLAGS) $<
 	
-# Cleans up everything
+# Clean up everything
 clean:
 	@echo "--------------------------------------"
-	@echo "Cleaning everything up in model"
+	@echo "Cleaning everything up in LPT"
 	@echo "--------------------------------------"
-	rm -f $(VPATH)*.o $(VPATH)*.mod $(VPATH)*.exe pt.exe
+	rm -f $(VPATH)*.o $(VPATH)*.mod $(VPATH)*.exe $(PROG)
 
-module_globals.o: module_globals.f90
+module_globals.o    : module_globals.f90
 module_timetools.o  : module_timetools.f90 module_globals.o
-module_io.o     : module_io.f90 module_globals.o
-module_grid.o   : module_grid.f90 module_globals.o
-pt.o            : pt.f90 module_io.o module_grid.o module_timetools.o
+module_io.o         : module_io.f90 module_globals.o
+module_grid.o       : module_grid.f90 module_globals.o
+lpt.o               : lpt.f90 module_io.o module_grid.o module_timetools.o

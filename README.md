@@ -13,7 +13,7 @@ The Lagrangian Particle Tracing of weightless particles. The scheme is based on 
 First `vi Makefile` :
 
 ```bash
-NETCDF=/opt/netcdf4-serial     # to add path to your NetCDF
+NETCDF=/opt/netcdf4-hdf5       # to add path to your NetCDF
 DATETIME=/opt/datetime-fortran # add path to your datetime-fortran libs
 FC=ifort                       # your FORTRAN compiler
 ```
@@ -50,7 +50,7 @@ All this preparation could be accomplished using the [cdo](https://code.mpimet.m
 
 The configuration is done using the file *namelist.pt*.
 
-The domain could be regional (`regional = .TRUE.`) or global (periodic boundary, `regional = .FALSE.`). You need also set the time interval using `stime` and `etime` (this interval has to be in your source file!).
+The domain could be regional (`regional = .TRUE.`) or global (periodic boundary, `regional = .FALSE.`). You need also set the time interval using `stime` and `etime` (this interval has to be present in the source file!).
 
 The particles could be initiated manually (`pt_grid = .FALSE.`) in ASCII file (see *points_test_Reykjavik.dat* as an example). Or evenly spaced allover the domain (`pt_grid = .TRUE.`), `pt_step ` is number of steps between particles in both directions, `pt_height` is elevation in meters. 
 

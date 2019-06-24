@@ -1,6 +1,6 @@
 &data
- stime = "2015-01-01 00:00:00", 
- etime = "2015-01-08 00:00:00", 
+ stime = "2015-01-08 00:00:00", 
+ etime = "2015-01-18 00:00:00", 
  regional = .TRUE. ! Default FALSE
 /
 
@@ -15,5 +15,5 @@
 &pacticles
  pt_grid = .TRUE., ! Default FALSE
  pt_height = 1000,
- pt_step = 15
+ pt_step = 10
 /

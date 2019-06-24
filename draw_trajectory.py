@@ -40,16 +40,21 @@ lons_all = data[:,:,0]
 lats_all = data[:,:,1]
 
 size = 2.
-llcrnrlat = np.min(lats_all)-size # np.max([plat-size,-90.])
-urcrnrlat = np.max(lats_all)+size # np.min([plat+size,+90.])
-llcrnrlon = np.min(lons_all)-size # np.max([plon-size,0.  ])
-urcrnrlon = np.max(lons_all)+size # np.min([plon+size,360.])
+llcrnrlat = np.max([np.min(lats_all)-size,-90.])
+urcrnrlat = np.min([np.max(lats_all)+size,+90.])
+llcrnrlon = np.max([np.min(lons_all)-size,-180.])
+urcrnrlon = np.min([np.max(lons_all)+size,180. ])
+
+print(llcrnrlat)
+print(urcrnrlat)
+print(llcrnrlon)
+print(urcrnrlon)
 
 m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
             llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
-# m = Basemap(projection='cyl',llcrnrlat=10,urcrnrlat=90,
-#             llcrnrlon=-100,urcrnrlon=-10,resolution='l')
-# m = Basemap(projection='npstere',boundinglat=60,lon_0=-50,resolution='l')
+# m = Basemap(projection='cyl',llcrnrlat=30,urcrnrlat=90,
+#             llcrnrlon=50,urcrnrlon=150,resolution='l')
+# m = Basemap(projection='npstere',boundinglat=60,lon_0=90,resolution='l')
 
 plt.figure(figsize=(6,4), dpi=150)
 
@@ -97,7 +102,8 @@ for ip in range(0,npts):
         linestyle='-.'
     
     # label = "%d m (%4.1f days)"%(int(hgts[0]),time_dur)
-    plt.plot(lons, lats,'-',  color=color, linestyle=linestyle, linewidth=1)
+    x,y = m(lons, lats)
+    plt.plot(x,y,'-',  color=color, linestyle=linestyle, linewidth=1)
     cs = m.scatter(lons[time_ind], lats[time_ind], c=hgts[time_ind], 
                    vmin=0, vmax=6, cmap="jet", marker='s', 
                    s=[10.], latlon=True)

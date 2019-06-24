@@ -52,7 +52,7 @@ The configuration is done using the file *namelist.pt*.
 
 The domain could be regional (`regional = .TRUE.`) or global (periodic boundary, `regional = .FALSE.`). You need also set the time interval using `stime` and `etime` (this interval has to be present in the source file!).
 
-The particles could be initiated manually (`pt_grid = .FALSE.`) in ASCII file (see *points_test_Reykjavik.dat* as an example). Or evenly spaced allover the domain (`pt_grid = .TRUE.`), `pt_step ` is number of steps between particles in both directions, `pt_height` is elevation in meters. 
+The particles could be initiated manually (`pt_grid = .FALSE.`) in ASCII file named *init_particles.dat* (see *init_particles_Reykjavik.dat* as an example). Or evenly spaced allover the domain (`pt_grid = .TRUE.`), `pt_step ` is number of steps between particles in both directions, `pt_height` is elevation in meters. 
 
 Accuracy of the computations. There are two schemes provided: 
 

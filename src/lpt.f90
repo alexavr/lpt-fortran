@@ -158,6 +158,7 @@ program lpt
     allocate ( z2(nlon, nlat, nz) )
   end if
 
+  print*, "-> Tracing..."
   update = .true.
   do itime = 1, (duration*ntimesteps+1)
 

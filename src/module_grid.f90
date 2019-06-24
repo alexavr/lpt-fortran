@@ -248,18 +248,18 @@ implicit none ! religion first
 
 
         ! FIX THIS!!!!
-        if (plat.ge.90) then 
+        if (plat.gt.90) then 
             plat = 180. - plat
-            plon = plon - 180
-        else if (plat .le. -90) then
-            plat = -180 - plat
-            plon = plon - 180
+            plon = plon - 180.
+        else if (plat .lt. -90) then
+            plat = -180. - plat
+            plon = plon - 180.
         end if
 
-        if (plon .ge. 180) then 
-            plon = plon - 360
-        else if (plon .le. -180) then
-            plon = 360 - plon
+        if (plon .gt. 180) then 
+            plon = plon - 360.
+        else if (plon .lt. -180) then
+            plon = 360. - plon
         end if
 
         point(1) = plon

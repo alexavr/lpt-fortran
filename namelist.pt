@@ -1,7 +1,7 @@
 &data
  stime = "2015-01-08 00:00:00", 
  etime = "2015-01-18 00:00:00", 
- regional = .TRUE. ! Default FALSE
+ regional = .FALSE. ! Default FALSE
 /
 
 &scheme 
@@ -13,7 +13,7 @@
 /
 
 &particles
- pt_grid = .TRUE., ! Default FALSE
+ pt_grid = .FALSE., ! Default FALSE
  pt_height = 1000,
  pt_step = 15
 /

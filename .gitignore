@@ -13,7 +13,7 @@ RES
 README.pptx
 *.mp4
 *.png
-points_many.dat
+init_particles_many.dat
 
 # Packages #
 ############

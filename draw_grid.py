@@ -9,13 +9,17 @@ import matplotlib.pyplot as plt
 from wrf import smooth2d
 import sys
 
-################################################################################
-tracking = False    # draw recent path on every particle
+### CHANGE THIS ################################################################
+
+tracking = True    # draw recent path on every particle
 if tracking: 
-    ltrajectory = 24 # the path length (it hr)
+    ltrajectory = 24 # the path length (in hours)
+
 ################################################################################
 ################################################################################
 ################################################################################
+
+### FUNCTIONS ################################################################
 
 def get_z_ind( ncid, zarray ):
 
@@ -66,16 +70,18 @@ npts  = data.shape[1]
 level = get_z_ind( ncidz, data[0,:,2] )
 print("determined vertical level = ",level)
 
-m = Basemap(width=10000000,height=10000000,
-            rsphere=(6378137.00,6356752.3142),\
-            resolution='c',area_thresh=1000.,projection='lcc',\
-            lat_1=45.,lat_2=45,lat_0=45,lon_0=-48.)
+# m = Basemap(width=10000000,height=10000000,
+#             rsphere=(6378137.00,6356752.3142),\
+#             resolution='c',area_thresh=1000.,projection='lcc',\
+#             lat_1=45.,lat_2=45,lat_0=45,lon_0=-48.)
 
 # m = Basemap(projection='merc',llcrnrlat=-89,urcrnrlat=89,\
 #             llcrnrlon=-180,urcrnrlon=180,lat_ts=20,resolution='c')
 
 # m = Basemap(projection='cyl',llcrnrlat=30,urcrnrlat=80,
 #             llcrnrlon=-120,urcrnrlon=0,resolution='l')
+
+m = Basemap(projection='npstere',boundinglat=np.max([np.min(data[:,:,1])-5,60.]),lon_0=90,resolution='l')
 
 if ncidp.accuracy == 1: accuracy = "Accurate scheme"
 else: accuracy = "Coarse scheme"
@@ -114,13 +120,13 @@ for it in range(0,ntime): # ntime
     plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
 
     if tracking:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(6000, 10001, 100),
-            linestyles='-', colors="y", linewidths=0.1, latlon=True)
+        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(0, 100001, 100),
+            linestyles='-', colors="g", linewidths=0.1, latlon=True)
     else:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(6000, 10001, 100),
+        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(0, 100001, 100),
             linestyles='-', colors="black", linewidths=0.5, latlon=True)
     
-    cs = m.contourf(lon2d, lat2d, smooth_z, 10, levels=np.arange(6000, 11001, 500), #levels=np.arange(6400, 10501, 100),
+    cs = m.contourf(lon2d, lat2d, smooth_z, 10, # levels=np.arange(6000, 11001, 500), #levels=np.arange(6400, 10501, 100),
         alpha = 0.5, extend='min', cmap="YlGn_r", latlon=True)
     
     if tracking:
@@ -137,9 +143,9 @@ for it in range(0,ntime): # ntime
     clb.set_label('Particle height [km]', labelpad=-33, fontsize=6, y=0.5, rotation=90)
 
     figname = "grid_%s_%07d.png"%(pt_file,it)
-    # plt.show()
-    fig.savefig(figname)
-    plt.close()
+    plt.show()
+    # fig.savefig(figname)
+    # plt.close()
 
     del lons
     del lats

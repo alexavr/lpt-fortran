@@ -45,15 +45,11 @@ urcrnrlat = np.min([np.max(lats_all)+size,+90.])
 llcrnrlon = np.max([np.min(lons_all)-size,-180.])
 urcrnrlon = np.min([np.max(lons_all)+size,180. ])
 
-print(llcrnrlat)
-print(urcrnrlat)
-print(llcrnrlon)
-print(urcrnrlon)
-
-m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
-            llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
+# m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
+#             llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
 # m = Basemap(projection='cyl',llcrnrlat=30,urcrnrlat=90,
 #             llcrnrlon=50,urcrnrlon=150,resolution='l')
+m = Basemap(projection='npstere',boundinglat=np.max([np.min(lats_all)-size,60.]),lon_0=90,resolution='l')
 # m = Basemap(projection='npstere',boundinglat=60,lon_0=90,resolution='l')
 
 plt.figure(figsize=(6,4), dpi=150)
@@ -79,6 +75,8 @@ for ip in range(0,npts):
     lons = data[:,ip,0]
     lats = data[:,ip,1]
     hgts = data[:,ip,2]/1000
+
+
     
     # time_ip = time[np.where( lons.mask )]
     # time_dur = (lons.shape[0]-np.sum(lons.mask))*dtime/24 

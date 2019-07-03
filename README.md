@@ -1,6 +1,6 @@
 *Detailed description is coming soon...*
 
-The lagrangian tracing of weightless particles. The scheme is based on pure interpolation (no modeling involved!). Basic idea: take the current particle coordinates and predict the future location base on its current velocity. As simple as that. The scheme uses 3D velocity components and geopotential fields.
+The lagrangian tracing of weightless particles. The scheme is based on pure interpolation (no modeling involved!). Basic idea: take the current particle coordinates and predict the future location based on its current velocity. As simple as that. The scheme uses 3D velocity components and geopotential fields.
 
 ## Requirements
 
@@ -8,20 +8,20 @@ The lagrangian tracing of weightless particles. The scheme is based on pure inte
 
 ## Building 
 
-Copy to your machine:
-
-```bash
-git clone https://github.com/alexavr/lpt-fortran.git
-cd lpt-fortran
-make
-```
-
-You might need to edit `Makefile` :
+First `vi Makefile` :
 
 ```bash
 NETCDF=/opt/netcdf4-hdf5       # path to your NetCDF
 DATETIME=/opt/datetime-fortran # path to your datetime-fortran libs
 FC=ifort                       # your FORTRAN compiler
+```
+
+Normally you don't need to change other stuff.
+
+Building:
+
+```bash
+make
 ```
 
 Cleaning in case anything went wrong:

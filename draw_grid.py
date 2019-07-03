@@ -70,18 +70,24 @@ npts  = data.shape[1]
 level = get_z_ind( ncidz, data[0,:,2] )
 print("determined vertical level = ",level)
 
-# m = Basemap(width=10000000,height=10000000,
-#             rsphere=(6378137.00,6356752.3142),\
-#             resolution='c',area_thresh=1000.,projection='lcc',\
-#             lat_1=45.,lat_2=45,lat_0=45,lon_0=-48.)
+size = 2.
+llcrnrlat = np.max([np.min(data[:,:,1])-size,-90.])
+urcrnrlat = np.min([np.max(data[:,:,1])+size,+90.])
+llcrnrlon = np.max([np.min(data[:,:,2])-size,-180.])
+urcrnrlon = np.min([np.max(data[:,:,2])+size,180. ])
 
-# m = Basemap(projection='merc',llcrnrlat=-89,urcrnrlat=89,\
-#             llcrnrlon=-180,urcrnrlon=180,lat_ts=20,resolution='c')
+# if(urcrnrlat <= 70):
+#     m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
+#                 llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
+# else:
+#     avglon = np.arange(data[:,:,2].any())
+#     m = Basemap(projection='npstere',boundinglat=np.max([np.min(data[:,:,1])-5,60.]),lon_0=avglon,resolution='l')
 
-# m = Basemap(projection='cyl',llcrnrlat=30,urcrnrlat=80,
-#             llcrnrlon=-120,urcrnrlon=0,resolution='l')
-
-m = Basemap(projection='npstere',boundinglat=np.max([np.min(data[:,:,1])-5,60.]),lon_0=90,resolution='l')
+# Define the NAAD map:
+m = Basemap(width=10000000,height=10000000,
+            rsphere=(6378137.00,6356752.3142),\
+            resolution='c',area_thresh=1000.,projection='lcc',\
+            lat_1=45.,lat_2=45,lat_0=45,lon_0=-48.)
 
 if ncidp.accuracy == 1: accuracy = "Accurate scheme"
 else: accuracy = "Coarse scheme"

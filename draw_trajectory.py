@@ -24,7 +24,6 @@ def get_time_ind( time, time_step_hours ):
 ################################################################################
 ################################################################################
 
-
 filename = sys.argv[1]
 
 ncid = Dataset(filename,"r")
@@ -45,12 +44,14 @@ urcrnrlat = np.min([np.max(lats_all)+size,+90.])
 llcrnrlon = np.max([np.min(lons_all)-size,-180.])
 urcrnrlon = np.min([np.max(lons_all)+size,180. ])
 
-# m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
-#             llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
-# m = Basemap(projection='cyl',llcrnrlat=30,urcrnrlat=90,
-#             llcrnrlon=50,urcrnrlon=150,resolution='l')
-m = Basemap(projection='npstere',boundinglat=np.max([np.min(lats_all)-size,60.]),lon_0=90,resolution='l')
-# m = Basemap(projection='npstere',boundinglat=60,lon_0=90,resolution='l')
+
+if(urcrnrlat <= 90):
+    m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
+                llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
+else:
+    avglon = np.arange(lons_all.any())
+    m = Basemap(projection='npstere',boundinglat=np.max([llcrnrlat,60.]),lon_0=avglon,resolution='l')
+
 
 plt.figure(figsize=(6,4), dpi=150)
 
@@ -138,6 +139,9 @@ divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
 plt.colorbar(im, cax=cax)
 plt.show()
+# figname = "%s.png"%(filename)
+# plt.savefig(figname)
+# plt.close()
 
 # props = dict(boxstyle='round', facecolor='white', alpha=0.5) # wheat
 # ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=6,

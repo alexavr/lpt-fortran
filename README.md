@@ -8,20 +8,20 @@ The lagrangian tracing of weightless particles. The scheme is based on pure inte
 
 ## Building 
 
-First `vi Makefile` :
+Copy to your machine:
+
+```bash
+git clone https://github.com/alexavr/lpt-fortran.git
+cd lpt-fortran
+make
+```
+
+You might need to edit `Makefile` :
 
 ```bash
 NETCDF=/opt/netcdf4-hdf5       # path to your NetCDF
 DATETIME=/opt/datetime-fortran # path to your datetime-fortran libs
 FC=ifort                       # your FORTRAN compiler
-```
-
-Normally you don't need to change other stuff.
-
-Building:
-
-```bash
-make
 ```
 
 Cleaning in case anything went wrong:

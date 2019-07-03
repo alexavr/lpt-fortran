@@ -109,6 +109,7 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "start_time" , stime) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "end_time"   , etime) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "timestep"   , timestep) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cell_detector", cell_detector) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "accuracy"   , merge(1, 0, accuracy  )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal" , merge(1, 0, horizontal)) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "regional"   , merge(1, 0, regional  )) )

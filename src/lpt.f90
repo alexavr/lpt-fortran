@@ -52,7 +52,7 @@ program lpt
   if(trim(file_in).EQ."") then
     stop "Usage: ./pt.exe input_file.nc"
   end if
-  file_out = "_pt_"//trim(file_in)
+  file_out = "lptf90_"//trim(file_in)
 
   print*,"-> Files:"
   print*,"   Input file:      ",trim(file_in)
@@ -171,13 +171,9 @@ program lpt
 
     if(itime.ne.1) update = ( it .gt. int(floor(newtime_ind(itime-1))) )
 
-    ! print*, newtime_datatime(itime), newtime_ind(itime), it
-
     if(accuracy) then
 
       if (update) then
-
-        ! print*,"   reading..."
 
         call get_var_xyz(ncid_in,"u",it  ,u1) 
         call get_var_xyz(ncid_in,"v",it  ,v1) 
@@ -217,7 +213,7 @@ program lpt
 
       do ip = 1, npoints
 
-        call get_cell_hor ( points(ip,:), lon2d, lat2d, ij) 
+        call get_cell_hor ( points(ip,:), lon2d, lat2d, ij)
 
         call get_cell_vert( points(ip,:), ij, z, kk )
 
@@ -230,6 +226,7 @@ program lpt
         if( any(points(ip,:).eq.fFillValue) ) cycle
 
         ! print'(a,2f7.2,f10.4, 2f10.4, f10.2)', newtime_datatime(itime), pu, pv, pw, points(ip,:)
+        ! print'(a, f7.2," |",2f10.4, f10.2)', newtime_datatime(itime), sqrt(pu**2+pv**2+pw**2), points(ip,:)
 
         result(:,ip,itime) = points(ip,:)
 

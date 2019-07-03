@@ -19,7 +19,7 @@ public :: get_cell_vert
 public :: interpolate
 public :: locate
 
-    real(kind=real64), parameter :: pi = 3.14159265359, er = 6371.D0
+    real(kind=real64), parameter :: pi = 3.14159265359d0, er = 6371.D0
 
     interface haversine
         procedure dhaversine1d, dhaversine2d
@@ -35,6 +35,7 @@ real(kind=real32), intent(inout) :: point(3)
 real(kind=real32), intent(in) :: lon2d(:,:), lat2d(:,:)
 integer, intent(out) :: ij(4,2)
 real(kind=real64),dimension(:,:),allocatable :: dist
+real(kind=real64) :: grid(3,3,5) = dFillValue
 
 integer :: xdim, ydim, npoints
 integer :: ii
@@ -58,13 +59,17 @@ logical :: skip = .false.
         allocate( dist(xdim, ydim) ) 
 
         dist = haversine(lon2d, lat2d, plon, plat)
+        call get_grid(dist, lon2d, lat2d, plon, plat, grid)
 
-        do ii = 1, npoints
-            ij(ii,:) = minloc(dist)
-            ! print*,"ij ", ii, ij(ii,:),dist( ij(ii,1),ij(ii,2) )
-
-            dist( ij(ii,1),ij(ii,2) ) = huge(dist)
-        end do
+        if(cell_detector.eq.0) then
+            ! print*,"Simple scheme"
+            call closest_distance(grid, plon, plat, ij)
+        else if(cell_detector.eq.1) then
+            call triangle_method(grid, plon, plat, ij)
+        else
+            print*,"get_cell_hor: Can not recognize the cell_detector option eq ",cell_detector
+            stop
+        end if
 
         ! If point reached the border, that loosing it
         if(regional) then
@@ -80,6 +85,277 @@ logical :: skip = .false.
     end if
 
 end subroutine get_cell_hor
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Searching for grid indexes around the point 
+! by using the triangle method: the sum of trangles areas  
+! (2 grid to the point) will be equal the gridcell area only if 
+! the point is inside the cell
+! Issues: 
+! - projection uncertanties make it usless to find 
+!           the actual equlity (even with certain epsilon).
+!           So for now I'm using min(sum(trianlges)) amoung 
+!           all 4 cells. Tested numerious times - works very well.
+! - Only 4 cells and 4 points acounted yet.
+! 
+subroutine triangle_method(grid, plon, plat, ij)
+implicit none ! religion first
+    real(kind=real64), intent(in) :: grid(:,:,:)
+    real(kind=real32), intent(in) :: plon, plat
+    integer          , intent(out):: ij(:,:)
+    logical :: skip = .false.
+    integer,parameter :: ncells = 4, npoints = 4 
+    real(kind=real32) :: cell(ncells,npoints,5)
+    real(kind=real32) :: segm(ncells,npoints,2)
+    real(kind=real64) :: darea(ncells)
+
+    integer :: ic, ip, ic_min(1)
+
+    ij = iFillValue
+
+    skip = ( count( grid.eq.dFillValue ) .NE. 0 ) 
+    
+    if(.not.skip) then
+        ! initializing the traversal order (+1 comes from python indexing)
+        segm(1,1,:) = (/1,1/)+1
+        segm(1,2,:) = (/1,0/)+1
+        segm(1,3,:) = (/2,0/)+1
+        segm(1,4,:) = (/2,1/)+1
+        segm(2,1,:) = (/1,1/)+1
+        segm(2,2,:) = (/2,1/)+1
+        segm(2,3,:) = (/2,2/)+1
+        segm(2,4,:) = (/1,2/)+1
+        segm(3,1,:) = (/1,1/)+1
+        segm(3,2,:) = (/1,0/)+1
+        segm(3,3,:) = (/0,0/)+1
+        segm(3,4,:) = (/0,1/)+1
+        segm(4,1,:) = (/1,1/)+1
+        segm(4,2,:) = (/1,2/)+1
+        segm(4,3,:) = (/0,2/)+1
+        segm(4,4,:) = (/0,1/)+1
+
+        do ic = 1, ncells
+        do ip = 1, npoints
+            cell(ic,ip,:) = grid( segm(ic,ip,1 ), segm(ic,ip,2 ), :)
+        end do
+        end do
+
+        do ic = 1, ncells
+            darea(ic) = darea_triangle( plon, plat, &
+                cell(ic,:,3), cell(ic,:,4) )
+        end do
+
+        ic_min = minloc(darea)
+        ij = cell(ic_min(1),:,1:2)
+
+    end if
+
+end subroutine triangle_method
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+real(kind=real64) function darea_triangle( plon, plat, lons1d, lats1d)
+implicit none ! religion first
+    real(kind=real32), intent(in) :: plon, plat
+    real(kind=real32), intent(in) :: lons1d(:), lats1d(:)
+
+    real(kind=real32) :: x0, x1, x2, x3, x4 
+    real(kind=real32) :: y0, y1, y2, y3, y4 
+    real(kind=real64) :: a_x, a_y, b_x, b_y, c_x, c_y, d_x, d_y
+    real(kind=real64) :: ao_x, ao_y, bo_x, bo_y, co_x, co_y, do_x, do_y
+    real(kind=real64) :: Sabc,Scda,Saob,Sboc,Scod,Sdoa,Sabcd,Ssum
+
+    x0 = plon
+    x1 = lons1d(1)
+    x2 = lons1d(2)
+    x3 = lons1d(3)
+    x4 = lons1d(4)
+    y0 = plat
+    y1 = lats1d(1)
+    y2 = lats1d(2)
+    y3 = lats1d(3)
+    y4 = lats1d(4)
+
+    a_x = haversine(x1, y1, x2, y1) 
+    a_y = haversine(x1, y1, x1, y2) 
+    b_x = haversine(x2, y2, x3, y2) 
+    b_y = haversine(x2, y2, x2, y3) 
+    c_x = haversine(x3, y3, x4, y3) 
+    c_y = haversine(x3, y3, x3, y4) 
+    d_x = haversine(x4, y4, x1, y4) 
+    d_y = haversine(x4, y4, x4, y1) 
+
+    ao_x = haversine(x1, y1, x0, y1)
+    ao_y = haversine(x1, y1, x1, y0)
+    bo_x = haversine(x2, y2, x0, y2)
+    bo_y = haversine(x2, y2, x2, y0)
+    co_x = haversine(x3, y3, x0, y3)
+    co_y = haversine(x3, y3, x3, y0)
+    do_x = haversine(x4, y4, x0, y4)
+    do_y = haversine(x4, y4, x4, y0)
+
+    Sabc = abs(0.5d0*(a_x*b_y-a_y*b_x))
+    Scda = abs(0.5d0*(c_x*d_y-c_y*d_x))
+    Sabcd = Sabc + Scda
+
+    Saob = abs(0.5d0*(a_x*ao_y-a_y*ao_x))
+    Sboc = abs(0.5d0*(b_x*bo_y-b_y*bo_x))
+    Scod = abs(0.5d0*(c_x*co_y-c_y*co_x))
+    Sdoa = abs(0.5d0*(d_x*do_y-d_y*do_x))
+    Ssum = Saob+Sboc+Scod+Sdoa
+
+    darea_triangle = abs( Sabcd-Ssum )
+
+end function darea_triangle
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Gets GRID data as output and finds npoints 
+! closest points. The npoints determines as 
+! the dimention of the ij array. 
+! 
+! grid(:,:,1) - ii (global)
+! grid(:,:,2) - jj (global)
+! grid(:,:,3) - lon 
+! grid(:,:,4) - lat 
+! grid(:,:,5) - dist 
+! 
+subroutine closest_distance(grid, plon, plat, ij)
+implicit none ! religion first
+    real(kind=real64), intent(inout) :: grid(:,:,:)
+    real(kind=real32), intent(in) :: plon, plat
+    integer          , intent(out):: ij(:,:)
+
+    integer :: npoints
+    logical :: skip = .false.
+
+    integer :: ii, ij_tmp(2)
+
+    skip = ( count( grid.eq.dFillValue ) .NE. 0 ) 
+    
+    if(.not.skip) then
+        npoints = ubound(ij,1)
+
+        do ii = 1, npoints
+            ij_tmp = minloc(grid(:,:,5))
+            ij(ii,1) = nint( grid(ij_tmp(1),ij_tmp(2),1) )
+            ij(ii,2) = nint( grid(ij_tmp(1),ij_tmp(2),2) )
+            ! print*,"ij ", ii, ij(ii,:), grid( ij_tmp(1),ij_tmp(2), 5 )
+            grid( ij_tmp(1),ij_tmp(2), 5 ) = huge(grid)
+        end do
+
+
+    end if
+
+
+end subroutine closest_distance
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+subroutine get_grid(dist, lon2d, lat2d, plon, plat, grid)
+implicit none ! religion first
+    real(kind=real64), intent(in) :: dist(:,:)
+    real(kind=real32), intent(in) :: lon2d(:,:),lat2d(:,:)
+    real(kind=real32), intent(in) :: plon, plat
+    real(kind=real64), intent(out) :: grid(3,3,5)
+
+    integer :: xdim, ydim
+    integer :: ii, jj
+    integer :: iii, iiip1, iiim1, jjj, jjjp1, jjjm1
+    integer :: iii_jjjm1,iii_jjjp1,iiip1_jjjm1,iiim1_jjjm1,iiip1_jjjp1,iiim1_jjjp1
+    integer :: tmp2(2), tmp1(1)
+    real(kind=real32) :: lon2
+
+    grid = dFillValue
+
+    xdim = ubound(dist,1)
+    ydim = ubound(dist,2)
+
+    tmp2 = minloc(dist)
+    ii = tmp2(1)
+    jj = tmp2(2)
+
+    ! if its the N/S Pole - we need to point the y-direction
+    if(.not. regional) then
+        if(lat2d(ii, jj) == 90 .or. lat2d(ii, jj) == -90) then
+            tmp1 = minloc( abs(lon2d(:, jj)-plon) )
+            ii = tmp1(1)
+        end if
+    end if
+
+    iii   = ii
+    iiip1 = ii+1
+    iiim1 = ii-1
+    jjj   = jj
+    jjjp1 = jj+1
+    jjjm1 = jj-1
+
+   if(regional) then
+        
+        ! If closest grid is at the border, than loose the particle else do:
+        if ((ii /= 1) .or. (ii /= xdim) .or. (jj /= 1) .or. (jj /= ydim)) then
+            grid(3,1,:) = (/ dble(iiim1), dble(jjj+1), dble(lon2d(iiim1,jjj+1)), dble(lat2d(iiim1,jjj+1)), dist(iiim1,jjj+1) /)
+            grid(3,2,:) = (/ dble(iii  ), dble(jjj+1), dble(lon2d(iii  ,jjj+1)), dble(lat2d(iii  ,jjj+1)), dist(iii  ,jjj+1) /)
+            grid(3,3,:) = (/ dble(iiip1), dble(jjj+1), dble(lon2d(iiip1,jjj+1)), dble(lat2d(iiip1,jjj+1)), dist(iiip1,jjj+1) /)
+            grid(2,1,:) = (/ dble(iiim1), dble(jjj  ), dble(lon2d(iiim1,jjj  )), dble(lat2d(iiim1,jjj  )), dist(iiim1,jjj  ) /)
+            grid(2,2,:) = (/ dble(iii  ), dble(jjj  ), dble(lon2d(iii  ,jjj  )), dble(lat2d(iii  ,jjj  )), dist(iii  ,jjj  ) /)
+            grid(2,3,:) = (/ dble(iiip1), dble(jjj  ), dble(lon2d(iiip1,jjj  )), dble(lat2d(iiip1,jjj  )), dist(iiip1,jjj  ) /)
+            grid(1,1,:) = (/ dble(iiim1), dble(jjj-1), dble(lon2d(iiim1,jjj-1)), dble(lat2d(iiim1,jjj-1)), dist(iiim1,jjj-1) /)
+            grid(1,2,:) = (/ dble(iii  ), dble(jjj-1), dble(lon2d(iii  ,jjj-1)), dble(lat2d(iii  ,jjj-1)), dist(iii  ,jjj-1) /)
+            grid(1,3,:) = (/ dble(iiip1), dble(jjj-1), dble(lon2d(iiip1,jjj-1)), dble(lat2d(iiip1,jjj-1)), dist(iiip1,jjj-1) /)
+        end if
+
+    else ! global data (periodic boundaries)
+
+        ! periodic boundary
+        if(ii == xdim) iiip1 = 1
+        if(ii == 1   ) iiim1 = xdim
+
+        iii_jjjm1 = iii
+        iii_jjjp1 = iii
+        iiip1_jjjm1 = iiip1
+        iiim1_jjjm1 = iiim1
+        iiip1_jjjp1 = iiip1
+        iiim1_jjjp1 = iiim1
+
+        ! handling the N/S Poles
+        if(jj == 1) then 
+            if (lon2d(ii,jj+1) > 0) then
+                lon2 = lon2d(ii,jj+1)-180.
+            else 
+                lon2 = lon2d(ii,jj+1)+180.
+            end if
+
+            jjjm1 = jj+1
+            
+            tmp1 = minloc( abs(lon2d(:, jjjm1)-lon2) )
+            iii_jjjm1 = tmp1(1)
+            iiip1_jjjm1 = iii_jjjm1 - 1
+            iiim1_jjjm1 = iii_jjjm1 + 1
+
+        end if
+
+        if(jj == ydim) then 
+
+            if (lon2d(ii,jj-1) >  0) then
+                lon2 = lon2d(ii,jj-1)-180.
+            else 
+                lon2 = lon2d(ii,jj-1)+180.
+            end if
+
+            jjjp1 = jj-1
+
+            tmp1 = minloc( abs(lon2d(:, jjjp1)-lon2) )
+            iii_jjjp1 = tmp1(1)
+            iiip1_jjjp1 = iii_jjjp1 - 1
+            iiim1_jjjp1 = iii_jjjp1 + 1
+        end if
+
+        grid(3,1,:) = (/dble(iiim1_jjjp1) , dble(jjjp1), dble(lon2d(iiim1_jjjp1,jjjp1)), dble(lat2d(iiim1_jjjp1,jjjp1)), dist(iiim1_jjjp1,jjjp1)/)
+        grid(3,2,:) = (/dble(iii_jjjp1  ) , dble(jjjp1), dble(lon2d(iii_jjjp1  ,jjjp1)), dble(lat2d(iii_jjjp1  ,jjjp1)), dist(iii_jjjp1  ,jjjp1)/)
+        grid(3,3,:) = (/dble(iiip1_jjjp1) , dble(jjjp1), dble(lon2d(iiip1_jjjp1,jjjp1)), dble(lat2d(iiip1_jjjp1,jjjp1)), dist(iiip1_jjjp1,jjjp1)/)
+        grid(2,1,:) = (/dble(iiim1      ) , dble(jjj  ), dble(lon2d(iiim1      ,jjj  )), dble(lat2d(iiim1      ,jjj  )), dist(iiim1      ,jjj  )/)
+        grid(2,2,:) = (/dble(iii        ) , dble(jjj  ), dble(lon2d(iii        ,jjj  )), dble(lat2d(iii        ,jjj  )), dist(iii        ,jjj  )/)
+        grid(2,3,:) = (/dble(iiip1      ) , dble(jjj  ), dble(lon2d(iiip1      ,jjj  )), dble(lat2d(iiip1      ,jjj  )), dist(iiip1      ,jjj  )/)
+        grid(1,1,:) = (/dble(iiim1_jjjm1) , dble(jjjm1), dble(lon2d(iiim1_jjjm1,jjjm1)), dble(lat2d(iiim1_jjjm1,jjjm1)), dist(iiim1_jjjm1,jjjm1)/)
+        grid(1,2,:) = (/dble(iii_jjjm1  ) , dble(jjjm1), dble(lon2d(iii_jjjm1  ,jjjm1)), dble(lat2d(iii_jjjm1  ,jjjm1)), dist(iii_jjjm1  ,jjjm1)/)
+        grid(1,3,:) = (/dble(iiip1_jjjm1) , dble(jjjm1), dble(lon2d(iiip1_jjjm1,jjjm1)), dble(lat2d(iiip1_jjjm1,jjjm1)), dist(iiip1_jjjm1,jjjm1)/)
+    end if
+
+end subroutine get_grid
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine get_cell_vert ( point, ij, z, kk)
 implicit none ! religion first
@@ -222,6 +498,21 @@ implicit none ! religion first
 
 end subroutine interpolate
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Gets Earth radius in km 
+pure elemental real(kind=real32) function earth_radius(lat)
+implicit none
+    real(kind=real32), intent(in)    :: lat 
+    real(kind=real32) :: er_a,er_b
+
+    er_a = 6378.1370 ! 6370.000 # The Earth's equatorial radius
+    er_b = 6356.7523 ! 6370.000 # The Earth's polar radius
+        
+    earth_radius = sqrt( ( (er_a**2*cos(lat))**2 + &
+        (er_b**2*sin(lat))**2 ) / ( (er_a*cos(lat))**2 + &
+        (er_b*sin(lat))**2 ))
+
+end function earth_radius
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! dt - in min
 subroutine locate(point, pu, pv, pw, dt)
 implicit none ! religion first
@@ -240,12 +531,16 @@ implicit none ! religion first
         plat = fFillValue
         phgt = fFillValue
 
-        R = er*1000.d0
+        ! R = 6371.0088
+        R = earth_radius(point(2))
+        R = R*1000.d0
 
-        plon = point(1) + pu*(dt*60.d0)/R*180.d0/pi*cos(point(2)*pi/180.d0)
-        plat = point(2) + pv*(dt*60.d0)/R*180.d0/pi
+        plon = point(1) + pu*(dt*60.d0)/(pi*R/180.d0*cos(point(2)*pi/180.d0))
+        plat = point(2) + pv*(dt*60.d0)/(pi*R/180.d0)
         phgt = point(3) + pw*(dt*60.d0)
 
+        ! Forbits to go over abs(360)
+        if (abs(plon) > 360) plon = mod(plon,360.)
 
         ! FIX THIS!!!!
         if (plat.gt.90) then 
@@ -290,7 +585,7 @@ real(kind=real64)             :: dhaversine1d
     a = sin(dlat/2.D0)**2 + cos(rlat1) * cos(rlat2) * sin(dlon/2.D0)**2
     c = 2.D0 * asin(sqrt(a))
 
-    dhaversine1d = c * er 
+    dhaversine1d = c * earth_radius( lat2 ) 
 
 end function dhaversine1d
 
@@ -310,10 +605,10 @@ integer :: xdim, ydim
     xdim = UBOUND(lon2d,1)
     ydim = UBOUND(lon2d,2)
 
-    allocate( rlon2d(xdim,xdim),rlat2d(xdim,xdim) ) 
-    allocate( dlon(xdim,xdim), dlat(xdim,xdim) ) 
-    allocate( a(xdim,xdim), c(xdim,xdim) )
-    allocate( dhaversine2d(xdim,xdim) )
+    allocate( rlon2d(xdim,ydim),rlat2d(xdim,ydim) ) 
+    allocate( dlon(xdim,ydim), dlat(xdim,ydim) ) 
+    allocate( a(xdim,ydim), c(xdim,ydim) )
+    allocate( dhaversine2d(xdim,ydim) )
 
     rlon2d = dble(lon2d)*pi/180.D0 
     rlat2d = dble(lat2d)*pi/180.D0 
@@ -326,7 +621,7 @@ integer :: xdim, ydim
     a = sin(dlat/2.D0)**2 + cos(rlat2d) * cos(rplat) * sin(dlon/2.D0)**2
     c = 2.D0 * asin(sqrt(a))
 
-    dhaversine2d = c * er 
+    dhaversine2d = c * earth_radius( plat ) 
     deallocate( rlon2d, rlat2d, dlon, dlat, a, c )
 
 end function dhaversine2d

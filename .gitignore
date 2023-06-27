@@ -6,6 +6,7 @@
 
 # data
 *.nc
+wrfout_d01_*
 
 # some developer stuff
 python_prototype
@@ -13,7 +14,6 @@ RES
 README.pptx
 *.mp4
 *.png
-init_particles_many.dat
 init_particles.dat
 DRAFTS.pdf
 trash

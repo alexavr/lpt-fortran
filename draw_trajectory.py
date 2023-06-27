@@ -6,7 +6,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import sys
 from datetime import *
-
+import cmaps
+import xarray as xr
 
 ################################################################################
 
@@ -30,6 +31,25 @@ ncid = Dataset(filename,"r")
 time = ncid.variables['time']
 data = ncid.variables["points"][:]
 
+ds = xr.open_dataset(ncid.src_file)
+# vunits = ds.u.vert_units
+
+horizontal = ncid.horizontal # if TRUE than it is 3D simulation
+try:
+    levels = ds.level
+    levels_name = ds.level.long_name
+    levels_units = ds.level.units
+except:
+    levels = data[0,:,2]
+    levels_name = "model_levels"
+    levels_units = "number"
+
+level_min = np.min(levels)
+level_max = np.max(levels)
+
+
+
+
 time_convert = netCDF4.num2date(time[:], time.units, time.calendar)
 time_ind = get_time_ind(time_convert,0)
 
@@ -50,14 +70,14 @@ if(urcrnrlat <= 90):
                 llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
 else:
     avglon = np.arange(lons_all.any())
-    m = Basemap(projection='npstere',boundinglat=np.max([llcrnrlat,60.]),lon_0=avglon,resolution='l')
+    m = Basemap(projection='npstere',boundinglat=np.max([llcrnrlat,60.]),lon_0=avglon,resolution='c')
 
 
 plt.figure(figsize=(6,4), dpi=150)
 
 cs = m.drawcoastlines(linewidth=0.5)
-cs = m.drawparallels(np.arange(-90.,91.,1.),linewidth=0.1)
-cs = m.drawmeridians(np.arange(-180,180.,1.),linewidth=0.1)
+cs = m.drawparallels(np.arange(-90., 91., 5), linewidth=0.1)
+cs = m.drawmeridians(np.arange(-180,180., 5), linewidth=0.1)
 cs = m.fillcontinents('grey', alpha = 0.2)
 
 # boxstr = "start time: %s\nend time  :%s"%(ncid.start_time,ncid.end_time) 
@@ -75,8 +95,7 @@ cs = m.fillcontinents('grey', alpha = 0.2)
 for ip in range(0,npts):
     lons = data[:,ip,0]
     lats = data[:,ip,1]
-    hgts = data[:,ip,2]/1000
-
+    hgts = data[:,ip,2]
 
     
     # time_ip = time[np.where( lons.mask )]
@@ -85,26 +104,26 @@ for ip in range(0,npts):
     
 #     textstr = textstr+"\nip: %d"%ip+" duration (w): %6.4f"%(time_dur)
      
-    color = "red"
-    linestyle=':'
-    if(hgts[0] <= 0.5): 
-#         color = "tab:red"
-        linestyle='-'
-    if(hgts[0] > 0.5 and hgts[0] <= 1 ): 
-#         color = "tab:blue"
-        linestyle='--'
-    if(hgts[0] > 1 and hgts[0] <= 3 ): 
-#         color = "tab:green"
-        linestyle=':'
-    if(hgts[0] > 3  ): 
-#         color = "tab:orange"
-        linestyle='-.'
+    color = "tab:red"
+    linestyle='-'
+#     if(hgts[0] <= 0.5): 
+# #         color = "tab:red"
+#         linestyle='-'
+#     if(hgts[0] > 0.5 and hgts[0] <= 1 ): 
+# #         color = "tab:blue"
+#         linestyle='--'
+#     if(hgts[0] > 1 and hgts[0] <= 3 ): 
+# #         color = "tab:green"
+#         linestyle=':'
+#     if(hgts[0] > 3  ): 
+# #         color = "tab:orange"
+#         linestyle='-.'
     
     # label = "%d m (%4.1f days)"%(int(hgts[0]),time_dur)
     x,y = m(lons, lats)
-    plt.plot(x,y,'-',  color=color, linestyle=linestyle, linewidth=1)
+    plt.plot(x,y,'-',  color=color, linestyle=linestyle, linewidth=0.7, alpha=0.5)
     cs = m.scatter(lons[time_ind], lats[time_ind], c=hgts[time_ind], 
-                   vmin=0, vmax=6, cmap="jet", marker='s', 
+                   vmin=level_min, vmax=level_max, cmap=cmaps.WhiteBlueGreenYellowRed, marker='s',
                    s=[10.], latlon=True)
 
     del lons
@@ -126,19 +145,21 @@ custom_lines = [Line2D([0], [0], color="black",linestyle='-' , lw=1),
                 Line2D([0], [0], color="black",linestyle=':' , lw=1),
                 Line2D([0], [0], color="black",linestyle='-.', lw=1)]
 
-ax.legend(custom_lines, ['0.3 km', '1 km ', '3 km ', '5 km'],
-          loc='lower right',
-          title = 'start height',
-          title_fontsize = 8,
-          fontsize=8)
-# ax.legend(custom_lines, ['0.3 km', '1 km ', '3km '],loc='upper right',fontsize=8)
+# ax.legend(custom_lines, ['0.3 km', '1 km ', '3 km ', '5 km'],
+#           loc='lower right',
+#           title = 'start height',
+#           title_fontsize = 8,
+#           fontsize=8)
+# # ax.legend(custom_lines, ['0.3 km', '1 km ', '3km '],loc='upper right',fontsize=8)
 
 ax = plt.gca()
-im = ax.imshow(np.arange(100).reshape((10,10)), vmin=0, vmax=6, cmap="jet")
+im = ax.imshow(np.arange(100).reshape((10,10)), vmin=level_min, vmax=level_max, cmap=cmaps.WhiteBlueGreenYellowRed)
 divider = make_axes_locatable(ax)
 cax = divider.append_axes("right", size="5%", pad=0.05)
-plt.colorbar(im, cax=cax)
+cbar = plt.colorbar(im, cax=cax, label=f"{levels_name} ({levels_units})")
+cbar.ax.tick_params(labelsize=5) 
 plt.show()
+
 # figname = "%s.png"%(filename)
 # plt.savefig(figname)
 # plt.close()

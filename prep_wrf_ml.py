@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # conda install -c conda-forge wrf-python
 # 1. ln -sf /storage/NAD/NAAD/v4/LoRes/2015/wrfout_d01_2015-01-* .
-# 2. for i in $(ls wrfout_d01_2015-01-*); do ./prep_wrf.py $i; done
-# 3. cdo mergetime _pt_wrfout_d01_2015-01-* _WRF.nc
+# 2. for i in $(ls wrfout_d01_*); do ./prep_wrf.py $i; done
+# 3. cdo mergetime _pt_wrfout_d01_* _WRF.nc
 # 4. cdo settunits,hours _WRF.nc wrf_2015-01.nc
-# 5. rm -rf wrfout_d01_2015-01-* _pt_wrfout_d01_2015-01-* _WRF.nc
+# 5. rm -rf wrfout_d01_* _pt_wrfout_d01_* _WRF.nc
 import sys
 from netCDF4 import Dataset
 import numpy as np
@@ -18,8 +18,8 @@ if len(sys.argv) != 2:
 ifile = str(sys.argv[1])
 ofile = "_pt_"+ifile
 
-print("Input file:      ",ifile)
-print("Output file: ",ofile)
+print(f"Input file:  {ifile}")
+print(f"Output file: {ofile}")
 
 incid = Dataset(ifile,"r")
 times = wrf.extract_times(incid, None, method='cat', squeeze=True, cache=None, meta=True, do_xtime=True)
@@ -34,6 +34,8 @@ var = incid.variables["W"][:]
 w = wrf.destagger(var, 1, meta=False)
 ph  = incid.variables["PH"][:]
 phb = incid.variables["PHB"][:]
+p  = incid.variables["P"][:]
+pb = incid.variables["PB"][:]
 # slp = wrf.getvar(incid, "slp", timeidx=wrf.ALL_TIMES)
 hgt = incid.variables["HGT"][0,:,:]
 
@@ -45,6 +47,7 @@ hgt = incid.variables["HGT"][0,:,:]
 # 2. With correction: 
 var = ph+phb
 z = wrf.destagger(var, 1, meta=False)
+p = p+pb
 h = z/9.81
 for it in range(0,z.shape[0]):
 	for iz in range(0,z.shape[1]):
@@ -75,6 +78,7 @@ vv = oncid.createVariable('v', np.float32, ('time','bottom_top','south_north','w
 vw = oncid.createVariable('w', np.float32, ('time','bottom_top','south_north','west_east'))
 vz = oncid.createVariable('z', np.float32, ('time','bottom_top','south_north','west_east'))
 vh = oncid.createVariable('h', np.float32, ('time','bottom_top','south_north','west_east'))
+vp = oncid.createVariable('p', np.float32, ('time','bottom_top','south_north','west_east'))
 
 vtime[:] = times[:]
 vlat[:] = xlat
@@ -85,6 +89,7 @@ vw[:] = w
 vz[:] = z
 # vslp[:] = slp
 vh[:] = h
+vp[:] = p
 
-del u, v, w, z, h, xlat, xlong, times
+del u, v, w, z, h, p, xlat, xlong, times
 # del slp

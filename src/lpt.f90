@@ -21,11 +21,12 @@ program lpt
 
   integer  :: nlon, nlat, nz, ntime_in
   real(kind=real32),dimension(:,:),allocatable :: lon2d, lat2d
-  real(kind=real32),dimension(:),allocatable :: levels
+  ! real(kind=real32),dimension(:),allocatable :: levels
   real(kind=real64),dimension(:),allocatable :: time_in
 
   real(kind=real64)  :: dt,dtm,dtt
   integer  :: ntimesteps, duration, npoints
+  integer  :: iz
 
   real(kind=real32),dimension(:,:),allocatable :: points
 
@@ -50,16 +51,22 @@ program lpt
 
   call get_command_argument(1,file_in)
   if(trim(file_in).EQ."") then
-    stop "Usage: ./pt.exe input_file.nc"
-  end if
+    stop "Usage: ./lpt.exe input_file.nc"
+  endif
   file_out = "lptf90_"//trim(file_in)
 
   print*,"-> Files:"
   print*,"   Input file:      ",trim(file_in)
-  print*,"   Output file: ",trim(file_out)
+  print*,"   Output file: "    ,trim(file_out)
   
   print*,"-> Reading namelist..."
   call read_namelist
+
+  if (horizontal) then
+    print*,"-> DOING HORIZONTAL SIMULATION"
+  else
+    print*,"-> DOING 3D SIMULATION"
+  endif
 
   print*,"-> Particles..."
   if(pt_grid) then
@@ -68,7 +75,7 @@ program lpt
     print*,"           at level(s): ",pt_height(:pt_nlevels)
   else 
     print*,"   Input stat points file: ",trim(file_start_particles)
-  end if
+  endif
 
   print*, "-> Opening src file..."
   call open_nc(file_in,ncid_in)
@@ -86,8 +93,8 @@ program lpt
   allocate( lon2d   ( nlon, nlat ) )
   allocate( lat2d   ( nlon, nlat ) )
   allocate( time_in ( ntime_in   ) )
-  allocate( levels  ( nz         ) )
-  call get_dims(ncid_in, lon2d, lat2d, levels, time_in)
+  ! allocate( levels  ( nz         ) )
+  call get_dims(ncid_in, lon2d, lat2d, levels(:nz), time_in)
   print*, "   Coordinates ... Ok"
 
   print*, "-> Finding stime and etime indexes in src..."
@@ -105,9 +112,9 @@ program lpt
     npoints =  get_pointtxt_num(file_start_particles)
     allocate( points(npoints,3) )
     call get_pointtxt(file_start_particles,points)
-  end if
+  endif
 
- print*, "-> Time driver..."
+  print*, "-> Time driver..."
  ! If accuracy: calculate number in timesteps between src timesteps
  ! Since timestep is in mins, than we need to convert in min (dtm) 
   dt = time_in(2) - time_in(1)
@@ -121,12 +128,14 @@ program lpt
     dtm = dt*60
   else if(trim(tunit).eq."days") then
     dtm = dt*24*60
-  end if
+  endif
 
   ntimesteps = 1
-  if(accuracy) ntimesteps = int(dtm)/int(timestep)
-
-  if(.not.accuracy) timestep = dtm
+  if (accuracy) then
+    ntimesteps = int(dtm)/int(timestep)
+  else
+    timestep = dtm
+  endif
 
   duration = etimeui - stimeui
   dtt = dt/ntimesteps
@@ -145,18 +154,18 @@ program lpt
 
   allocate ( u(nlon, nlat, nz) )
   allocate ( v(nlon, nlat, nz) )
-  allocate ( w(nlon, nlat, nz) )
-  allocate ( z(nlon, nlat, nz) )
+  allocate ( w(nlon, nlat, nz) )  ! if (.not.horizontal) 
+  allocate ( z(nlon, nlat, nz) )  ! if (.not.horizontal) 
   if(accuracy) then
     allocate ( u1(nlon, nlat, nz) )
     allocate ( v1(nlon, nlat, nz) )
-    allocate ( w1(nlon, nlat, nz) )
-    allocate ( z1(nlon, nlat, nz) )
+    allocate ( w1(nlon, nlat, nz) )  ! if (.not.horizontal)  
+    allocate ( z1(nlon, nlat, nz) )  ! if (.not.horizontal) 
     allocate ( u2(nlon, nlat, nz) )
     allocate ( v2(nlon, nlat, nz) )
-    allocate ( w2(nlon, nlat, nz) )
-    allocate ( z2(nlon, nlat, nz) )
-  end if
+    allocate ( w2(nlon, nlat, nz) )  ! if (.not.horizontal)  
+    allocate ( z2(nlon, nlat, nz) )  ! if (.not.horizontal) 
+  endif
 
   print*, "-> Tracing..."
   update = .true.
@@ -175,34 +184,64 @@ program lpt
 
       if (update) then
 
-        call get_var_xyz(ncid_in,"u",it  ,u1) 
-        call get_var_xyz(ncid_in,"v",it  ,v1) 
-        call get_var_xyz(ncid_in,"w",it  ,w1) 
-        call get_var_xyz(ncid_in,"z",it  ,z1) 
-        call get_var_xyz(ncid_in,"u",it+1,u2) 
-        call get_var_xyz(ncid_in,"v",it+1,v2) 
-        call get_var_xyz(ncid_in,"w",it+1,w2) 
-        call get_var_xyz(ncid_in,"z",it+1,z2) 
+        if (horizontal) then
+          w1 = 0; w2 = 0 ! if it is 2D interpolation
+          z1 = 0; z2 = 0 ! if it is 2D interpolation
+          call get_var_xyz(ncid_in,"u",it  ,u1)
+          call get_var_xyz(ncid_in,"v",it  ,v1)
+          call get_var_xyz(ncid_in,"u",it+1,u2)
+          call get_var_xyz(ncid_in,"v",it+1,v2)
+        else
+          call get_var_xyz(ncid_in,"u",it  ,u1)
+          call get_var_xyz(ncid_in,"v",it  ,v1)
+          call get_var_xyz(ncid_in,"w",it  ,w1)
+          call get_var_xyz(ncid_in,"z",it  ,z1)
+          call get_var_xyz(ncid_in,"u",it+1,u2)
+          call get_var_xyz(ncid_in,"v",it+1,v2)
+          call get_var_xyz(ncid_in,"w",it+1,w2)
+          call get_var_xyz(ncid_in,"z",it+1,z2)
+        endif
+
         update = .false.
 
-      end if
+      endif
         
-        ditime = newtime_ind(itime)-it   ! 
-        z = (1.-ditime)*z1 + (ditime)*z2 ! Linear inperpolation between 
-        u = (1.-ditime)*u1 + (ditime)*u2 !    src timesteps 
-        v = (1.-ditime)*v1 + (ditime)*v2 !    weights are 0..1 =>
-        w = (1.-ditime)*w1 + (ditime)*w2 !    no need to normalize
+      ditime = newtime_ind(itime)-it   ! 
+
+      ! Linear inperpolation between src timesteps 
+      ! weights are 0..1 => no need to normalize  (!!!!!!!)
+      if (horizontal) then
+        u = (1.-ditime)*u1 + (ditime)*u2
+        v = (1.-ditime)*v1 + (ditime)*v2
+      else
+        u = (1.-ditime)*u1 + (ditime)*u2
+        v = (1.-ditime)*v1 + (ditime)*v2
+        z = (1.-ditime)*z1 + (ditime)*z2 !
+        w = (1.-ditime)*w1 + (ditime)*w2 !
+      endif
 
     else
-        call get_var_xyz(ncid_in,"u",it,u) 
-        call get_var_xyz(ncid_in,"v",it,v) 
-        call get_var_xyz(ncid_in,"w",it,w) 
-        call get_var_xyz(ncid_in,"z",it,z) 
-        ditime = 0
-    end if
+
+      if (horizontal) then
+        call get_var_xyz(ncid_in,"u",it,u)
+        call get_var_xyz(ncid_in,"v",it,v)
+      else
+        call get_var_xyz(ncid_in,"u",it,u)
+        call get_var_xyz(ncid_in,"v",it,v)
+        call get_var_xyz(ncid_in,"w",it,w)
+        call get_var_xyz(ncid_in,"z",it,z)
+      endif
+
+      ditime = 0
+
+    endif
+
+! print*,' *** 1'
 
     ! calculating heights (for z interpolation)
-    z = z * rg ! geopotential / g = h
+    ! z = z * rg ! geopotential / g = h
+
+! print*,' *** 2'
 
     if(itime.eq.1) then
         do ip = 1, npoints
@@ -211,28 +250,50 @@ program lpt
         end do
     else
 
-      do ip = 1, npoints
-
-        call get_cell_hor ( points(ip,:), lon2d, lat2d, ij)
-
-        call get_cell_vert( points(ip,:), ij, z, kk )
-
-        call interpolate  ( points(ip,:), u, v, w, z, ij, kk, &
-                            lon2d, lat2d, levels, &
-                            pu, pv, pw) 
+      if (horizontal) then ! if it's horizontal plane
         
-        call locate       ( points(ip,:), pu, pv, pw, timestep )
-        
-        if( any(points(ip,:).eq.fFillValue) ) cycle
+! print*,' *** 3'
 
-        ! print'(a,2f7.2,f10.4, 2f10.4, f10.2)', newtime_datatime(itime), pu, pv, pw, points(ip,:)
-        ! print'(a, f7.2," |",2f10.4, f10.2)', newtime_datatime(itime), sqrt(pu**2+pv**2+pw**2), points(ip,:)
+        iz = MINLOC(abs(levels-horizontal_level), 1)
 
-        result(:,ip,itime) = points(ip,:)
+        do ip = 1, npoints
 
-      end do
+          call get_cell_hor ( points(ip,:), lon2d, lat2d, ij)
+          call interpolate2d( points(ip,:), u(:,:,iz), v(:,:,iz), ij, &
+                              lon2d, lat2d, pu, pv, pw)
+          call locate       ( points(ip,:), pu, pv, pw, timestep )
 
-    end if
+          if( any(points(ip,:).eq.fFillValue) ) cycle
+
+          result(:,ip,itime) = points(ip,:)
+
+        end do
+
+      else ! it is 3D plane
+
+        do ip = 1, npoints
+
+          call get_cell_hor ( points(ip,:), lon2d, lat2d, ij)
+          call get_cell_vert( points(ip,:), ij, z, kk )
+          call interpolate3d( points(ip,:), u, v, w, z, ij, kk, &
+                              lon2d, lat2d, levels, pu, pv, pw)
+          call locate       ( points(ip,:), pu, pv, pw, timestep )
+
+          if( any(points(ip,:).eq.fFillValue) ) cycle
+
+          ! print'(a,2f7.2,f10.4, 2f10.4, f10.2)', newtime_datatime(itime), pu, pv, pw, points(ip,:)
+          ! print'(a, f7.2," |",2f10.4, f10.2)', newtime_datatime(itime), sqrt(pu**2+pv**2+pw**2), points(ip,:)
+
+          result(:,ip,itime) = points(ip,:)
+
+        end do
+
+
+
+      endif
+
+    endif
+
 
   end do
 
@@ -240,13 +301,14 @@ program lpt
   if(accuracy) then
     deallocate( u1,v1,w1,z1 )
     deallocate( u2,v2,w2,z2 )
-  end if
+  endif
 
   ! OUTPUT
   call save_results(file_out,file_in,ncid_in,result,newtime)
 
-  deallocate( points,lon2d,lat2d,time_in,levels           )
-  deallocate( result,newtime_ind,newtime,newtime_datatime )
+  ! deallocate( points,lon2d,lat2d,time_in,levels            )
+  deallocate( points,lon2d,lat2d,time_in            )
+  deallocate( result,newtime_ind,newtime,newtime_datatime  )
 
   call close_nc(ncid_in)
 

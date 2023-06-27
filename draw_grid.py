@@ -2,12 +2,13 @@
 # 
 from netCDF4 import Dataset
 import netCDF4
-import numpy as np
-from mpl_toolkits.basemap import Basemap
+import numpy as np # conda install -c anaconda numpy
+from mpl_toolkits.basemap import Basemap # conda install -c conda-forge matplotlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 from wrf import smooth2d
 import sys
+import cmaps  # conda install -c conda-forge cmaps
 
 ### CHANGE THIS ################################################################
 
@@ -25,7 +26,7 @@ def get_z_ind( ncid, zarray ):
 
     zavg = np.average(zarray)
 
-    z = np.average(ncidz.variables["z"][0,:,:,:],axis=(1,2))/9.81
+    z = np.average(ncid.variables["z"][0,:,:,:],axis=(1,2))/9.81
 
     idx = np.abs(z - zavg).argmin()
 
@@ -67,14 +68,25 @@ data  = ncidp.variables["points"][:]
 ntime = data.shape[0]
 npts  = data.shape[1]
 
-level = get_z_ind( ncidz, data[0,:,2] )
-print("determined vertical level = ",level)
+horizontal = ncidp.horizontal # if TRUE than it is 3D simulation
+if horizontal:
+    levels = ncidz.variables['level']
+    level_real = ncidp.getncattr('horizontal_level')
+    level = np.argmin(np.abs(levels-level_real))
+else:
+    levels = data[0,:,2]
+    level = get_z_ind( ncidz, levels )
+
+level_min = np.min(levels)
+level_max = np.max(levels)
+
+print(f"Vertical level index {level} and value {levels[level]:.1f} for plot pressure contours")
 
 size = 2.
-llcrnrlat = np.max([np.min(data[:,:,1])-size,-90.])
-urcrnrlat = np.min([np.max(data[:,:,1])+size,+90.])
-llcrnrlon = np.max([np.min(data[:,:,2])-size,-180.])
-urcrnrlon = np.min([np.max(data[:,:,2])+size,180. ])
+llcrnrlat = np.max([np.min(data[:,:,0])-size,-90.])
+urcrnrlat = np.min([np.max(data[:,:,0])+size,+90.])
+llcrnrlon = np.max([np.min(data[:,:,1])-size,-180.])
+urcrnrlon = np.min([np.max(data[:,:,1])+size,180. ])
 
 # if(urcrnrlat <= 70):
 #     m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
@@ -84,28 +96,29 @@ urcrnrlon = np.min([np.max(data[:,:,2])+size,180. ])
 #     m = Basemap(projection='npstere',boundinglat=np.max([np.min(data[:,:,1])-5,60.]),lon_0=avglon,resolution='l')
 
 # Define the NAAD map:
-m = Basemap(width=10000000,height=10000000,
+
+m = Basemap(width=8000000,height=8500000,
             rsphere=(6378137.00,6356752.3142),\
             resolution='c',area_thresh=1000.,projection='lcc',\
-            lat_1=45.,lat_2=45,lat_0=45,lon_0=-48.)
+            lat_1=45.,lat_2=45,lat_0=45,lon_0=-45.)
 
 if ncidp.accuracy == 1: accuracy = "Accurate scheme"
 else: accuracy = "Coarse scheme"
 
-if ncidp.horizontal == 1: horizontal = "2D"
-else: horizontal = "3D"
-
 for it in range(0,ntime): # ntime
 
     print(ptime_convert[it], end='\r', flush=True)
+    # print(ptime_convert[it])
 
     lons = data[it,:,0]
     lats = data[it,:,1]
-    hgts = data[it,:,2]/1000
+    hgts = data[it,:,2]
     
     itt = np.where(ztime_convert == ptime_convert[it])[0].tolist()
     if itt != []: 
-        z = ncidz.variables["z"][itt,level,:,:]
+        z = ncidz.variables["z"][itt,level,:,:]/100
+        # levs = np.arange(np.floor(np.quantile(z,0.05)), np.ceil(np.quantile(z,0.95)), 2)
+        levs = np.arange(np.floor(np.min(z)), np.ceil(np.max(z)), 2)
         smooth_z = smooth2d(z[0,:,:], 6, cenweight=4)
         del z
 
@@ -126,13 +139,13 @@ for it in range(0,ntime): # ntime
     plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
 
     if tracking:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(0, 100001, 100),
+        cs = m.contour(lon2d, lat2d, smooth_z, levels=levs,
             linestyles='-', colors="g", linewidths=0.1, latlon=True)
     else:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=np.arange(0, 100001, 100),
+        cs = m.contour(lon2d, lat2d, smooth_z, levels=levs,
             linestyles='-', colors="black", linewidths=0.5, latlon=True)
     
-    cs = m.contourf(lon2d, lat2d, smooth_z, 10, # levels=np.arange(6000, 11001, 500), #levels=np.arange(6400, 10501, 100),
+    cs = m.contourf(lon2d, lat2d, smooth_z, levels=levs, #levels=np.arange(6400, 10501, 100),
         alpha = 0.5, extend='min', cmap="YlGn_r", latlon=True)
     
     if tracking:
@@ -140,15 +153,15 @@ for it in range(0,ntime): # ntime
         for ip in range(0,npts):
             x,y = m(data[ts:it,ip,0], data[ts:it,ip,1])
             plt.plot(x,y,'-', 
-                color="black", linewidth=0.5)
+                color="black", alpha=0.5, linewidth=0.2)
 
     cs = m.scatter(lons, lats, c=hgts, 
-                   vmin=0, vmax=4, cmap="jet",s=[0.6], latlon=True)
+                   vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], latlon=True)
 
     clb = fig.colorbar(cs)
-    clb.set_label('Particle height [km]', labelpad=-33, fontsize=6, y=0.5, rotation=90)
+    clb.set_label('Particle height [km]', labelpad=-33, fontsize=5, y=0.5, rotation=90)
 
-    figname = "grid_%s_%07d.png"%(pt_file,it)
+    figname = f"grid_{filename}_{it:07d}.png"
     # plt.show()
     fig.savefig(figname)
     plt.close()
@@ -158,8 +171,8 @@ for it in range(0,ntime): # ntime
     del hgts
 print("\n DONE!")
 
-print("Create video:")
-print("ffmpeg -framerate 10 -i grid_%s_%%07d.png \\"%(pt_file))
-print("   -c:v libx264 -r 30 -pix_fmt yuv420p grid_%s.mp4"%(pt_file))
-print("or gif animation:")
-print("convert -delay 20 grid_%s_00*.png grid_%s.gif"%(pt_file,pt_file))
+print(f"Create video:")
+print(f"ffmpeg -framerate 10 -i grid_{filename}_%07d.png \\"        )
+print(f"   -c:v libx264 -r 30 -pix_fmt yuv420p grid_{filename}.mp4"  )
+print(f"or gif animation:"                                          )
+print(f"convert -delay 20 grid_{filename}_00*.png grid_{filename}.gif")

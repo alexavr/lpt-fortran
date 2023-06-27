@@ -88,7 +88,7 @@ implicit none
 
     tunits = get_attr_str(ncid_in,"time","units")
     tcalendar = get_attr_str(ncid_in,"time","calendar")
-    tlong_name = get_attr_str(ncid_in,"time","long_name")
+    ! tlong_name = get_attr_str(ncid_in,"time","long_name")
     
     ! TIME
     call check( nf90_def_var(ncid_out, name="time", xtype=NF90_DOUBLE, dimids = (/tdim_id/), varid = tvar_id ) )
@@ -111,12 +111,13 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "timestep"   , timestep) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cell_detector", cell_detector) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "accuracy"   , merge(1, 0, accuracy  )) )
-    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal" , merge(1, 0, horizontal)) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "regional"   , merge(1, 0, regional  )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "zoutput"    , merge(1, 0, zoutput   )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_grid"    , merge(1, 0, pt_grid   )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_step"    , pt_step) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_height"  , pt_height(:pt_nlevels)) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal" , merge(1, 0, horizontal)) )
+    if (horizontal) call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal_level"   , horizontal_level) )
 
     ! RESULT
     call check( nf90_def_var(ncid_out, name="points", xtype=NF90_FLOAT, dimids = (/vdim_id, pdim_id, tdim_id /), varid = var_id ) )
@@ -235,6 +236,8 @@ implicit none
     ydim = ubound(lon2d,2) 
     zdim = ubound(z,1) 
     tdim = ubound(time,1)
+
+    print*, zdim !##############################################################
 
     do ii = 1, ubound(lon_names,1)
         status = nf90_inq_varid(ncid, trim(lon_names(ii)), var_id)

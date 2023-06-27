@@ -16,7 +16,8 @@ private
 public :: haversine 
 public :: get_cell_hor 
 public :: get_cell_vert
-public :: interpolate
+public :: interpolate3d
+public :: interpolate2d
 public :: locate
 
     real(kind=real64), parameter :: pi = 3.14159265359d0, er = 6371.D0
@@ -47,6 +48,8 @@ logical :: skip = .false.
 
     ij = iFillValue
 
+! print*,' *** 4.1', skip
+
     if(.not.skip) then
 
         plon = point(1)
@@ -58,8 +61,13 @@ logical :: skip = .false.
 
         allocate( dist(xdim, ydim) ) 
 
+! print*,' *** 4.2', xdim, ydim, npoints
         dist = haversine(lon2d, lat2d, plon, plat)
+! print*,' *** 4.3 lon2d:', minval(lon2d), maxval(lon2d)
+! print*,' *** 4.3 lat2d:', minval(lat2d), maxval(lat2d)
+! print*,' *** 4.3 plon, plat:', plon, plat
         call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+! print*,' *** 4.4', grid
 
         if(cell_detector.eq.0) then
             ! print*,"Simple scheme"
@@ -70,6 +78,8 @@ logical :: skip = .false.
             print*,"get_cell_hor: Can not recognize the cell_detector option eq ",cell_detector
             stop
         end if
+
+! print*,' *** 4.5', ij
 
         ! If point reached the border, that loosing it
         if(regional) then
@@ -83,6 +93,8 @@ logical :: skip = .false.
         deallocate (dist)
 
     end if
+
+! print*,' *** 4.6', point
 
 end subroutine get_cell_hor
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -268,6 +280,10 @@ implicit none ! religion first
     ii = tmp2(1)
     jj = tmp2(2)
 
+! print*,' *** 4.3.1', xdim, ydim, ii, jj
+! print*,' *** 4.3.1.1', minval(dist), maxval(dist)
+
+
     ! if its the N/S Pole - we need to point the y-direction
     if(.not. regional) then
         if(lat2d(ii, jj) == 90 .or. lat2d(ii, jj) == -90) then
@@ -282,6 +298,9 @@ implicit none ! religion first
     jjj   = jj
     jjjp1 = jj+1
     jjjm1 = jj-1
+
+! print*,' *** 4.3.2', iii, iiip1, iiim1, jjj, jjjp1, jjjm1
+
 
    if(regional) then
         
@@ -422,7 +441,8 @@ implicit none ! religion first
 
 end subroutine get_cell_vert
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine interpolate(point, u, v, w, z, ij, kk,       &
+!   ADD DESCRIPTION 
+subroutine interpolate3d(point, u, v, w, z, ij, kk,       &
                             lon2d, lat2d, levs,         &
                             pu, pv, pw)
 implicit none ! religion first
@@ -478,8 +498,8 @@ implicit none ! religion first
         do in = 1, nn
             dp = 1.
             dz = 1.
-            if(levels) then ! if we have levels => it is reanalisis and have w[Pa/m]
-                dp = abs( levs(kk(in,1)) - levs(kk(in,2)) )*100.
+            if(levels) then ! if we have levels => it is pressure|hight levels with w[Pa/m] or w[m/s]
+                dp = abs( levs(kk(in,1)) - levs(kk(in,2)) )
                 dz = abs( z(ij(in,1),ij(in,2),kk(in,1)) - z(ij(in,1),ij(in,2),kk(in,2)) )
             end if
 
@@ -496,7 +516,68 @@ implicit none ! religion first
 
     end if
 
-end subroutine interpolate
+end subroutine interpolate3d
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!   ADD DESCRIPTION 
+subroutine interpolate2d(point, u, v, ij, &
+                            lon2d, lat2d, &
+                            pu, pv, pw)
+implicit none ! religion first
+    real(kind=real32), intent(inout) :: point(3)
+    real(kind=real32), intent(in)    :: u(:,:),v(:,:)
+    real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
+    integer, intent(in)    :: ij(:,:)
+    real(kind=real32), intent(out)   :: pu, pv, pw
+    logical :: skip = .false.
+    real(kind=real32) :: plon, plat, phgt
+    real(kind=real64) :: dlon, dlat, dhgt
+    real(kind=real64),dimension(:),allocatable :: dist, wgt
+    integer :: nn, nk, ndist, ik, in, ii
+    real(kind=real32) :: dp, dz
+    real(kind=real64) :: sum_dist
+
+    skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
+
+    if(.not.skip) then
+
+        plon = point(1)
+        plat = point(2)
+        phgt = point(3)
+
+        nn = ubound(ij,1)
+        ndist = nn
+
+        allocate( dist(ndist) )
+        allocate(  wgt(ndist) )
+
+        ii = 1
+        do in = 1, nn
+            dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
+            dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+            dist(ii) = sqrt( dlon**2 + dlat**2  )
+            ii = ii + 1
+        end do
+
+        sum_dist = sum(dist)
+        wgt = (1.d0 - dist/sum_dist)/dble(ndist-1)
+
+        pu = 0.
+        pv = 0.
+        pw = 0.
+        ii = 1
+        do in = 1, nn
+            pu = pu + wgt(ii)*u( ij(in,1),ij(in,2) )
+            pv = pv + wgt(ii)*v( ij(in,1),ij(in,2) )
+            ! print*,pu,pv,wgt(ii),ij(in,1),ij(in,2),u( ij(in,1),ij(in,2) )
+            ii = ii + 1
+        end do
+
+        deallocate( dist )
+        deallocate( wgt  )
+
+    end if
+
+end subroutine interpolate2d
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Gets Earth radius in km 
 pure elemental real(kind=real32) function earth_radius(lat)

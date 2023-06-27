@@ -1,6 +1,6 @@
 *Detailed description is coming soon...*
 
-The lagrangian tracing of weightless particles. The scheme is based on pure interpolation (no modeling involved!). Basic idea: take the current particle coordinates and predict the future location based on its current velocity. As simple as that. The scheme uses 3D velocity components and geopotential fields.
+The lagrangian tracing of weightless particles. The scheme is based on pure interpolation (no modeling involved!). Basic idea: take the particle coordinates and predict the future location based on its current velocity. As simple as that. The scheme uses 3D velocity components and geopotential fields.
 
 ## Requirements
 

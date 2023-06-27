@@ -1,16 +1,21 @@
 &data
- stime = "2015-01-08 00:00:00", 
- etime = "2015-01-15 00:00:00", 
+ stime = "2010-08-28 00:00:00", 
+ ! etime = "2010-08-29 00:00:00",
+ etime = "2010-09-02 00:00:00",
  regional = .TRUE. ! Default FALSE
 /
 
+&wrf_prep
+ type = "pressure" ! interpolation on surfaces pressure, hight or model_levels (default, no interp)
+ levels = 90000., 80000., 55000., 50000., 40000., 30000., 20000. ! Pa or meters
+/
+
 &scheme 
- accuracy = .TRUE.,
- timestep = 12, 
- cell_detector = 0 ! 0 - simple; 1 - trianlge method
- ! horizontal = .FALSE., ! Default FALSE [under development!!!]
- ! perfomance = .TRUE. ! Default FALSE [under development!!!]
- ! zoutput = .FALSE. ! Default FALSE [under development!!!]
+ accuracy = .TRUE.,       ! False - Coarse scheme; True - Fine scheme (Interpolates between time step)
+ timestep = 10,            ! interpolation step size (in minutes)
+ cell_detector = 1         ! 0 - simple; 1 - trianlge method
+ ! horizontal = .TRUE.,      ! Default is FALSE
+ ! horizontal_level = 50000, ! (horizontal=.FALSE. only) Level for 2D simulation (default 0)
 /
 
 &particles

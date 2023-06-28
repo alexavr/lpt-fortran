@@ -237,8 +237,6 @@ implicit none
     zdim = ubound(z,1) 
     tdim = ubound(time,1)
 
-    print*, zdim !##############################################################
-
     do ii = 1, ubound(lon_names,1)
         status = nf90_inq_varid(ncid, trim(lon_names(ii)), var_id)
         if(status == nf90_noerr) then

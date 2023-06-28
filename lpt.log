@@ -1,0 +1,2847 @@
+ -> Files:
+    Input file:      wrf_2010_pl.nc
+    Output file: lptf90_wrf_2010_pl.nc
+ -> Reading namelist...
+ -> DOING 3D SIMULATION
+ -> Particles...
+    Particles are spreaded all over the domain
+            with step  :           20
+            at level(s):    50000.00    
+ -> Opening src file...
+ -> Converting stime and etime to src time...
+ -> Getting coordinates...
+    Dimensions are 
+    nlon = 550; nlat = 550; nz =   7; ntime =  48
+    Coordinates ... Ok
+ -> Finding stime and etime indexes in src...
+ -> Read or create initial points...
+  ** points size =    9.187500      Kb
+ -> Time driver...
+  ** result size =   0.1166382      Mb
+ -> Tracing...
+2010-08-28T00:00:00 100.0%
+2010-08-28T00:30:00 100.0%
+  -72.76577       5.119484       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10046.3408203125        20007.4140625000     
+   50298.1640625000        57721.0195312500        74558.0390625000     
+   95227.3828125000        122205.687500000     
+   50000.00      >    10046.3408203125       AND    50000.00      < 
+   20007.4140625000     
+   50000.00      >    20007.4140625000       AND    50000.00      < 
+   50298.1640625000     
+ kk            1           2           3
+ get_cell_vert zz                      NaN   19997.8554687500     
+   50330.5976562500        57713.2187500000        74556.5781250000     
+   95231.2187500000        122159.070312500     
+   50000.00      >                      NaN  AND    50000.00      < 
+   19997.8554687500     
+   50000.00      >    19997.8554687500       AND    50000.00      < 
+   50330.5976562500     
+ kk            2           2           3
+ get_cell_vert zz    10115.9521484375        20078.4628906250     
+   50390.7734375000        57789.9062500000        74632.1171875000     
+   95267.4140625000        122255.843750000     
+   50000.00      >    10115.9521484375       AND    50000.00      < 
+   20078.4628906250     
+   50000.00      >    20078.4628906250       AND    50000.00      < 
+   50390.7734375000     
+ kk            3           2           3
+ get_cell_vert zz    10100.7216796875        20065.9394531250     
+   50387.7460937500        57755.9296875000        74612.5937500000     
+   95296.8359375000        122226.835937500     
+   50000.00      >    10100.7216796875       AND    50000.00      < 
+   20065.9394531250     
+   50000.00      >    20065.9394531250       AND    50000.00      < 
+   50387.7460937500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3           3           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2           3           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2           2           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3           2           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3           3           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2           3           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2           2           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3           2           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -73.76797       7.412450       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9921.65429687500        19907.6445312500     
+   50268.3984375000        57691.4375000000        74518.2265625000     
+   95202.7656250000        122182.671875000     
+   50000.00      >    9921.65429687500       AND    50000.00      < 
+   19907.6445312500     
+   50000.00      >    19907.6445312500       AND    50000.00      < 
+   50268.3984375000     
+ kk            1           2           3
+ get_cell_vert zz    9954.05957031250        19943.7675781250     
+   50307.6132812500        57728.2382812500        74551.6015625000     
+   95225.4921875000        122199.898437500     
+   50000.00      >    9954.05957031250       AND    50000.00      < 
+   19943.7675781250     
+   50000.00      >    19943.7675781250       AND    50000.00      < 
+   50307.6132812500     
+ kk            2           2           3
+ get_cell_vert zz    9972.93554687500        19963.7675781250     
+   50324.1875000000        57746.5664062500        74569.0546875000     
+   95248.2265625000        122219.742187500     
+   50000.00      >    9972.93554687500       AND    50000.00      < 
+   19963.7675781250     
+   50000.00      >    19963.7675781250       AND    50000.00      < 
+   50324.1875000000     
+ kk            3           2           3
+ get_cell_vert zz    9928.09375000000        19914.4414062500     
+   50269.3945312500        57696.3750000000        74521.5000000000     
+   95215.4140625000        122186.328125000     
+   50000.00      >    9928.09375000000       AND    50000.00      < 
+   19914.4414062500     
+   50000.00      >    19914.4414062500       AND    50000.00      < 
+   50269.3945312500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          23           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          23           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          22           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          22           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          23           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          23           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          22           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          22           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -74.78065       9.703152       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9901.03222656250        19867.8945312500     
+   50255.5859375000        57678.2460937500        74529.3750000000     
+   95218.6796875000        122205.734375000     
+   50000.00      >    9901.03222656250       AND    50000.00      < 
+   19867.8945312500     
+   50000.00      >    19867.8945312500       AND    50000.00      < 
+   50255.5859375000     
+ kk            1           2           3
+ get_cell_vert zz    9899.40429687500        19864.1679687500     
+   50240.1601562500        57663.6718750000        74508.2578125000     
+   95198.7187500000        122184.375000000     
+   50000.00      >    9899.40429687500       AND    50000.00      < 
+   19864.1679687500     
+   50000.00      >    19864.1679687500       AND    50000.00      < 
+   50240.1601562500     
+ kk            2           2           3
+ get_cell_vert zz    9906.63085937500        19871.7695312500     
+   50252.0468750000        57673.0859375000        74519.0078125000     
+   95203.4843750000        122190.781250000     
+   50000.00      >    9906.63085937500       AND    50000.00      < 
+   19871.7695312500     
+   50000.00      >    19871.7695312500       AND    50000.00      < 
+   50252.0468750000     
+ kk            3           2           3
+ get_cell_vert zz    9903.34570312500        19870.6816406250     
+   50259.4843750000        57682.1250000000        74533.5078125000     
+   95220.3125000000        122205.648437500     
+   50000.00      >    9903.34570312500       AND    50000.00      < 
+   19870.6816406250     
+   50000.00      >    19870.6816406250       AND    50000.00      < 
+   50259.4843750000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          43           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          43           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          42           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          42           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          43           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          43           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          42           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          42           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -75.80728       11.99084       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9917.90136718750        19871.8320312500     
+   50260.0078125000        57683.5976562500        74535.9140625000     
+   95216.7812500000        122226.359375000     
+   50000.00      >    9917.90136718750       AND    50000.00      < 
+   19871.8320312500     
+   50000.00      >    19871.8320312500       AND    50000.00      < 
+   50260.0078125000     
+ kk            1           2           3
+ get_cell_vert zz    9904.31542968750        19859.9648437500     
+   50252.1757812500        57676.6171875000        74528.0156250000     
+   95210.0625000000        122224.562500000     
+   50000.00      >    9904.31542968750       AND    50000.00      < 
+   19859.9648437500     
+   50000.00      >    19859.9648437500       AND    50000.00      < 
+   50252.1757812500     
+ kk            2           2           3
+ get_cell_vert zz    9904.67773437500        19861.1269531250     
+   50252.7109375000        57677.0742187500        74527.6328125000     
+   95209.6640625000        122224.406250000     
+   50000.00      >    9904.67773437500       AND    50000.00      < 
+   19861.1269531250     
+   50000.00      >    19861.1269531250       AND    50000.00      < 
+   50252.7109375000     
+ kk            3           2           3
+ get_cell_vert zz    9917.69726562500        19872.2617187500     
+   50260.8164062500        57684.3320312500        74536.6093750000     
+   95216.9375000000        122226.203125000     
+   50000.00      >    9917.69726562500       AND    50000.00      < 
+   19872.2617187500     
+   50000.00      >    19872.2617187500       AND    50000.00      < 
+   50260.8164062500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          63           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          63           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          62           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          62           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          63           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          63           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          62           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          62           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -76.85146       14.27472       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9931.41210937500        19872.5839843750     
+   50271.5703125000        57698.0078125000        74544.6640625000     
+   95210.6796875000        122191.437500000     
+   50000.00      >    9931.41210937500       AND    50000.00      < 
+   19872.5839843750     
+   50000.00      >    19872.5839843750       AND    50000.00      < 
+   50271.5703125000     
+ kk            1           2           3
+ get_cell_vert zz    9917.41406250000        19861.4082031250     
+   50265.2304687500        57693.3476562500        74539.9609375000     
+   95209.4765625000        122193.906250000     
+   50000.00      >    9917.41406250000       AND    50000.00      < 
+   19861.4082031250     
+   50000.00      >    19861.4082031250       AND    50000.00      < 
+   50265.2304687500     
+ kk            2           2           3
+ get_cell_vert zz    9916.26757812500        19860.4902343750     
+   50262.8398437500        57690.8515625000        74538.4765625000     
+   95209.7187500000        122197.039062500     
+   50000.00      >    9916.26757812500       AND    50000.00      < 
+   19860.4902343750     
+   50000.00      >    19860.4902343750       AND    50000.00      < 
+   50262.8398437500     
+ kk            3           2           3
+ get_cell_vert zz    9930.52148437500        19871.2500000000     
+   50269.0000000000        57695.5117187500        74543.7265625000     
+   95213.1328125000        122196.265625000     
+   50000.00      >    9930.52148437500       AND    50000.00      < 
+   19871.2500000000     
+   50000.00      >    19871.2500000000       AND    50000.00      < 
+   50269.0000000000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          83           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          83           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          82           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          82           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          83           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          83           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2          82           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3          82           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -77.91702       16.55397       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9971.28515625000        19922.3730468750     
+   50321.3320312500        57746.5312500000        74573.0468750000     
+   95182.5546875000        122122.015625000     
+   50000.00      >    9971.28515625000       AND    50000.00      < 
+   19922.3730468750     
+   50000.00      >    19922.3730468750       AND    50000.00      < 
+   50321.3320312500     
+ kk            1           2           3
+ get_cell_vert zz    9962.27050781250        19914.1972656250     
+   50314.3437500000        57740.3945312500        74567.0000000000     
+   95175.3984375000        122115.023437500     
+   50000.00      >    9962.27050781250       AND    50000.00      < 
+   19914.1972656250     
+   50000.00      >    19914.1972656250       AND    50000.00      < 
+   50314.3437500000     
+ kk            2           2           3
+ get_cell_vert zz    9958.50195312500        19910.1816406250     
+   50311.1875000000        57737.2578125000        74566.0000000000     
+   95177.0625000000        122119.335937500     
+   50000.00      >    9958.50195312500       AND    50000.00      < 
+   19910.1816406250     
+   50000.00      >    19910.1816406250       AND    50000.00      < 
+   50311.1875000000     
+ kk            3           2           3
+ get_cell_vert zz    9965.85156250000        19917.1855468750     
+   50318.0781250000        57743.7929687500        74571.6328125000     
+   95184.2812500000        122126.539062500     
+   50000.00      >    9965.85156250000       AND    50000.00      < 
+   19917.1855468750     
+   50000.00      >    19917.1855468750       AND    50000.00      < 
+   50318.0781250000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         103           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         103           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         102           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         102           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         103           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         103           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         102           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         102           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -79.00807       18.82767       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10030.4365234375        19991.4042968750     
+   50367.7031250000        57784.5117187500        74599.7656250000     
+   95199.8984375000        122115.140625000     
+   50000.00      >    10030.4365234375       AND    50000.00      < 
+   19991.4042968750     
+   50000.00      >    19991.4042968750       AND    50000.00      < 
+   50367.7031250000     
+ kk            1           2           3
+ get_cell_vert zz    10026.2431640625        19986.1679687500     
+   50359.6250000000        57776.0507812500        74591.4375000000     
+   95192.6015625000        122111.132812500     
+   50000.00      >    10026.2431640625       AND    50000.00      < 
+   19986.1679687500     
+   50000.00      >    19986.1679687500       AND    50000.00      < 
+   50359.6250000000     
+ kk            2           2           3
+ get_cell_vert zz    10022.0283203125        19981.5019531250     
+   50357.0234375000        57774.4570312500        74590.9531250000     
+   95194.2187500000        122111.976562500     
+   50000.00      >    10022.0283203125       AND    50000.00      < 
+   19981.5019531250     
+   50000.00      >    19981.5019531250       AND    50000.00      < 
+   50357.0234375000     
+ kk            3           2           3
+ get_cell_vert zz    10023.2783203125        19984.6523437500     
+   50364.5625000000        57782.5273437500        74599.6796875000     
+   95204.0390625000        122119.648437500     
+   50000.00      >    10023.2783203125       AND    50000.00      < 
+   19984.6523437500     
+   50000.00      >    19984.6523437500       AND    50000.00      < 
+   50364.5625000000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         123           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         123           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         122           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         122           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         123           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         123           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         122           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         122           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -80.12901       21.09485       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10129.0175781250        20083.5546875000     
+   50422.2421875000        57830.4218750000        74654.6640625000     
+   95288.8203125000        122273.101562500     
+   50000.00      >    10129.0175781250       AND    50000.00      < 
+   20083.5546875000     
+   50000.00      >    20083.5546875000       AND    50000.00      < 
+   50422.2421875000     
+ kk            1           2           3
+ get_cell_vert zz    10125.5703125000        20081.5957031250     
+   50417.8320312500        57824.5312500000        74647.4062500000     
+   95282.7265625000        122270.539062500     
+   50000.00      >    10125.5703125000       AND    50000.00      < 
+   20081.5957031250     
+   50000.00      >    20081.5957031250       AND    50000.00      < 
+   50417.8320312500     
+ kk            2           2           3
+ get_cell_vert zz    10118.7539062500        20076.1699218750     
+   50412.7343750000        57819.2929687500        74641.1484375000     
+   95271.5703125000        122255.320312500     
+   50000.00      >    10118.7539062500       AND    50000.00      < 
+   20076.1699218750     
+   50000.00      >    20076.1699218750       AND    50000.00      < 
+   50412.7343750000     
+ kk            3           2           3
+ get_cell_vert zz    10123.7978515625        20079.7500000000     
+   50418.0195312500        57825.6679687500        74647.3125000000     
+   95275.0781250000        122253.500000000     
+   50000.00      >    10123.7978515625       AND    50000.00      < 
+   20079.7500000000     
+   50000.00      >    20079.7500000000       AND    50000.00      < 
+   50418.0195312500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         143           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         143           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         142           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         142           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         143           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         143           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         142           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         142           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -81.28467       23.35445       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10247.4970703125        20194.9062500000     
+   50509.0156250000        57915.2421875000        74759.5546875000     
+   95468.9218750000        122530.320312500     
+   50000.00      >    10247.4970703125       AND    50000.00      < 
+   20194.9062500000     
+   50000.00      >    20194.9062500000       AND    50000.00      < 
+   50509.0156250000     
+ kk            1           2           3
+ get_cell_vert zz    10246.4804687500        20193.6679687500     
+   50503.8671875000        57908.7968750000        74749.3046875000     
+   95456.2265625000        122520.585937500     
+   50000.00      >    10246.4804687500       AND    50000.00      < 
+   20193.6679687500     
+   50000.00      >    20193.6679687500       AND    50000.00      < 
+   50503.8671875000     
+ kk            2           2           3
+ get_cell_vert zz    10240.9775390625        20188.7050781250     
+   50499.5859375000        57904.3632812500        74742.5078125000     
+   95446.2031250000        122507.031250000     
+   50000.00      >    10240.9775390625       AND    50000.00      < 
+   20188.7050781250     
+   50000.00      >    20188.7050781250       AND    50000.00      < 
+   50499.5859375000     
+ kk            3           2           3
+ get_cell_vert zz    10242.6777343750        20189.8984375000     
+   50505.8203125000        57911.7617187500        74754.2812500000     
+   95459.7890625000        122518.156250000     
+   50000.00      >    10242.6777343750       AND    50000.00      < 
+   20189.8984375000     
+   50000.00      >    20189.8984375000       AND    50000.00      < 
+   50505.8203125000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         163           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         163           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         162           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         162           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         163           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         163           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         162           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         162           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -82.48031       25.60526       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10322.9462890625        20264.8281250000     
+   50530.0664062500        57943.4335937500        74822.5078125000     
+   95557.8671875000        122633.367187500     
+   50000.00      >    10322.9462890625       AND    50000.00      < 
+   20264.8281250000     
+   50000.00      >    20264.8281250000       AND    50000.00      < 
+   50530.0664062500     
+ kk            1           2           3
+ get_cell_vert zz    10309.2880859375        20250.2207031250     
+   50518.9375000000        57933.5507812500        74817.0000000000     
+   95554.9609375000        122632.382812500     
+   50000.00      >    10309.2880859375       AND    50000.00      < 
+   20250.2207031250     
+   50000.00      >    20250.2207031250       AND    50000.00      < 
+   50518.9375000000     
+ kk            2           2           3
+ get_cell_vert zz    10307.5615234375        20249.0449218750     
+   50521.1445312500        57935.8085937500        74817.6484375000     
+   95554.1875000000        122630.679687500     
+   50000.00      >    10307.5615234375       AND    50000.00      < 
+   20249.0449218750     
+   50000.00      >    20249.0449218750       AND    50000.00      < 
+   50521.1445312500     
+ kk            3           2           3
+ get_cell_vert zz    10321.0126953125        20263.3007812500     
+   50532.2890625000        57945.4296875000        74823.2656250000     
+   95557.6484375000        122632.335937500     
+   50000.00      >    10321.0126953125       AND    50000.00      < 
+   20263.3007812500     
+   50000.00      >    20263.3007812500       AND    50000.00      < 
+   50532.2890625000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         183           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         183           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         182           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         182           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         183           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         183           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         182           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         182           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -83.72175       27.84598       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10358.2304687500        20267.0019531250     
+   50482.7421875000        57887.3203125000        74757.7890625000     
+   95507.9062500000        122615.796875000     
+   50000.00      >    10358.2304687500       AND    50000.00      < 
+   20267.0019531250     
+   50000.00      >    20267.0019531250       AND    50000.00      < 
+   50482.7421875000     
+ kk            1           2           3
+ get_cell_vert zz    10360.2773437500        20266.7187500000     
+   50479.4882812500        57883.7187500000        74753.3281250000     
+   95501.7656250000        122608.656250000     
+   50000.00      >    10360.2773437500       AND    50000.00      < 
+   20266.7187500000     
+   50000.00      >    20266.7187500000       AND    50000.00      < 
+   50479.4882812500     
+ kk            2           2           3
+ get_cell_vert zz    10361.9746093750        20273.3378906250     
+   50492.7578125000        57894.7968750000        74760.8437500000     
+   95505.8437500000        122607.554687500     
+   50000.00      >    10361.9746093750       AND    50000.00      < 
+   20273.3378906250     
+   50000.00      >    20273.3378906250       AND    50000.00      < 
+   50492.7578125000     
+ kk            3           2           3
+ get_cell_vert zz    10360.7226562500        20273.7949218750     
+   50495.4453125000        57898.3007812500        74765.2343750000     
+   95510.7578125000        122612.531250000     
+   50000.00      >    10360.7226562500       AND    50000.00      < 
+   20273.7949218750     
+   50000.00      >    20273.7949218750       AND    50000.00      < 
+   50495.4453125000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         203           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         204           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         204           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         203           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         203           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         204           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         204           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         203           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -85.01544       30.07512       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10379.1542968750        20257.8750000000     
+   50418.5507812500        57806.1015625000        74632.7343750000     
+   95357.5625000000        122413.539062500     
+   50000.00      >    10379.1542968750       AND    50000.00      < 
+   20257.8750000000     
+   50000.00      >    20257.8750000000       AND    50000.00      < 
+   50418.5507812500     
+ kk            1           2           3
+ get_cell_vert zz    10378.0332031250        20258.1542968750     
+   50418.0742187500        57805.5937500000        74627.1562500000     
+   95350.1953125000        122407.460937500     
+   50000.00      >    10378.0332031250       AND    50000.00      < 
+   20258.1542968750     
+   50000.00      >    20258.1542968750       AND    50000.00      < 
+   50418.0742187500     
+ kk            2           2           3
+ get_cell_vert zz    10364.4208984375        20254.5097656250     
+   50431.3632812500        57818.7070312500        74634.9687500000     
+   95355.7734375000        122405.601562500     
+   50000.00      >    10364.4208984375       AND    50000.00      < 
+   20254.5097656250     
+   50000.00      >    20254.5097656250       AND    50000.00      < 
+   50431.3632812500     
+ kk            3           2           3
+ get_cell_vert zz    10366.1523437500        20254.0800781250     
+   50433.2031250000        57819.4765625000        74641.2656250000     
+   95362.0390625000        122410.828125000     
+   50000.00      >    10366.1523437500       AND    50000.00      < 
+   20254.0800781250     
+   50000.00      >    20254.0800781250       AND    50000.00      < 
+   50433.2031250000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         223           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         224           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         224           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         223           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         223           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         224           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         224           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         223           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -86.36861       32.29101       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10350.6972656250        20272.4687500000     
+   50418.9375000000        57793.7695312500        74533.9921875000     
+   95119.5468750000        122178.296875000     
+   50000.00      >    10350.6972656250       AND    50000.00      < 
+   20272.4687500000     
+   50000.00      >    20272.4687500000       AND    50000.00      < 
+   50418.9375000000     
+ kk            1           2           3
+ get_cell_vert zz    10353.2763671875        20273.1367187500     
+   50414.3164062500        57787.5937500000        74526.5156250000     
+   95116.8359375000        122179.023437500     
+   50000.00      >    10353.2763671875       AND    50000.00      < 
+   20273.1367187500     
+   50000.00      >    20273.1367187500       AND    50000.00      < 
+   50414.3164062500     
+ kk            2           2           3
+ get_cell_vert zz    10351.4726562500        20274.4921875000     
+   50415.8632812500        57788.5468750000        74522.8125000000     
+   95098.3906250000        122159.554687500     
+   50000.00      >    10351.4726562500       AND    50000.00      < 
+   20274.4921875000     
+   50000.00      >    20274.4921875000       AND    50000.00      < 
+   50415.8632812500     
+ kk            3           2           3
+ get_cell_vert zz    10347.0380859375        20272.9296875000     
+   50418.4375000000        57793.6914062500        74528.2421875000     
+   95100.8906250000        122157.656250000     
+   50000.00      >    10347.0380859375       AND    50000.00      < 
+   20272.9296875000     
+   50000.00      >    20272.9296875000       AND    50000.00      < 
+   50418.4375000000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         243           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         243           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         244           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         244           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         243           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         243           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         244           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         244           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -87.78938       34.49175       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10330.4951171875        20260.5214843750     
+   50401.8359375000        57775.1250000000        74403.7890625000     
+   94807.5312500000        121836.171875000     
+   50000.00      >    10330.4951171875       AND    50000.00      < 
+   20260.5214843750     
+   50000.00      >    20260.5214843750       AND    50000.00      < 
+   50401.8359375000     
+ kk            1           2           3
+ get_cell_vert zz    10324.5625000000        20255.7500000000     
+   50394.2656250000        57770.7695312500        74400.6562500000     
+   94802.8359375000        121836.054687500     
+   50000.00      >    10324.5625000000       AND    50000.00      < 
+   20255.7500000000     
+   50000.00      >    20255.7500000000       AND    50000.00      < 
+   50394.2656250000     
+ kk            2           2           3
+ get_cell_vert zz    10330.8896484375        20258.4960937500     
+   50390.8906250000        57777.4804687500        74403.5546875000     
+   94793.8437500000        121833.421875000     
+   50000.00      >    10330.8896484375       AND    50000.00      < 
+   20258.4960937500     
+   50000.00      >    20258.4960937500       AND    50000.00      < 
+   50390.8906250000     
+ kk            3           2           3
+ get_cell_vert zz    10335.6523437500        20263.2500000000     
+   50396.6953125000        57781.5625000000        74406.6015625000     
+   94798.6718750000        121832.968750000     
+   50000.00      >    10335.6523437500       AND    50000.00      < 
+   20263.2500000000     
+   50000.00      >    20263.2500000000       AND    50000.00      < 
+   50396.6953125000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         263           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         263           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         264           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         264           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         263           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         263           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         264           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         264           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -89.28690       36.67515       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10384.1025390625        20226.6289062500     
+   50446.9375000000        57809.7148437500        74447.5859375000     
+   94851.5156250000        121743.750000000     
+   50000.00      >    10384.1025390625       AND    50000.00      < 
+   20226.6289062500     
+   50000.00      >    20226.6289062500       AND    50000.00      < 
+   50446.9375000000     
+ kk            1           2           3
+ get_cell_vert zz    10381.0087890625        20226.0625000000     
+   50449.7773437500        57812.0078125000        74446.6171875000     
+   94850.2421875000        121756.273437500     
+   50000.00      >    10381.0087890625       AND    50000.00      < 
+   20226.0625000000     
+   50000.00      >    20226.0625000000       AND    50000.00      < 
+   50449.7773437500     
+ kk            2           2           3
+ get_cell_vert zz    10383.7226562500        20227.2363281250     
+   50449.9179687500        57812.1210937500        74450.9609375000     
+   94859.4531250000        121753.570312500     
+   50000.00      >    10383.7226562500       AND    50000.00      < 
+   20227.2363281250     
+   50000.00      >    20227.2363281250       AND    50000.00      < 
+   50449.9179687500     
+ kk            3           2           3
+ get_cell_vert zz    10386.6425781250        20227.0820312500     
+   50446.9648437500        57809.2695312500        74451.2968750000     
+   94860.0078125000        121740.843750000     
+   50000.00      >    10386.6425781250       AND    50000.00      < 
+   20227.0820312500     
+   50000.00      >    20227.0820312500       AND    50000.00      < 
+   50446.9648437500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         283           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         283           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         284           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         284           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         283           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         283           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         284           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         284           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -90.87151       38.83871       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10409.2822265625        20263.6679687500     
+   50424.6601562500        57789.6132812500        74505.4765625000     
+   94979.5703125000        121725.750000000     
+   50000.00      >    10409.2822265625       AND    50000.00      < 
+   20263.6679687500     
+   50000.00      >    20263.6679687500       AND    50000.00      < 
+   50424.6601562500     
+ kk            1           2           3
+ get_cell_vert zz    10398.6552734375        20255.2929687500     
+   50413.0937500000        57784.6523437500        74500.3437500000     
+   94985.6796875000        121731.585937500     
+   50000.00      >    10398.6552734375       AND    50000.00      < 
+   20255.2929687500     
+   50000.00      >    20255.2929687500       AND    50000.00      < 
+   50413.0937500000     
+ kk            2           2           3
+ get_cell_vert zz    10397.7529296875        20257.1210937500     
+   50412.2812500000        57782.7773437500        74500.9375000000     
+   94985.9062500000        121732.515625000     
+   50000.00      >    10397.7529296875       AND    50000.00      < 
+   20257.1210937500     
+   50000.00      >    20257.1210937500       AND    50000.00      < 
+   50412.2812500000     
+ kk            3           2           3
+ get_cell_vert zz    10409.2714843750        20266.4121093750     
+   50424.0429687500        57788.2656250000        74506.1015625000     
+   94980.8750000000        121727.320312500     
+   50000.00      >    10409.2714843750       AND    50000.00      < 
+   20266.4121093750     
+   50000.00      >    20266.4121093750       AND    50000.00      < 
+   50424.0429687500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         303           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         303           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         304           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         304           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         303           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         303           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         304           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         304           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -92.55499       40.97953       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    10318.3730468750        20217.6875000000     
+   50355.4531250000        57716.0703125000        74456.7109375000     
+   94968.4140625000        121724.046875000     
+   50000.00      >    10318.3730468750       AND    50000.00      < 
+   20217.6875000000     
+   50000.00      >    20217.6875000000       AND    50000.00      < 
+   50355.4531250000     
+ kk            1           2           3
+ get_cell_vert zz    10307.9863281250        20209.2343750000     
+   50349.5234375000        57712.0234375000        74453.8593750000     
+   94966.2187500000        121721.398437500     
+   50000.00      >    10307.9863281250       AND    50000.00      < 
+   20209.2343750000     
+   50000.00      >    20209.2343750000       AND    50000.00      < 
+   50349.5234375000     
+ kk            2           2           3
+ get_cell_vert zz    10321.9931640625        20220.7441406250     
+   50346.1484375000        57711.3281250000        74448.8359375000     
+   94956.7500000000        121710.335937500     
+   50000.00      >    10321.9931640625       AND    50000.00      < 
+   20220.7441406250     
+   50000.00      >    20220.7441406250       AND    50000.00      < 
+   50346.1484375000     
+ kk            3           2           3
+ get_cell_vert zz    10333.1328125000        20229.5566406250     
+   50350.7695312500        57716.9648437500        74453.4531250000     
+   94958.6406250000        121713.820312500     
+   50000.00      >    10333.1328125000       AND    50000.00      < 
+   20229.5566406250     
+   50000.00      >    20229.5566406250       AND    50000.00      < 
+   50350.7695312500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         323           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         324           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         324           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         323           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         323           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         324           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         324           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         323           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -94.35075       43.09422       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9985.08007812500        19927.0371093750     
+   50274.2031250000        57591.4062500000        74351.1640625000     
+   94850.2500000000        121545.929687500     
+   50000.00      >    9985.08007812500       AND    50000.00      < 
+   19927.0371093750     
+   50000.00      >    19927.0371093750       AND    50000.00      < 
+   50274.2031250000     
+ kk            1           2           3
+ get_cell_vert zz    9990.07128906250        19929.5546875000     
+   50269.2578125000        57590.7109375000        74347.3203125000     
+   94842.5625000000        121540.953125000     
+   50000.00      >    9990.07128906250       AND    50000.00      < 
+   19929.5546875000     
+   50000.00      >    19929.5546875000       AND    50000.00      < 
+   50269.2578125000     
+ kk            2           2           3
+ get_cell_vert zz    10015.0195312500        19948.5175781250     
+   50272.8750000000        57596.2656250000        74354.4453125000     
+   94851.9843750000        121552.796875000     
+   50000.00      >    10015.0195312500       AND    50000.00      < 
+   19948.5175781250     
+   50000.00      >    19948.5175781250       AND    50000.00      < 
+   50272.8750000000     
+ kk            3           2           3
+ get_cell_vert zz    10008.2880859375        19944.8300781250     
+   50276.3203125000        57599.5859375000        74356.7421875000     
+   94860.8984375000        121559.906250000     
+   50000.00      >    10008.2880859375       AND    50000.00      < 
+   19944.8300781250     
+   50000.00      >    19944.8300781250       AND    50000.00      < 
+   50276.3203125000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         343           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         343           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         342           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         342           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         343           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         343           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         342           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         342           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -96.27406       45.17884       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9431.53906250000        19516.2441406250     
+   50163.0351562500        57447.6406250000        74096.9375000000     
+   94530.2265625000        121246.039062500     
+   50000.00      >    9431.53906250000       AND    50000.00      < 
+   19516.2441406250     
+   50000.00      >    19516.2441406250       AND    50000.00      < 
+   50163.0351562500     
+ kk            1           2           3
+ get_cell_vert zz    9446.51660156250        19519.5332031250     
+   50153.3750000000        57436.0507812500        74085.2343750000     
+   94524.4609375000        121249.132812500     
+   50000.00      >    9446.51660156250       AND    50000.00      < 
+   19519.5332031250     
+   50000.00      >    19519.5332031250       AND    50000.00      < 
+   50153.3750000000     
+ kk            2           2           3
+ get_cell_vert zz    9473.67773437500        19543.5605468750     
+   50164.1093750000        57446.1406250000        74101.5000000000     
+   94546.3281250000        121269.406250000     
+   50000.00      >    9473.67773437500       AND    50000.00      < 
+   19543.5605468750     
+   50000.00      >    19543.5605468750       AND    50000.00      < 
+   50164.1093750000     
+ kk            3           2           3
+ get_cell_vert zz    9461.30273437500        19539.9824218750     
+   50173.7148437500        57458.3203125000        74113.3515625000     
+   94550.9609375000        121265.234375000     
+   50000.00      >    9461.30273437500       AND    50000.00      < 
+   19539.9824218750     
+   50000.00      >    19539.9824218750       AND    50000.00      < 
+   50173.7148437500     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         363           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         363           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         362           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         362           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         363           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         363           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         362           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         362           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -98.34229       47.22873       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8970.11132812500        19139.3515625000     
+   49816.8007812500        57128.1289062500        73721.5312500000     
+   94031.9375000000        120721.101562500     
+   50000.00      >    8970.11132812500       AND    50000.00      < 
+   19139.3515625000     
+   50000.00      >    19139.3515625000       AND    50000.00      < 
+   49816.8007812500     
+   50000.00      >    49816.8007812500       AND    50000.00      < 
+   57128.1289062500     
+ kk            1           3           4
+ get_cell_vert zz    8979.96582031250        19139.1777343750     
+   49805.9570312500        57114.9453125000        73708.0625000000     
+   94024.4062500000        120719.437500000     
+   50000.00      >    8979.96582031250       AND    50000.00      < 
+   19139.1777343750     
+   50000.00      >    19139.1777343750       AND    50000.00      < 
+   49805.9570312500     
+   50000.00      >    49805.9570312500       AND    50000.00      < 
+   57114.9453125000     
+ kk            2           3           4
+ get_cell_vert zz    8992.38574218750        19149.3027343750     
+   49825.6835937500        57134.6640625000        73730.5859375000     
+   94052.2109375000        120754.710937500     
+   50000.00      >    8992.38574218750       AND    50000.00      < 
+   19149.3027343750     
+   50000.00      >    19149.3027343750       AND    50000.00      < 
+   49825.6835937500     
+   50000.00      >    49825.6835937500       AND    50000.00      < 
+   57134.6640625000     
+ kk            3           3           4
+ get_cell_vert zz    8980.13574218750        19148.8867187500     
+   49836.1367187500        57146.5625000000        73742.9531250000     
+   94058.9453125000        120753.742187500     
+   50000.00      >    8980.13574218750       AND    50000.00      < 
+   19148.8867187500     
+   50000.00      >    19148.8867187500       AND    50000.00      < 
+   49836.1367187500     
+   50000.00      >    49836.1367187500       AND    50000.00      < 
+   57146.5625000000     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         383           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         383           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         382           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         382           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         383           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         383           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         382           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         382           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -100.5753       49.23844       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9016.76171875000        18935.8281250000     
+   49257.6015625000        56551.7890625000        73102.9453125000     
+   93334.1875000000        119900.992187500     
+   50000.00      >    9016.76171875000       AND    50000.00      < 
+   18935.8281250000     
+   50000.00      >    18935.8281250000       AND    50000.00      < 
+   49257.6015625000     
+   50000.00      >    49257.6015625000       AND    50000.00      < 
+   56551.7890625000     
+ kk            1           3           4
+ get_cell_vert zz    9000.10156250000        18921.9472656250     
+   49256.3437500000        56551.8554687500        73105.7421875000     
+   93337.7500000000        119901.812500000     
+   50000.00      >    9000.10156250000       AND    50000.00      < 
+   18921.9472656250     
+   50000.00      >    18921.9472656250       AND    50000.00      < 
+   49256.3437500000     
+   50000.00      >    49256.3437500000       AND    50000.00      < 
+   56551.8554687500     
+ kk            2           3           4
+ get_cell_vert zz    8997.92089843750        18938.8242187500     
+   49290.5351562500        56593.8398437500        73147.1796875000     
+   93374.7031250000        119956.507812500     
+   50000.00      >    8997.92089843750       AND    50000.00      < 
+   18938.8242187500     
+   50000.00      >    18938.8242187500       AND    50000.00      < 
+   49290.5351562500     
+   50000.00      >    49290.5351562500       AND    50000.00      < 
+   56593.8398437500     
+ kk            3           3           4
+ get_cell_vert zz    9017.79199218750        18955.7968750000     
+   49289.9101562500        56595.5312500000        73144.5312500000     
+   93366.2578125000        119958.804687500     
+   50000.00      >    9017.79199218750       AND    50000.00      < 
+   18955.7968750000     
+   50000.00      >    18955.7968750000       AND    50000.00      < 
+   49289.9101562500     
+   50000.00      >    49289.9101562500       AND    50000.00      < 
+   56595.5312500000     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         403           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         403           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         402           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         402           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         403           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         403           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         402           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         402           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -102.9955       51.20147       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8999.27636718750        18689.2714843750     
+   48358.7109375000        55652.0117187500        72107.1718750000     
+   92152.8906250000        118693.890625000     
+   50000.00      >    8999.27636718750       AND    50000.00      < 
+   18689.2714843750     
+   50000.00      >    18689.2714843750       AND    50000.00      < 
+   48358.7109375000     
+   50000.00      >    48358.7109375000       AND    50000.00      < 
+   55652.0117187500     
+ kk            1           3           4
+ get_cell_vert zz    8987.87109375000        18676.3808593750     
+   48370.1171875000        55656.2773437500        72113.6093750000     
+   92168.3593750000        118687.492187500     
+   50000.00      >    8987.87109375000       AND    50000.00      < 
+   18676.3808593750     
+   50000.00      >    18676.3808593750       AND    50000.00      < 
+   48370.1171875000     
+   50000.00      >    48370.1171875000       AND    50000.00      < 
+   55656.2773437500     
+ kk            2           3           4
+ get_cell_vert zz    8996.79687500000        18691.7382812500     
+   48420.9765625000        55709.0546875000        72176.0546875000     
+   92242.1562500000        118758.875000000     
+   50000.00      >    8996.79687500000       AND    50000.00      < 
+   18691.7382812500     
+   50000.00      >    18691.7382812500       AND    50000.00      < 
+   48420.9765625000     
+   50000.00      >    48420.9765625000       AND    50000.00      < 
+   55709.0546875000     
+ kk            3           3           4
+ get_cell_vert zz    9009.45800781250        18704.8554687500     
+   48412.7148437500        55705.5703125000        72171.2968750000     
+   92232.2578125000        118766.054687500     
+   50000.00      >    9009.45800781250       AND    50000.00      < 
+   18704.8554687500     
+   50000.00      >    18704.8554687500       AND    50000.00      < 
+   48412.7148437500     
+   50000.00      >    48412.7148437500       AND    50000.00      < 
+   55705.5703125000     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         423           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         423           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         422           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         422           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         423           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         423           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         422           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         422           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -105.6280       53.11019       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8747.93261718750        18351.8671875000     
+   47420.6250000000        54490.5820312500        70690.2421875000     
+   90544.1015625000        117132.757812500     
+   50000.00      >    8747.93261718750       AND    50000.00      < 
+   18351.8671875000     
+   50000.00      >    18351.8671875000       AND    50000.00      < 
+   47420.6250000000     
+   50000.00      >    47420.6250000000       AND    50000.00      < 
+   54490.5820312500     
+ kk            1           3           4
+ get_cell_vert zz    8727.83300781250        18331.3867187500     
+   47412.1953125000        54486.9179687500        70693.1328125000     
+   90551.0234375000        117140.578125000     
+   50000.00      >    8727.83300781250       AND    50000.00      < 
+   18331.3867187500     
+   50000.00      >    18331.3867187500       AND    50000.00      < 
+   47412.1953125000     
+   50000.00      >    47412.1953125000       AND    50000.00      < 
+   54486.9179687500     
+ kk            2           3           4
+ get_cell_vert zz    8743.38281250000        18350.9277343750     
+   47453.3046875000        54541.8789062500        70772.0312500000     
+   90640.4453125000        117211.632812500     
+   50000.00      >    8743.38281250000       AND    50000.00      < 
+   18350.9277343750     
+   50000.00      >    18350.9277343750       AND    50000.00      < 
+   47453.3046875000     
+   50000.00      >    47453.3046875000       AND    50000.00      < 
+   54541.8789062500     
+ kk            3           3           4
+ get_cell_vert zz    8763.59765625000        18373.2460937500     
+   47460.3437500000        54545.9960937500        70768.6484375000     
+   90630.0625000000        117205.343750000     
+   50000.00      >    8763.59765625000       AND    50000.00      < 
+   18373.2460937500     
+   50000.00      >    18373.2460937500       AND    50000.00      < 
+   47460.3437500000     
+   50000.00      >    47460.3437500000       AND    50000.00      < 
+   54545.9960937500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         443           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         443           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         442           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         442           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         443           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         443           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         442           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         442           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -108.5008       54.95551       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8334.63867187500        17866.3300781250     
+   46706.8437500000        53716.4765625000        69518.8281250000     
+   88860.8203125000        116002.562500000     
+   50000.00      >    8334.63867187500       AND    50000.00      < 
+   17866.3300781250     
+   50000.00      >    17866.3300781250       AND    50000.00      < 
+   46706.8437500000     
+   50000.00      >    46706.8437500000       AND    50000.00      < 
+   53716.4765625000     
+ kk            1           3           4
+ get_cell_vert zz    8324.86621093750        17852.1152343750     
+   46702.2460937500        53703.3007812500        69510.2656250000     
+   88865.4375000000        115994.476562500     
+   50000.00      >    8324.86621093750       AND    50000.00      < 
+   17852.1152343750     
+   50000.00      >    17852.1152343750       AND    50000.00      < 
+   46702.2460937500     
+   50000.00      >    46702.2460937500       AND    50000.00      < 
+   53703.3007812500     
+ kk            2           3           4
+ get_cell_vert zz    8350.94726562500        17881.7304687500     
+   46736.3593750000        53734.5664062500        69534.4453125000     
+   88912.5625000000        116034.687500000     
+   50000.00      >    8350.94726562500       AND    50000.00      < 
+   17881.7304687500     
+   50000.00      >    17881.7304687500       AND    50000.00      < 
+   46736.3593750000     
+   50000.00      >    46736.3593750000       AND    50000.00      < 
+   53734.5664062500     
+ kk            3           3           4
+ get_cell_vert zz    8363.81152343750        17896.9492187500     
+   46745.3359375000        53749.3710937500        69544.4218750000     
+   88910.3984375000        116043.390625000     
+   50000.00      >    8363.81152343750       AND    50000.00      < 
+   17896.9492187500     
+   50000.00      >    17896.9492187500       AND    50000.00      < 
+   46745.3359375000     
+   50000.00      >    46745.3359375000       AND    50000.00      < 
+   53749.3710937500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         463           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         463           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         462           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         462           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         463           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         463           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           4         462           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         462           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -111.6443       56.72666       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    7818.15087890625        17275.8398437500     
+   46247.1757812500        53329.7343750000        69368.6328125000     
+   88831.4375000000        115551.695312500     
+   50000.00      >    7818.15087890625       AND    50000.00      < 
+   17275.8398437500     
+   50000.00      >    17275.8398437500       AND    50000.00      < 
+   46247.1757812500     
+   50000.00      >    46247.1757812500       AND    50000.00      < 
+   53329.7343750000     
+ kk            1           3           4
+ get_cell_vert zz    7852.03222656250        17307.7910156250     
+   46258.6992187500        53342.7460937500        69375.6093750000     
+   88828.9062500000        115560.578125000     
+   50000.00      >    7852.03222656250       AND    50000.00      < 
+   17307.7910156250     
+   50000.00      >    17307.7910156250       AND    50000.00      < 
+   46258.6992187500     
+   50000.00      >    46258.6992187500       AND    50000.00      < 
+   53342.7460937500     
+ kk            2           3           4
+ get_cell_vert zz    7873.06835937500        17328.5195312500     
+   46271.8515625000        53346.5976562500        69368.8437500000     
+   88814.0859375000        115566.367187500     
+   50000.00      >    7873.06835937500       AND    50000.00      < 
+   17328.5195312500     
+   50000.00      >    17328.5195312500       AND    50000.00      < 
+   46271.8515625000     
+   50000.00      >    46271.8515625000       AND    50000.00      < 
+   53346.5976562500     
+ kk            3           3           4
+ get_cell_vert zz    7843.68505859375        17296.0273437500     
+   46261.3398437500        53330.6523437500        69358.3359375000     
+   88817.9218750000        115554.750000000     
+   50000.00      >    7843.68505859375       AND    50000.00      < 
+   17296.0273437500     
+   50000.00      >    17296.0273437500       AND    50000.00      < 
+   46261.3398437500     
+   50000.00      >    46261.3398437500       AND    50000.00      < 
+   53330.6523437500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         483           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         483           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         482           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         482           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         483           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         483           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         482           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         482           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -115.0905       58.41102       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8151.12255859375        17479.2832031250     
+   46330.4375000000        53428.9765625000        69623.0234375000     
+   89302.2187500000        115386.101562500     
+   50000.00      >    8151.12255859375       AND    50000.00      < 
+   17479.2832031250     
+   50000.00      >    17479.2832031250       AND    50000.00      < 
+   46330.4375000000     
+   50000.00      >    46330.4375000000       AND    50000.00      < 
+   53428.9765625000     
+ kk            1           3           4
+ get_cell_vert zz    8164.55468750000        17497.9433593750     
+   46336.6250000000        53429.9257812500        69620.8750000000     
+   89301.9921875000        115392.898437500     
+   50000.00      >    8164.55468750000       AND    50000.00      < 
+   17497.9433593750     
+   50000.00      >    17497.9433593750       AND    50000.00      < 
+   46336.6250000000     
+   50000.00      >    46336.6250000000       AND    50000.00      < 
+   53429.9257812500     
+ kk            2           3           4
+ get_cell_vert zz    8127.59130859375        17465.2558593750     
+   46321.3593750000        53418.3125000000        69603.5156250000     
+   89274.6171875000        115398.148437500     
+   50000.00      >    8127.59130859375       AND    50000.00      < 
+   17465.2558593750     
+   50000.00      >    17465.2558593750       AND    50000.00      < 
+   46321.3593750000     
+   50000.00      >    46321.3593750000       AND    50000.00      < 
+   53418.3125000000     
+ kk            3           3           4
+ get_cell_vert zz    8116.64550781250        17444.8281250000     
+   46314.5273437500        53415.7148437500        69605.0156250000     
+   89276.2890625000        115389.531250000     
+   50000.00      >    8116.64550781250       AND    50000.00      < 
+   17444.8281250000     
+   50000.00      >    17444.8281250000       AND    50000.00      < 
+   46314.5273437500     
+   50000.00      >    46314.5273437500       AND    50000.00      < 
+   53415.7148437500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         503           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         503           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         502           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         502           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         503           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         503           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         502           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         502           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -118.8718       59.99379       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    8944.68847656250        18273.8847656250     
+   46878.4375000000        53931.6640625000        70009.4296875000     
+   89638.2187500000        115458.890625000     
+   50000.00      >    8944.68847656250       AND    50000.00      < 
+   18273.8847656250     
+   50000.00      >    18273.8847656250       AND    50000.00      < 
+   46878.4375000000     
+   50000.00      >    46878.4375000000       AND    50000.00      < 
+   53931.6640625000     
+ kk            1           3           4
+ get_cell_vert zz    8941.48925781250        18273.1972656250     
+   46881.2382812500        53931.0546875000        70006.0156250000     
+   89640.5390625000        115451.218750000     
+   50000.00      >    8941.48925781250       AND    50000.00      < 
+   18273.1972656250     
+   50000.00      >    18273.1972656250       AND    50000.00      < 
+   46881.2382812500     
+   50000.00      >    46881.2382812500       AND    50000.00      < 
+   53931.0546875000     
+ kk            2           3           4
+ get_cell_vert zz    8909.98828125000        18235.8457031250     
+   46846.6015625000        53898.2734375000        69987.1875000000     
+   89631.6718750000        115448.328125000     
+   50000.00      >    8909.98828125000       AND    50000.00      < 
+   18235.8457031250     
+   50000.00      >    18235.8457031250       AND    50000.00      < 
+   46846.6015625000     
+   50000.00      >    46846.6015625000       AND    50000.00      < 
+   53898.2734375000     
+ kk            3           3           4
+ get_cell_vert zz    8912.19921875000        18237.8457031250     
+   46841.7187500000        53900.3476562500        69991.0234375000     
+   89626.3046875000        115459.578125000     
+   50000.00      >    8912.19921875000       AND    50000.00      < 
+   18237.8457031250     
+   50000.00      >    18237.8457031250       AND    50000.00      < 
+   46841.7187500000     
+   50000.00      >    46841.7187500000       AND    50000.00      < 
+   53900.3476562500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         523           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         523           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         522           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         522           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         523           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         523           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         522           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         522           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -123.0177       61.45790       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9470.41992187500        18822.8281250000     
+   47506.9453125000        54487.8281250000        70372.1171875000     
+   89739.0937500000        115344.898437500     
+   50000.00      >    9470.41992187500       AND    50000.00      < 
+   18822.8281250000     
+   50000.00      >    18822.8281250000       AND    50000.00      < 
+   47506.9453125000     
+   50000.00      >    47506.9453125000       AND    50000.00      < 
+   54487.8281250000     
+ kk            1           3           4
+ get_cell_vert zz    9473.72558593750        18823.6679687500     
+   47507.6406250000        54493.7421875000        70377.9140625000     
+   89735.0312500000        115351.054687500     
+   50000.00      >    9473.72558593750       AND    50000.00      < 
+   18823.6679687500     
+   50000.00      >    18823.6679687500       AND    50000.00      < 
+   47507.6406250000     
+   50000.00      >    47507.6406250000       AND    50000.00      < 
+   54493.7421875000     
+ kk            2           3           4
+ get_cell_vert zz    9463.86425781250        18813.3925781250     
+   47481.0546875000        54483.3046875000        70347.0781250000     
+   89759.5390625000        115369.867187500     
+   50000.00      >    9463.86425781250       AND    50000.00      < 
+   18813.3925781250     
+   50000.00      >    18813.3925781250       AND    50000.00      < 
+   47481.0546875000     
+   50000.00      >    47481.0546875000       AND    50000.00      < 
+   54483.3046875000     
+ kk            3           3           4
+ get_cell_vert zz    9452.58691406250        18807.0273437500     
+   47482.3203125000        54468.5351562500        70346.1718750000     
+   89753.4843750000        115353.835937500     
+   50000.00      >    9452.58691406250       AND    50000.00      < 
+   18807.0273437500     
+   50000.00      >    18807.0273437500       AND    50000.00      < 
+   47482.3203125000     
+   50000.00      >    47482.3203125000       AND    50000.00      < 
+   54468.5351562500     
+ kk            4           3           4
+ interpolate3d:           3           3           3           3           4
+           4           4           4
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         543           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         543           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         542           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         542           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         543           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         543           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           2         542           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt           3         542           4
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -70.84542       5.916704       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz    9972.35546875000        19936.0136718750     
+   50247.3906250000        57673.9960937500        74496.0468750000     
+   95179.1796875000        122097.867187500     
+   50000.00      >    9972.35546875000       AND    50000.00      < 
+   19936.0136718750     
+   50000.00      >    19936.0136718750       AND    50000.00      < 
+   50247.3906250000     
+ kk            1           2           3
+ get_cell_vert zz    9973.26562500000        19936.2382812500     
+   50245.1914062500        57672.3281250000        74494.7031250000     
+   95179.3906250000        122098.195312500     
+   50000.00      >    9973.26562500000       AND    50000.00      < 
+   19936.2382812500     
+   50000.00      >    19936.2382812500       AND    50000.00      < 
+   50245.1914062500     
+ kk            2           2           3
+ get_cell_vert zz    9953.24804687500        19916.4785156250     
+   50224.5859375000        57650.4257812500        74468.7734375000     
+   95151.0000000000        122069.726562500     
+   50000.00      >    9953.24804687500       AND    50000.00      < 
+   19916.4785156250     
+   50000.00      >    19916.4785156250       AND    50000.00      < 
+   50224.5859375000     
+ kk            3           2           3
+ get_cell_vert zz    9953.68847656250        19918.3359375000     
+   50227.9531250000        57653.2500000000        74471.0703125000     
+   95151.4453125000        122070.617187500     
+   50000.00      >    9953.68847656250       AND    50000.00      < 
+   19918.3359375000     
+   50000.00      >    19918.3359375000       AND    50000.00      < 
+   50227.9531250000     
+ kk            4           2           3
+ interpolate3d:           2           2           2           2           3
+           3           3           3
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          23           3           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          22           3           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          22           2           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           1           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          23           2           2
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          23           3           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           2
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          22           3           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           3
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          22           2           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.2 haversine 1           2           4
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          23           2           3
+   50000.00    
+ interpolate3d 5.2 haversine dist
+ interpolate3d 5.2 haversine ii
+ interpolate3d 5.3
+ interpolate3d 5.4
+ locate:
+ susex
+ HERE 5
+  -71.78512       8.236293       50000.00    
+ get_cell_ho:
+ get_cell_vert:
+ get_cell_vert zz                      NaN                     NaN
+   50284.9531250000        57683.0507812500        74533.0312500000     
+   95167.4296875000        122116.117187500     
+   50000.00      >                      NaN  AND    50000.00      < 
+                     NaN
+   50000.00      >                      NaN  AND    50000.00      < 
+   50284.9531250000     
+   50000.00      >    50284.9531250000       AND    50000.00      < 
+   57683.0507812500     
+   50000.00      >    57683.0507812500       AND    50000.00      < 
+   74533.0312500000     
+   50000.00      >    74533.0312500000       AND    50000.00      < 
+   95167.4296875000     
+   50000.00      >    95167.4296875000       AND    50000.00      < 
+   122116.117187500     
+ kk            1 -2147483647 -2147483647
+ get_cell_vert zz                      NaN                     NaN
+   50302.8242187500        57676.6757812500        74518.7265625000     
+   95192.1640625000        122140.898437500     
+   50000.00      >                      NaN  AND    50000.00      < 
+                     NaN
+   50000.00      >                      NaN  AND    50000.00      < 
+   50302.8242187500     
+   50000.00      >    50302.8242187500       AND    50000.00      < 
+   57676.6757812500     
+   50000.00      >    57676.6757812500       AND    50000.00      < 
+   74518.7265625000     
+   50000.00      >    74518.7265625000       AND    50000.00      < 
+   95192.1640625000     
+   50000.00      >    95192.1640625000       AND    50000.00      < 
+   122140.898437500     
+ kk            2 -2147483647 -2147483647
+ get_cell_vert zz                      NaN                     NaN
+   50306.6015625000        57680.1679687500        74505.2187500000     
+   95195.4218750000        122131.835937500     
+   50000.00      >                      NaN  AND    50000.00      < 
+                     NaN
+   50000.00      >                      NaN  AND    50000.00      < 
+   50306.6015625000     
+   50000.00      >    50306.6015625000       AND    50000.00      < 
+   57680.1679687500     
+   50000.00      >    57680.1679687500       AND    50000.00      < 
+   74505.2187500000     
+   50000.00      >    74505.2187500000       AND    50000.00      < 
+   95195.4218750000     
+   50000.00      >    95195.4218750000       AND    50000.00      < 
+   122131.835937500     
+ kk            3 -2147483647 -2147483647
+ get_cell_vert zz                      NaN                     NaN
+   50294.9648437500        57702.4648437500        74540.2968750000     
+   95201.6328125000        122135.546875000     
+   50000.00      >                      NaN  AND    50000.00      < 
+                     NaN
+   50000.00      >                      NaN  AND    50000.00      < 
+   50294.9648437500     
+   50000.00      >    50294.9648437500       AND    50000.00      < 
+   57702.4648437500     
+   50000.00      >    57702.4648437500       AND    50000.00      < 
+   74540.2968750000     
+   50000.00      >    74540.2968750000       AND    50000.00      < 
+   95201.6328125000     
+   50000.00      >    95201.6328125000       AND    50000.00      < 
+   122135.546875000     
+ kk            4 -2147483647 -2147483647
+ interpolate3d: -2147483647 -2147483647 -2147483647 -2147483647 -2147483647
+ -2147483647 -2147483647 -2147483647
+ interpolate3d 5.1
+ interpolate3d 5.2
+ interpolate3d 5.2 haversine 1           1           1
+ interpolate3d 5.2 haversine 2
+ interpolate3d 5.2 haversine dhgt          23          23 -2147483647
+   50000.00    
+forrtl: severe (174): SIGSEGV, segmentation fault occurred
+Image              PC                Routine            Line        Source             
+lpt.exe            0000000000444313  for__signal_handl     Unknown  Unknown
+libpthread-2.17.s  00002B29CE5FC630  Unknown               Unknown  Unknown
+lpt.exe            000000000041B20F  Unknown               Unknown  Unknown
+lpt.exe            00000000004262DB  Unknown               Unknown  Unknown
+lpt.exe            000000000040C512  Unknown               Unknown  Unknown
+libc-2.17.so       00002B29CE82B555  __libc_start_main     Unknown  Unknown
+lpt.exe            000000000040C429  Unknown               Unknown  Unknown

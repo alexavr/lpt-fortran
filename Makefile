@@ -16,9 +16,10 @@ PROG = lpt.exe
 VPATH = ./src/
 
 # Compiler Flags
-FFLAGS = -I$(NETCDF)/include -I$(DATETIME)/include
-FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff
-LINKER = $(FC) -o
+FFLAGS = -I$(NETCDF)/include -I$(DATETIME)/include 
+# FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff  -qopenmp
+FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff 
+LINKER = $(FC) -o 
 
 # Object files
 OBJS = module_globals.o module_io.o module_grid.o module_timetools.o lpt.o
@@ -38,7 +39,8 @@ $(PROG): $(OBJS)
 	@echo "--------------------------------------"
 	@echo "Compiling the file $<"
 	@echo "--------------------------------------"
-	$(FC) -c $(FFLAGS) $<
+# 	$(FC) -c  -qopenmp $(FFLAGS) $< 
+	$(FC) -c  $(FFLAGS) $< 
 	
 # Clean up everything
 clean:

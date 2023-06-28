@@ -47,6 +47,7 @@ pt_file = ncidp.out_file
 zfilename = ncidp.pwd+ncidp.src_file
 ncidz = Dataset(zfilename,"r")
 
+
 try:
     lon2d = ncidz.variables['XLONG'][:]
     lat2d = ncidz.variables['XLAT'][:]
@@ -107,7 +108,7 @@ else: accuracy = "Coarse scheme"
 
 for it in range(0,ntime): # ntime
 
-    print(ptime_convert[it], end='\r', flush=True)
+    print(ptime_convert[it].replace(microsecond=0), end='\r', flush=True)
     # print(ptime_convert[it])
 
     lons = data[it,:,0]
@@ -132,7 +133,7 @@ for it in range(0,ntime): # ntime
     m.drawmeridians(np.arange(-180,180.,5.),linestyle='--',linewidth=0.1)
     m.fillcontinents('tab:gray', alpha = 0.7)
 
-    titlestrL = "%s"%(ptime_convert[it])
+    titlestrL = "%s"%(ptime_convert[it].replace(microsecond=0))
     titlestrR = "%4.1f%%"%((float(lons.count())/float(lons.shape[0])*100.))
     
     plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
@@ -159,7 +160,7 @@ for it in range(0,ntime): # ntime
                    vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], latlon=True)
 
     clb = fig.colorbar(cs)
-    clb.set_label('Particle height [km]', labelpad=-33, fontsize=5, y=0.5, rotation=90)
+    clb.set_label(f'Pressure [Pa]', labelpad=-33, fontsize=5, y=0.5, rotation=90)
 
     figname = f"grid_{filename}_{it:07d}.png"
     # plt.show()

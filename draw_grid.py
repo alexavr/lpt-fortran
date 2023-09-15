@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 # 
-from netCDF4 import Dataset
-import netCDF4
 import numpy as np # conda install -c anaconda numpy
 from mpl_toolkits.basemap import Basemap # conda install -c conda-forge matplotlib
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
-from wrf import smooth2d
 import sys
 import cmaps  # conda install -c conda-forge cmaps
+import xarray as xr
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
+from scipy.ndimage import gaussian_filter
+import pandas as pd 
 
 ### CHANGE THIS ################################################################
 
-tracking = True    # draw recent path on every particle
+tracking = False    # draw recent path on every particle
 if tracking: 
     ltrajectory = 24 # the path length (in hours)
 
@@ -38,139 +40,134 @@ def get_z_ind( ncid, zarray ):
 
 filename = sys.argv[1]
 
-ncidp = Dataset(filename,"r")
-time  = ncidp.variables['time']
-data  = ncidp.variables["points"][:]
+ds_trk = xr.open_dataset(filename)
+ds_src = xr.open_dataset(ds_trk.src_file)
 
-pt_file = ncidp.out_file
+time_trk = [ pd.to_datetime(str(i.values)) for i in ds_trk.time]
+time_src = [ pd.to_datetime(str(i.values)) for i in ds_src.time] 
 
-zfilename = ncidp.pwd+ncidp.src_file
-ncidz = Dataset(zfilename,"r")
-
+data  = ds_trk.points
 
 try:
-    lon2d = ncidz.variables['XLONG'][:]
-    lat2d = ncidz.variables['XLAT'][:]
+    lon2d = ds_src.XLONG
+    lat2d = ds_src.XLAT
 except:
-    lat1d = ncidz.variables["latitude"][:]
-    lon1d = ncidz.variables["longitude"][:]
+    lat1d = ds_src.latitude
+    lon1d = ds_src.longitude
     lon2d, lat2d = np.meshgrid(lon1d,lat1d)
     del lat1d, lon1d
 
-ztime = ncidz.variables['time']
-ptime = ncidp.variables['time']
-ztime_convert = netCDF4.num2date(ztime[:], ztime.units, ztime.calendar)
-ptime_convert = netCDF4.num2date(ptime[:], ptime.units, ptime.calendar)
 
-if tracking:
-    daystep = int((ltrajectory*3600.)/(ptime_convert[1]-ptime_convert[0]).total_seconds())
+# get N timesteps in daystep (1 day)
+if tracking: 
+    daystep = int(ltrajectory*3600./(time_trk[1] - time_trk[0]).total_seconds())
 
-data  = ncidp.variables["points"][:]
-ntime = data.shape[0]
-npts  = data.shape[1]
+ntime = len(time_trk)
+npts  = len(data[0,:,0])
 
-horizontal = ncidp.horizontal # if TRUE than it is 3D simulation
-if horizontal:
-    levels = ncidz.variables['level']
-    level_real = ncidp.getncattr('horizontal_level')
+# Получаем уровни по вертикали.
+# Если плоский запуск, то читаем вектор высот (для отрисовки) и актуальную высоту.
+if ds_trk.horizontal:
+    levels = ds_src.level
+    level_real = ds_trk.horizontal_level
     level = np.argmin(np.abs(levels-level_real))
 else:
     levels = data[0,:,2]
-    level = get_z_ind( ncidz, levels )
+    level = np.abs(ds_src.z[0,:,:,:].mean(axis=(1,2)) - levels.mean() ).argmin()
+    level_real = levels[level]
 
-level_min = np.min(levels)
-level_max = np.max(levels)
 
-print(f"Vertical level index {level} and value {levels[level]:.1f} for plot pressure contours")
 
-size = 2.
-llcrnrlat = np.max([np.min(data[:,:,0])-size,-90.])
-urcrnrlat = np.min([np.max(data[:,:,0])+size,+90.])
-llcrnrlon = np.max([np.min(data[:,:,1])-size,-180.])
-urcrnrlon = np.min([np.max(data[:,:,1])+size,180. ])
+# For colorbar
+# level_real = level_real/100
+levs = np.arange(np.floor(ds_src.z.isel(level=level).min()/100), np.ceil(ds_src.z.isel(level=level).max()/100), 4)
 
-# if(urcrnrlat <= 70):
-#     m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
-#                 llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
-# else:
-#     avglon = np.arange(data[:,:,2].any())
-#     m = Basemap(projection='npstere',boundinglat=np.max([np.min(data[:,:,1])-5,60.]),lon_0=avglon,resolution='l')
-
-# Define the NAAD map:
-
-m = Basemap(width=8000000,height=8500000,
-            rsphere=(6378137.00,6356752.3142),\
-            resolution='c',area_thresh=1000.,projection='lcc',\
-            lat_1=45.,lat_2=45,lat_0=45,lon_0=-45.)
-
-if ncidp.accuracy == 1: accuracy = "Accurate scheme"
-else: accuracy = "Coarse scheme"
-
+# Main loop
 for it in range(0,ntime): # ntime
-
-    print(ptime_convert[it].replace(microsecond=0), end='\r', flush=True)
-    # print(ptime_convert[it])
+ 
 
     lons = data[it,:,0]
     lats = data[it,:,1]
     hgts = data[it,:,2]
-    
-    itt = np.where(ztime_convert == ptime_convert[it])[0].tolist()
-    if itt != []: 
-        z = ncidz.variables["z"][itt,level,:,:]/100
-        # levs = np.arange(np.floor(np.quantile(z,0.05)), np.ceil(np.quantile(z,0.95)), 2)
-        levs = np.arange(np.floor(np.min(z)), np.ceil(np.max(z)), 2)
-        smooth_z = smooth2d(z[0,:,:], 6, cenweight=4)
+
+    try:
+        itt = time_src.index(time_trk[it])
+        z = ds_src.z.isel(time=itt,level=level)/100
+        smooth_z = gaussian_filter(z, sigma=1)
         del z
+    except:
+        itt = None
 
-    fig = plt.figure(figsize=(6,4), dpi=300)
-    plt.rcParams.update({'font.size': 6}) 
+    plt.figure(figsize=(6,4), dpi=150)
+
+    proj = ccrs.PlateCarree()
+
+    # ax = plt.axes(projection=ccrs.LambertConformal(
+    #     central_longitude=-45.0,central_latitude=50.0))
+
+    ax = plt.axes(projection=ccrs.NearsidePerspective(
+        central_longitude=-45, central_latitude=45, 
+        satellite_height=39785831, 
+        false_easting=0, false_northing=0, globe=None))
     
-    m.drawcoastlines(linewidth=0.1)
-    m.drawparallels(np.arange(-90.,91.,5.) ,linestyle='--',linewidth=0.1)
-    m.drawmeridians(np.arange(-180,180.,5.),linestyle='--',linewidth=0.1)
-    # m.drawparallels(np.arange(0,80,15),labels=[False,True,False,False])
-    m.drawmeridians(np.arange(-180,180.,5.),linestyle='--',linewidth=0.1)
-    m.fillcontinents('tab:gray', alpha = 0.7)
 
-    titlestrL = "%s"%(ptime_convert[it].replace(microsecond=0))
-    titlestrR = "%4.1f%%"%((float(lons.count())/float(lons.shape[0])*100.))
+
+    ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
+    ax.add_feature(cfeature.LAND, alpha=0.5)
+    ax.add_feature(cfeature.OCEAN, alpha=0.2)
+
+    gl = ax.gridlines(crs=proj,
+                        # draw_labels=True, dms=True, 
+                        # x_inline=False, y_inline=False,  
+                        linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
+    gl.xlabels_top = False
+    gl.ylabels_right = False
+    # gl.xlines = False
+    # gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
+    # gl.xformatter = LONGITUDE_FORMATTER
+    # gl.yformatter = LATITUDE_FORMATTER
+    gl.xlabel_style = {'size': 6} # , 'color': 'gray'
+    gl.ylabel_style = {'size': 6} # , 'color': 'gray'
+    gl.rotate_labels=0
+
+    ax.set_extent([-85, -5, 5, 80], crs=ccrs.PlateCarree())
+
+    # Рисуем поля геопотенциала
+    zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, smooth_z, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
+    zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, smooth_z, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
+    # plt.contourf(smooth_z,transform=proj)
     
-    plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
-    plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
+    cbar = plt.colorbar(zfil, shrink=0.95, pad=0.01)
+    cbar.ax.tick_params(labelsize=6)
+    cbar.set_label('Geopotential height [hPa]', labelpad=-26, fontsize=6, y=0.5, rotation=90)
 
-    if tracking:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=levs,
-            linestyles='-', colors="g", linewidths=0.1, latlon=True)
+    # Разбрасываем точки на текущий момент
+    if ds_trk.horizontal:
+        cs = plt.scatter(lons, lats, color="black", s=[0.6], transform=proj)
     else:
-        cs = m.contour(lon2d, lat2d, smooth_z, levels=levs,
-            linestyles='-', colors="black", linewidths=0.5, latlon=True)
-    
-    cs = m.contourf(lon2d, lat2d, smooth_z, levels=levs, #levels=np.arange(6400, 10501, 100),
-        alpha = 0.5, extend='min', cmap="YlGn_r", latlon=True)
-    
+        cs = plt.scatter(lons, lats, c=hgts, 
+                       vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], transform=proj)
+
+    # Рисуем хвоста за последние ltrajectory шагов
     if tracking:
         ts = it - np.min([daystep,it])
         for ip in range(0,npts):
-            x,y = m(data[ts:it,ip,0], data[ts:it,ip,1])
-            plt.plot(x,y,'-', 
-                color="black", alpha=0.5, linewidth=0.2)
+            plt.plot(data[ts:it,ip,0], data[ts:it,ip,1],'-', color="black", alpha=0.9, linewidth=0.2, transform=proj)
+            # plt.text(data[it,   ip,0], data[   it,ip,1], ip, fontsize=5, transform=proj)
 
-    cs = m.scatter(lons, lats, c=hgts, 
-                   vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], latlon=True)
+    # print(time_trk[it])
+    titlestrL = f"{time_trk[it]}"
+    titlestrR = f"{(float(lons.count())/float(lons.shape[0])*100.):4.1f}%"
+    plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
+    plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
 
-    clb = fig.colorbar(cs)
-    clb.set_label(f'Pressure [Pa]', labelpad=-33, fontsize=5, y=0.5, rotation=90)
+    print(f"{time_trk[it]}   {titlestrR}", end='\r', flush=True)
 
-    figname = f"grid_{filename}_{it:07d}.png"
+    # plt.tight_layout()
+    figname = f"./pics/grid_{filename}_{it:07d}.png"
     # plt.show()
-    fig.savefig(figname)
+    plt.savefig(figname, dpi=150)
     plt.close()
-
-    del lons
-    del lats
-    del hgts
-print("\n DONE!")
 
 print(f"Create video:")
 print(f"ffmpeg -framerate 10 -i grid_{filename}_%07d.png \\"        )

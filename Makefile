@@ -1,12 +1,12 @@
 ################################################
 # Change this part
-NETCDF=/opt/netcdf-4
+#NETCDF=/opt/netcdf-4
 DATETIME=/opt/datetime-fortran-1.6.0
 FC = ifort
 ################################################
 
 ################################################
-# Do not edit part
+# Do not edit the rest!!!
 # (unless you know what you are doing)
 
 # Program Name
@@ -16,10 +16,10 @@ PROG = lpt.exe
 VPATH = ./src/
 
 # Compiler Flags
-FFLAGS = -I$(NETCDF)/include -I$(DATETIME)/include 
-# FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff  -qopenmp
-FLINK = -O3 -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff 
-LINKER = $(FC) -o 
+LINKER = $(FC) 
+INCLUDE = -I$(NETCDF)/include -I$(DATETIME)/include 
+LIBS = -qopenmp -L$(DATETIME)/lib -ldatetime -L$(NETCDF)/lib -lnetcdf -lnetcdff 
+FFLAGS = -O3
 
 # Object files
 OBJS = module_globals.o module_io.o module_grid.o module_timetools.o lpt.o
@@ -31,7 +31,7 @@ $(PROG): $(OBJS)
 	@echo "--------------------------------------"
 	@echo "Creating the executable for the LPT"
 	@echo "--------------------------------------"
-	$(LINKER) $(PROG) $(OBJS) $(FLINK)
+	$(LINKER) -o $(PROG) $(OBJS) $(LIBS)
 	mv *.o *.mod $(VPATH)
 # 	ln -sf $(VPATH)${PROG} .
 
@@ -39,8 +39,7 @@ $(PROG): $(OBJS)
 	@echo "--------------------------------------"
 	@echo "Compiling the file $<"
 	@echo "--------------------------------------"
-# 	$(FC) -c  -qopenmp $(FFLAGS) $< 
-	$(FC) -c  $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $(INCLUDE) $(LIBS) $<
 	
 # Clean up everything
 clean:

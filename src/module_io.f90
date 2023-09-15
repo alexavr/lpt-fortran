@@ -10,6 +10,7 @@ module module_io
 use,intrinsic :: iso_fortran_env,only:real32,real64
 use netcdf
 use module_globals
+use omp_lib
 
 private
 
@@ -18,6 +19,8 @@ public :: save_results
 public :: get_scale
 public :: get_offset
 public :: get_var_xyz
+public :: get_var_xyzt
+public :: get_var_xyt
 public :: get_dims
 public :: get_ndims
 public :: get_attr_str
@@ -111,7 +114,7 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "timestep"   , timestep) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cell_detector", cell_detector) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "accuracy"   , merge(1, 0, accuracy  )) )
-    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "regional"   , merge(1, 0, regional  )) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "global"   , merge(1, 0, global  )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "zoutput"    , merge(1, 0, zoutput   )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_grid"    , merge(1, 0, pt_grid   )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_step"    , pt_step) )
@@ -187,7 +190,7 @@ implicit none
     real(kind=real32),intent(out) :: array(:,:,:)
     integer :: status, var_id, xdim, ydim, zdim
     real(kind=real64) :: scale_factor,add_offset
-    integer(2),dimension(:,:,:),allocatable :: sarray
+    real(kind=real64),dimension(:,:,:),allocatable :: sarray
 
     xdim  = UBOUND(array,1)
     ydim  = UBOUND(array,2)
@@ -202,7 +205,7 @@ implicit none
         allocate( sarray(xdim,ydim,zdim) )
 
         call check( nf90_get_var(ncid, var_id, sarray , start = (/ 1, 1, 1, itime /), count = (/ xdim, ydim, zdim, 1 /) ) )
-        array = float(sarray)*scale_factor+add_offset
+        array = sarray*scale_factor+add_offset
 
         deallocate( sarray )
     else
@@ -212,6 +215,88 @@ implicit none
     ! print*,trim(var_name),var_id,minval(array),maxval(array)
 
 end subroutine get_var_xyz
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Прочитать данные одной горизонтальной плоскости
+subroutine get_var_xyt(ncid,var_name,level,st,tduration,array)
+implicit none
+    integer,intent(in)  :: ncid,st,tduration,level
+    character(len=*), intent(in)  :: var_name
+    real(kind=real32),intent(out) :: array(:,:,:)
+    integer :: status, var_id, dim_id, xdim, ydim, zdim, tdim
+    real(kind=real64) :: scale_factor,add_offset
+    real(kind=real32),dimension(:,:,:),allocatable :: sarray
+    ! real(kind=real32),dimension(:),    allocatable :: levels
+
+    xdim  = UBOUND(array,1)
+    ydim  = UBOUND(array,2)
+    tdim  = UBOUND(array,3)
+
+    ! ! понять какой индекс у этого уровня
+    ! call check( nf90_inq_varid(ncid, "level", var_id) )
+    ! call check( nf90_inq_dimid(ncid, "level", dim_id) )
+    ! call check( nf90_inquire_dimension(ncid = ncid, dimid = dim_id, len = zdim) )
+    ! allocate( levels(zdim) )
+    ! call check( nf90_get_var(ncid, var_id, levels ) )
+
+    ! zloc=minloc(abs(levels-level),1)
+
+    call check( nf90_inq_varid(ncid, trim(var_name), var_id) )
+
+    add_offset = get_offset(ncid,var_id)
+    scale_factor = get_scale(ncid,var_id)
+
+    if(add_offset .eq. 0) add_offset = 1
+    if(scale_factor .eq. 0) scale_factor = 1
+
+    allocate( sarray(xdim,ydim,tdim) )
+
+    call check( nf90_get_var(ncid, var_id, sarray, &
+                    start = (/ 1, 1, level, st /), &
+                    count = (/ xdim, ydim, 1, (tduration) /)   ) )
+    
+    array = sarray*scale_factor+add_offset  ! Unscaling если нужно
+
+    deallocate( sarray )
+    ! deallocate( levels )
+
+    ! print*,trim(var_name),var_id,minval(array),maxval(array)
+
+end subroutine get_var_xyt
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+subroutine get_var_xyzt(ncid,var_name,st,et,array)
+! array has 4D: xdim,ydim,zdim,tdim
+implicit none
+    integer,intent(in)  :: ncid,st,et
+    character(len=*),intent(in)  :: var_name
+    real(kind=real32),intent(out) :: array(:,:,:,:)
+    integer :: status, var_id, xdim, ydim, zdim, tdim
+    real(kind=real64) :: scale_factor,add_offset
+    real(kind=real64),dimension(:,:,:,:),allocatable :: sarray
+
+    xdim  = UBOUND(array,1)
+    ydim  = UBOUND(array,2)
+    zdim  = UBOUND(array,3)
+    tdim  = UBOUND(array,4)
+
+    call check( nf90_inq_varid(ncid, trim(var_name), var_id) )
+
+    add_offset = get_offset(ncid,var_id)
+    scale_factor = get_scale(ncid,var_id)
+
+    if(add_offset .eq. 0) add_offset = 1
+    if(scale_factor .eq. 0) scale_factor = 1
+
+    allocate( sarray(xdim,ydim,zdim,tdim) )
+
+    call check( nf90_get_var(ncid, var_id, sarray, start = (/ 1, 1, 1, st /), count = (/ xdim, ydim, zdim, et /) ) )
+    array = sarray*scale_factor+add_offset
+
+    deallocate( sarray )
+
+    ! print*,trim(var_name),var_id,minval(array),maxval(array)
+
+end subroutine get_var_xyzt
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine get_dims(ncid, lon2d, lat2d, z, time)
 implicit none

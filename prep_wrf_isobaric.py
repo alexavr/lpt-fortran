@@ -43,7 +43,7 @@ def prep_var(ds, name):
 
 print(f"   Infile: {src_filename}")
 
-with open('./namelist.pt') as nml_file:
+with open('./lpt.nml') as nml_file:
 	nml = f90nml.read(nml_file)
 	levels = nml['wrf_prep']['levels']
 

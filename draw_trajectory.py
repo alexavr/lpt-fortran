@@ -1,13 +1,11 @@
+import numpy as np                  # conda install -y -c anaconda numpy
+import matplotlib.pyplot as plt     # conda install -y -c conda-forge matplotlib
 from netCDF4 import Dataset
-import netCDF4
-import numpy as np
-from mpl_toolkits.basemap import Basemap
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.pyplot as plt
+import xarray as xr                 # conda install -y xarray dask netCDF4 bottleneck
+import cartopy.crs as ccrs          # conda install -y -c conda-forge cartopy
+import cartopy.feature as cfeature
+import cmaps                        # conda install -y -c conda-forge cmaps
 import sys
-from datetime import *
-import cmaps
-import xarray as xr
 
 ################################################################################
 
@@ -27,144 +25,51 @@ def get_time_ind( time, time_step_hours ):
 
 filename = sys.argv[1]
 
-ncid = Dataset(filename,"r")
-time = ncid.variables['time']
-data = ncid.variables["points"][:]
+ds_trk = xr.open_dataset(filename)
+ds_src = xr.open_dataset(ds_trk.src_file)
 
-ds = xr.open_dataset(ncid.src_file)
-# vunits = ds.u.vert_units
+horizontal = ds_trk.horizontal # TRUE if it's 2D simulation
 
-horizontal = ncid.horizontal # if TRUE than it is 3D simulation
-try:
-    levels = ds.level
-    levels_name = ds.level.long_name
-    levels_units = ds.level.units
-except:
-    levels = data[0,:,2]
-    levels_name = "model_levels"
-    levels_units = "number"
+levels = ds_src.level
 
-    
-level_min = np.min(levels)
-level_max = np.max(levels)
+level_min = levels.min()
+level_max = levels.max()
 
-
-
-
-time_convert = netCDF4.num2date(time[:], time.units, time.calendar)
-time_ind = get_time_ind(time_convert,0)
-
-npts = data.shape[1]
-ntime = data.shape[0]
-lons_all = data[:,:,0]
-lats_all = data[:,:,1]
-
-size = 2.
-llcrnrlat = np.max([np.min(lats_all)-size,-90.])
-urcrnrlat = np.min([np.max(lats_all)+size,+90.])
-llcrnrlon = np.max([np.min(lons_all)-size,-180.])
-urcrnrlon = np.min([np.max(lons_all)+size,180. ])
-
-
-if(urcrnrlat <= 90):
-    m = Basemap(projection='cyl',llcrnrlat=llcrnrlat,urcrnrlat=urcrnrlat,
-                llcrnrlon=llcrnrlon,urcrnrlon=urcrnrlon,resolution='l')
-else:
-    avglon = np.arange(lons_all.any())
-    m = Basemap(projection='npstere',boundinglat=np.max([llcrnrlat,60.]),lon_0=avglon,resolution='c')
-
+npts = len(ds_trk.n)
+ntime = len(ds_trk.time)
 
 plt.figure(figsize=(6,4), dpi=150)
 
-cs = m.drawcoastlines(linewidth=0.5)
-cs = m.drawparallels(np.arange(-90., 91., 5), linewidth=0.1)
-cs = m.drawmeridians(np.arange(-180,180., 5), linewidth=0.1)
-cs = m.fillcontinents('grey', alpha = 0.2)
+proj = ccrs.PlateCarree()
 
-# boxstr = "start time: %s\nend time  :%s"%(ncid.start_time,ncid.end_time) 
-# titlestr = "No of particles = %d\ndata = %s"%(npts,src_name) 
+ax = plt.axes(projection=proj)
+ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
+ax.add_feature(cfeature.LAND, alpha=0.5)
+ax.add_feature(cfeature.OCEAN, alpha=0.2)
 
-# if ncid.accuracy == 1: accuracy = "Accurate scheme"
-# else: accuracy = "Coarse scheme"
+gl = ax.gridlines(crs=proj,
+                  draw_labels=True, 
+                  linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
+gl.xlabels_top = False
+gl.ylabels_right = False
+# gl.xlines = False
+# gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
+# gl.xformatter = LONGITUDE_FORMATTER
+# gl.yformatter = LATITUDE_FORMATTER
+gl.xlabel_style = {'size': 6} # , 'color': 'gray'
+gl.ylabel_style = {'size': 6} # , 'color': 'gray'
+gl.rotate_labels=0
 
-# if ncid.horizontal == 1: horizontal = "2D"
-# else: horizontal = "3D"
 
-# titlestr = "Data: %s\nstart time: %s\nend time:  %s\n%s (%s), total # of particles = %d"%(src_name,ncid.start_time,ncid.end_time,accuracy,horizontal,npts) 
-# plt.title(titlestr,loc='left', fontsize=6)
+
 
 for ip in range(0,npts):
-    lons = data[:,ip,0]
-    lats = data[:,ip,1]
-    hgts = data[:,ip,2]
+    lons = ds_trk.points[:,ip,0]
+    lats = ds_trk.points[:,ip,1]
+    hgts = ds_trk.points[:,ip,2]
 
-    
-    # time_ip = time[np.where( lons.mask )]
-    # time_dur = (lons.shape[0]-np.sum(lons.mask))*dtime/24 
-    # print( "Time integrated: ",ip, time_dur )
-    
-#     textstr = textstr+"\nip: %d"%ip+" duration (w): %6.4f"%(time_dur)
-     
-    color = "tab:red"
-    linestyle='-'
-#     if(hgts[0] <= 0.5): 
-# #         color = "tab:red"
-#         linestyle='-'
-#     if(hgts[0] > 0.5 and hgts[0] <= 1 ): 
-# #         color = "tab:blue"
-#         linestyle='--'
-#     if(hgts[0] > 1 and hgts[0] <= 3 ): 
-# #         color = "tab:green"
-#         linestyle=':'
-#     if(hgts[0] > 3  ): 
-# #         color = "tab:orange"
-#         linestyle='-.'
-    
-    # label = "%d m (%4.1f days)"%(int(hgts[0]),time_dur)
-    x,y = m(lons, lats)
-    plt.plot(x,y,'-',  color=color, linestyle=linestyle, linewidth=0.7, alpha=0.5)
-    cs = m.scatter(lons[time_ind], lats[time_ind], c=hgts[time_ind], 
-                   vmin=level_min, vmax=level_max, cmap=cmaps.WhiteBlueGreenYellowRed, marker='s',
-                   s=[10.], latlon=True)
+    plt.plot(lons, lats, alpha=1, transform=proj, color="tab:red")
+    # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)
+    plt.scatter(lons[::8], lats[::8], alpha=1, transform=proj, s=10, marker='x',  color="black", zorder=10)
 
-    del lons
-    del lats
-    del hgts
-    # del time_ip
-
-ax = plt.gca()
-
-# props = dict(boxstyle='round', facecolor='white', alpha=0.5) # wheat
-# ax.text(0.05, 0.1, boxstr, transform=ax.transAxes, fontsize=6,
-#         verticalalignment='top', bbox=props)
-
-# ax.legend(loc='lower right',fontsize=4)
-
-from matplotlib.lines import Line2D
-custom_lines = [Line2D([0], [0], color="black",linestyle='-' , lw=1),
-                Line2D([0], [0], color="black",linestyle='--', lw=1),
-                Line2D([0], [0], color="black",linestyle=':' , lw=1),
-                Line2D([0], [0], color="black",linestyle='-.', lw=1)]
-
-# ax.legend(custom_lines, ['0.3 km', '1 km ', '3 km ', '5 km'],
-#           loc='lower right',
-#           title = 'start height',
-#           title_fontsize = 8,
-#           fontsize=8)
-# # ax.legend(custom_lines, ['0.3 km', '1 km ', '3km '],loc='upper right',fontsize=8)
-
-ax = plt.gca()
-im = ax.imshow(np.arange(100).reshape((10,10)), vmin=level_min, vmax=level_max, cmap=cmaps.WhiteBlueGreenYellowRed)
-divider = make_axes_locatable(ax)
-cax = divider.append_axes("right", size="5%", pad=0.05)
-cbar = plt.colorbar(im, cax=cax, label=f"{levels_name} ({levels_units})")
-cbar.ax.tick_params(labelsize=5) 
 plt.show()
-
-# figname = "%s.png"%(filename)
-# plt.savefig(figname)
-# plt.close()
-
-# props = dict(boxstyle='round', facecolor='white', alpha=0.5) # wheat
-# ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=6,
-#         verticalalignment='top', bbox=props)

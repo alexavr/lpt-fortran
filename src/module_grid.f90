@@ -30,13 +30,14 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 
-subroutine get_cell_hor ( point, lon2d, lat2d, ij)
+subroutine get_cell_hor ( point1d, lon2d, lat2d, ij, mask)
 implicit none ! religion first
-real(kind=real32), intent(inout) :: point(3)
-real(kind=real32), intent(in) :: lon2d(:,:), lat2d(:,:)
-integer, intent(out) :: ij(4,2)
+real(kind=real32), intent(inout) :: point1d(3)
+real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
+logical,           intent(in)    :: mask(:,:)
+integer,           intent(out)   :: ij(4,2)
 real(kind=real64),dimension(:,:),allocatable :: dist
-real(kind=real64) :: grid(3,3,5) = dFillValue
+real(kind=real64)                :: grid(3,3,5) = dFillValue
 
 integer :: xdim, ydim, npoints
 integer :: ii
@@ -44,7 +45,10 @@ real(kind=real32) :: plon, plat, dist_min
 logical :: south, north, east, west
 logical :: skip = .false.
 
-    skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
+! !$omp critical
+
+    skip = ( count( point1d.eq.fFillValue ) .NE. 0 )
+
 
     ij = iFillValue
 
@@ -52,8 +56,9 @@ logical :: skip = .false.
 
     if(.not.skip) then
 
-        plon = point(1)
-        plat = point(2)
+
+        plon = point1d(1)
+        plat = point1d(2)
 
         xdim = ubound(lon2d,1)
         ydim = ubound(lon2d,2)
@@ -66,7 +71,7 @@ logical :: skip = .false.
 ! print*,' *** 4.3 lon2d:', minval(lon2d), maxval(lon2d)
 ! print*,' *** 4.3 lat2d:', minval(lat2d), maxval(lat2d)
 ! print*,' *** 4.3 plon, plat:', plon, plat
-        call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+      call get_grid(dist, lon2d, lat2d, plon, plat, grid)
 ! print*,' *** 4.4', grid
 
         if(cell_detector.eq.0) then
@@ -79,20 +84,33 @@ logical :: skip = .false.
             stop
         end if
 
-! print*,' *** 4.5', ij
+        skip = ( count( ij.eq.iFillValue ) .NE. 0 ) 
 
-        ! If point reached the border, that loosing it
-        if(regional) then
-            west  = (count( ij(:,1).EQ.1 ) .NE. 0)
-            south = (count( ij(:,2).EQ.1 ) .NE. 0)
-            east  = (count( ij(:,1).EQ.xdim ) .NE. 0)
-            north = (count( ij(:,2).EQ.ydim ) .NE. 0)
-            if( south .or. north .or. east .or. west ) point = fFillValue
+        if (skip) then
+            point1d = fFillValue
+        else
+
+            if(.not.global) then ! If point reached the border, that loosing it
+                west  = (count( ij(:,1).EQ.1 ) .NE. 0)
+                south = (count( ij(:,2).EQ.1 ) .NE. 0)
+                east  = (count( ij(:,1).EQ.xdim ) .NE. 0)
+                north = (count( ij(:,2).EQ.ydim ) .NE. 0)
+                if( south .or. north .or. east .or. west ) point1d = fFillValue
+            end if
+
+            skip = ( mask( ij(1,1),ij(1,2)) .OR. mask( ij(2,1),ij(2,2)) .OR. &
+                     mask( ij(3,1),ij(3,2)) .OR. mask( ij(4,1),ij(4,2))  )
+            ! print*,skip
+            if(skip) point1d = fFillValue ! If point reached the missing area
+        
         end if
 
         deallocate (dist)
 
+
     end if
+
+! !$omp end critical
 
 ! print*,' *** 4.6', point
 
@@ -285,7 +303,7 @@ implicit none ! religion first
 
 
     ! if its the N/S Pole - we need to point the y-direction
-    if(.not. regional) then
+    if(global) then
         if(lat2d(ii, jj) == 90 .or. lat2d(ii, jj) == -90) then
             tmp1 = minloc( abs(lon2d(:, jj)-plon) )
             ii = tmp1(1)
@@ -302,10 +320,10 @@ implicit none ! religion first
 ! print*,' *** 4.3.2', iii, iiip1, iiim1, jjj, jjjp1, jjjm1
 
 
-   if(regional) then
-        
-        ! If closest grid is at the border, than loose the particle else do:
-        if ((ii /= 1) .or. (ii /= xdim) .or. (jj /= 1) .or. (jj /= ydim)) then
+    if( .not. global ) then
+
+       ! If closest grid is at the border, than loose the particle else do:
+        if (.not. (((ii == 1) .or. (ii == xdim) .or. (jj == 1) .or. (jj == ydim)))) then
             grid(3,1,:) = (/ dble(iiim1), dble(jjj+1), dble(lon2d(iiim1,jjj+1)), dble(lat2d(iiim1,jjj+1)), dist(iiim1,jjj+1) /)
             grid(3,2,:) = (/ dble(iii  ), dble(jjj+1), dble(lon2d(iii  ,jjj+1)), dble(lat2d(iii  ,jjj+1)), dist(iii  ,jjj+1) /)
             grid(3,3,:) = (/ dble(iiip1), dble(jjj+1), dble(lon2d(iiip1,jjj+1)), dble(lat2d(iiip1,jjj+1)), dist(iiip1,jjj+1) /)
@@ -519,15 +537,15 @@ implicit none ! religion first
 end subroutine interpolate3d
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !   ADD DESCRIPTION 
-subroutine interpolate2d(point, u, v, ij, &
+subroutine interpolate2d(point1d, u, v, ij, &
                             lon2d, lat2d, &
-                            pu, pv, pw)
+                            pu, pv)
 implicit none ! religion first
-    real(kind=real32), intent(inout) :: point(3)
+    real(kind=real32), intent(in) :: point1d(3)
     real(kind=real32), intent(in)    :: u(:,:),v(:,:)
     real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
     integer, intent(in)    :: ij(:,:)
-    real(kind=real32), intent(out)   :: pu, pv, pw
+    real(kind=real32), intent(out)   :: pu, pv
     logical :: skip = .false.
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: dlon, dlat, dhgt
@@ -536,13 +554,14 @@ implicit none ! religion first
     real(kind=real32) :: dp, dz
     real(kind=real64) :: sum_dist
 
-    skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
+    skip = ( count( point1d.eq.fFillValue ) .NE. 0 )
+    ! skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
 
     if(.not.skip) then
 
-        plon = point(1)
-        plat = point(2)
-        phgt = point(3)
+        plon = point1d(1)
+        plat = point1d(2)
+        phgt = point1d(3)
 
         nn = ubound(ij,1)
         ndist = nn
@@ -563,11 +582,17 @@ implicit none ! religion first
 
         pu = 0.
         pv = 0.
-        pw = 0.
         ii = 1
         do in = 1, nn
-            pu = pu + wgt(ii)*u( ij(in,1),ij(in,2) )
-            pv = pv + wgt(ii)*v( ij(in,1),ij(in,2) )
+            if ( u( ij(in,1),ij(in,2) ).EQ.fFillValue .OR. v( ij(in,1),ij(in,2) ).EQ.fFillValue ) then
+                pu = fFillValue
+                pv = fFillValue
+            else
+                pu = pu + wgt(ii)*u( ij(in,1),ij(in,2) )
+                pv = pv + wgt(ii)*v( ij(in,1),ij(in,2) )
+            endif
+            
+
             ! print*,pu,pv,wgt(ii),ij(in,1),ij(in,2),u( ij(in,1),ij(in,2) )
             ii = ii + 1
         end do
@@ -594,17 +619,18 @@ implicit none
 
 end function earth_radius
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Поиск координат частицы исходя из прошых координат и скорости точки
 ! dt - in min
-subroutine locate(point, pu, pv, pw, dt)
+subroutine locate(point1d, pu, pv, pw, dt)
 implicit none ! religion first
-    real(kind=real32), intent(inout) :: point(3)
+    real(kind=real32), intent(inout) :: point1d(3)
     real(kind=real32), intent(in)    :: pu, pv, pw 
     real(kind=real32), intent(in)    :: dt 
     logical :: skip = .false.
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: R
 
-    skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
+    skip = ( count( point1d.eq.fFillValue ) .NE. 0 )
 
     if(.not.skip) then
 
@@ -613,17 +639,18 @@ implicit none ! religion first
         phgt = fFillValue
 
         ! R = 6371.0088
-        R = earth_radius(point(2))
+        R = earth_radius(point1d(2))
         R = R*1000.d0
 
-        plon = point(1) + pu*(dt*60.d0)/(pi*R/180.d0*cos(point(2)*pi/180.d0))
-        plat = point(2) + pv*(dt*60.d0)/(pi*R/180.d0)
-        phgt = point(3) + pw*(dt*60.d0)
+        plon = point1d(1) + pu*60*dt/(pi*R/180.d0*cos(point1d(2)*pi/180.d0))
+        plat = point1d(2) + pv*60*dt/(pi*R/180.d0)
+        phgt = point1d(3) + pw*60*dt
+        ! print*,plon,plat
 
         ! Forbits to go over abs(360)
         if (abs(plon) > 360) plon = mod(plon,360.)
 
-        ! FIX THIS!!!!
+        ! Если вылетели выше полюса, то переходим в другое полушарие
         if (plat.gt.90) then 
             plat = 180. - plat
             plon = plon - 180.
@@ -632,15 +659,16 @@ implicit none ! religion first
             plon = plon - 180.
         end if
 
+        ! придерживаемся -180..+180 координатной сетки
         if (plon .gt. 180) then 
             plon = plon - 360.
         else if (plon .lt. -180) then
             plon = plon + 360.
         end if
 
-        point(1) = plon
-        point(2) = plat
-        point(3) = phgt
+        point1d(1) = plon
+        point1d(2) = plat
+        point1d(3) = phgt
 
     end if
 

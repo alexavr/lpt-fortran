@@ -10,7 +10,7 @@
 /
 
 &scheme 
- accuracy = .TRUE.,       ! False - Coarse scheme; True - Fine scheme (Interpolates between time step)
+ accuracy = .FALSE.,       ! False - Coarse scheme; True - Fine scheme (Interpolates between time step)
  timestep = 15,            ! interpolation step size (in MINUTES) if accuracy
  cell_detector = 1         ! 0 - nearest neighbor ; 1 - trianlge method
  horizontal = .TRUE.,      ! Default is FALSE

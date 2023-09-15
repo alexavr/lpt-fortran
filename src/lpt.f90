@@ -45,6 +45,7 @@ program lpt
   ! real(kind=real32),dimension(:,:,:,:),allocatable :: u1,v1,w1,z1
   ! real(kind=real32),dimension(:,:,:,:),allocatable :: u2,v2,w2,z2
   real(kind=real32) :: pu, pv, pw
+  real(kind=real32) :: prg
 
   ! For interpolation used rodust scheme:
   ! horisontal: min distance to 4 points (x,y) [ij(4,2)]
@@ -222,14 +223,13 @@ program lpt
 
   outer: do ipoint = ps, pe
 
-    if (tid .EQ. 0) then
-      write(*,'("   * * Progress appoximatley ",f5.1," % ")') float(ipoint)/float(pe-ps+1)*100. ! minval((/float(ipoint)/float(pe-ps+1)*100.,100./))
-    endif
+    prg = float(ipoint)/float(pe-ps+1)*100.
+    if (tid .EQ. 0) write(*,'("   * * Progress appoximatley ",f5.1," % ")')  prg
 
 ! print*, ipoint
     if (horizontal) then ! Если считаем только на проскости, то
 
-! print*, "horizontal"
+print*, "horizontal"
       inner: do itime = 1, duration*ntimesteps+1
 
 ! print*, itime

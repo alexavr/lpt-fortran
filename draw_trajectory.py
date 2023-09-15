@@ -29,6 +29,7 @@ ds_trk = xr.open_dataset(filename)
 ds_src = xr.open_dataset(ds_trk.src_file)
 
 horizontal = ds_trk.horizontal # TRUE if it's 2D simulation
+ideal_case = ds_trk.ideal_case # TRUE if it's ij-coordinate system
 
 levels = ds_src.level
 
@@ -38,38 +39,55 @@ level_max = levels.max()
 npts = len(ds_trk.n)
 ntime = len(ds_trk.time)
 
-plt.figure(figsize=(6,4), dpi=150)
 
-proj = ccrs.PlateCarree()
+if ideal_case:
 
-ax = plt.axes(projection=proj)
-ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
-ax.add_feature(cfeature.LAND, alpha=0.5)
-ax.add_feature(cfeature.OCEAN, alpha=0.2)
+    plt.figure(figsize=(6,4), dpi=150)
 
-gl = ax.gridlines(crs=proj,
-                  draw_labels=True, 
-                  linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
-gl.xlabels_top = False
-gl.ylabels_right = False
-# gl.xlines = False
-# gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 6} # , 'color': 'gray'
-gl.ylabel_style = {'size': 6} # , 'color': 'gray'
-gl.rotate_labels=0
+    for ip in range(0,npts):
+        lons = ds_trk.points[:,ip,0]
+        lats = ds_trk.points[:,ip,1]
+        hgts = ds_trk.points[:,ip,2]
+
+        plt.plot(lons, lats, alpha=1, color="tab:red")
+        # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)
+        # plt.scatter(lons[::8], lats[::8], alpha=1, s=10, marker='x',  color="black", zorder=10)
 
 
+else:
+
+    plt.figure(figsize=(6,4), dpi=150)
+
+    proj = ccrs.PlateCarree()
+
+    ax = plt.axes(projection=proj)
+    ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
+    ax.add_feature(cfeature.LAND, alpha=0.5)
+    ax.add_feature(cfeature.OCEAN, alpha=0.2)
+
+    gl = ax.gridlines(crs=proj,
+                      draw_labels=True, 
+                      linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
+    gl.xlabels_top = False
+    gl.ylabels_right = False
+    # gl.xlines = False
+    # gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
+    # gl.xformatter = LONGITUDE_FORMATTER
+    # gl.yformatter = LATITUDE_FORMATTER
+    gl.xlabel_style = {'size': 6} # , 'color': 'gray'
+    gl.ylabel_style = {'size': 6} # , 'color': 'gray'
+    gl.rotate_labels=0
 
 
-for ip in range(0,npts):
-    lons = ds_trk.points[:,ip,0]
-    lats = ds_trk.points[:,ip,1]
-    hgts = ds_trk.points[:,ip,2]
 
-    plt.plot(lons, lats, alpha=1, transform=proj, color="tab:red")
-    # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)
-    plt.scatter(lons[::8], lats[::8], alpha=1, transform=proj, s=10, marker='x',  color="black", zorder=10)
+
+    for ip in range(0,npts):
+        lons = ds_trk.points[:,ip,0]
+        lats = ds_trk.points[:,ip,1]
+        hgts = ds_trk.points[:,ip,2]
+
+        plt.plot(lons, lats, alpha=1, transform=proj, color="tab:red")
+        # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)
+        plt.scatter(lons[::8], lats[::8], alpha=1, transform=proj, s=10, marker='x',  color="black", zorder=10)
 
 plt.show()

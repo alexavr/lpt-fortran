@@ -42,10 +42,15 @@ def prep_var(ds, name):
 	return ds
 
 print(f"   Infile: {src_filename}")
+file_name = Path(src_filename).stem
+file_name_split = file_name.split("_")
+outfile = f"_pt_{file_name_split[2]}_{file_name_split[3]}.nc"
+print(f"  Outfile: {outfile}")
 
 with open('./lpt.nml') as nml_file:
 	nml = f90nml.read(nml_file)
 	levels = nml['wrf_prep']['levels']
+	cartesian = nml['data']['cartesian_grid']
 
 ds = xr.open_dataset(src_filename)
 f = Dataset(src_filename)
@@ -73,16 +78,15 @@ print(" * Reading geopotential...")
 z = wrf.getvar(f, "geopotential",wrf.ALL_TIMES)
 z = wrf.interplevel(z, p, levels)
 
-file_name = Path(src_filename).stem
-file_name_split = file_name.split("_")
-outfile = f"_pt_{file_name_split[2]}_{file_name_split[3]}.nc"
-
 lon2d = prep_var(lon2d, "XLONG")
 lat2d = prep_var(lat2d, "XLAT")
+
 u = prep_var(u, "u")
 v = prep_var(v, "v")
 w = prep_var(w, "w")
 z = prep_var(z, "z")
+lon2d = prep_var(lon2d, "XLONG")
+lat2d = prep_var(lat2d, "XLAT")
 
 u.to_netcdf(outfile)
 v.to_netcdf(outfile, mode='a')

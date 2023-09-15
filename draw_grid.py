@@ -98,73 +98,115 @@ for it in range(0,ntime): # ntime
     except:
         itt = None
 
+
     plt.figure(figsize=(6,4), dpi=150)
 
-    proj = ccrs.PlateCarree()
+    if ds_trk.ideal_case:
 
-    # ax = plt.axes(projection=ccrs.LambertConformal(
-    #     central_longitude=-45.0,central_latitude=50.0))
+        plt.xlim([0, ds_src.dims['west_east']]) 
+        plt.ylim([0, ds_src.dims['south_north']]) 
 
-    ax = plt.axes(projection=ccrs.NearsidePerspective(
-        central_longitude=-45, central_latitude=45, 
-        satellite_height=39785831, 
-        false_easting=0, false_northing=0, globe=None))
-    
+        # # Рисуем поля геопотенциала
+        # zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, smooth_z, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
+        # zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, smooth_z, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
+        # # plt.contourf(smooth_z,transform=proj)
+        
+        # cbar = plt.colorbar(zfil, shrink=0.95, pad=0.01)
+        # cbar.ax.tick_params(labelsize=6)
+        # cbar.set_label('Geopotential height [hPa]', labelpad=-26, fontsize=6, y=0.5, rotation=90)
+
+        # Разбрасываем точки на текущий момент
+        if ds_trk.horizontal:
+            cs = plt.scatter(lons, lats, color="black", s=[0.6])
+        else:
+            cs = plt.scatter(lons, lats, c=hgts, 
+                           vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6])
+
+        # Рисуем хвоста за последние ltrajectory шагов
+        if tracking:
+            ts = it - np.min([daystep,it])
+            for ip in range(0,npts):
+                plt.plot(data[ts:it,ip,0], data[ts:it,ip,1],'-', color="black", alpha=0.9, linewidth=0.2)
+                # plt.text(data[it,   ip,0], data[   it,ip,1], ip, fontsize=5, transform=proj)
 
 
-    ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
-    ax.add_feature(cfeature.LAND, alpha=0.5)
-    ax.add_feature(cfeature.OCEAN, alpha=0.2)
+        ax = plt.gca()
+        ax.set_aspect('equal', adjustable='box')
 
-    gl = ax.gridlines(crs=proj,
-                        # draw_labels=True, dms=True, 
-                        # x_inline=False, y_inline=False,  
-                        linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
-    gl.xlabels_top = False
-    gl.ylabels_right = False
-    # gl.xlines = False
-    # gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
-    # gl.xformatter = LONGITUDE_FORMATTER
-    # gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 6} # , 'color': 'gray'
-    gl.ylabel_style = {'size': 6} # , 'color': 'gray'
-    gl.rotate_labels=0
+        # print(time_trk[it])
+        titlestrL = f"{time_trk[it]}"
+        titlestrR = f"{(float(lons.count())/float(lons.shape[0])*100.):4.1f}%"
+        plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
+        plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
 
-    ax.set_extent([-85, -5, 5, 80], crs=ccrs.PlateCarree())
-
-    # Рисуем поля геопотенциала
-    zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, smooth_z, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
-    zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, smooth_z, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
-    # plt.contourf(smooth_z,transform=proj)
-    
-    cbar = plt.colorbar(zfil, shrink=0.95, pad=0.01)
-    cbar.ax.tick_params(labelsize=6)
-    cbar.set_label('Geopotential height [hPa]', labelpad=-26, fontsize=6, y=0.5, rotation=90)
-
-    # Разбрасываем точки на текущий момент
-    if ds_trk.horizontal:
-        cs = plt.scatter(lons, lats, color="black", s=[0.6], transform=proj)
     else:
-        cs = plt.scatter(lons, lats, c=hgts, 
-                       vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], transform=proj)
 
-    # Рисуем хвоста за последние ltrajectory шагов
-    if tracking:
-        ts = it - np.min([daystep,it])
-        for ip in range(0,npts):
-            plt.plot(data[ts:it,ip,0], data[ts:it,ip,1],'-', color="black", alpha=0.9, linewidth=0.2, transform=proj)
-            # plt.text(data[it,   ip,0], data[   it,ip,1], ip, fontsize=5, transform=proj)
 
-    # print(time_trk[it])
-    titlestrL = f"{time_trk[it]}"
-    titlestrR = f"{(float(lons.count())/float(lons.shape[0])*100.):4.1f}%"
-    plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
-    plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
+        proj = ccrs.PlateCarree()
+
+        # ax = plt.axes(projection=ccrs.LambertConformal(
+        #     central_longitude=-45.0,central_latitude=50.0))
+
+        ax = plt.axes(projection=ccrs.NearsidePerspective(
+            central_longitude=-45, central_latitude=45, 
+            satellite_height=39785831, 
+            false_easting=0, false_northing=0, globe=None))
+        
+
+
+        ax.coastlines('110m',linewidth=0.2, alpha=1, color="black")
+        ax.add_feature(cfeature.LAND, alpha=0.5)
+        ax.add_feature(cfeature.OCEAN, alpha=0.2)
+
+        gl = ax.gridlines(crs=proj,
+                            # draw_labels=True, dms=True, 
+                            # x_inline=False, y_inline=False,  
+                            linewidth=0.5, linestyle=":", color='gray', alpha=0.5)
+        gl.xlabels_top = False
+        gl.ylabels_right = False
+        # gl.xlines = False
+        # gl.xlocator = mticker.FixedLocator([-180, -45, 0, 45, 180])
+        # gl.xformatter = LONGITUDE_FORMATTER
+        # gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 6} # , 'color': 'gray'
+        gl.ylabel_style = {'size': 6} # , 'color': 'gray'
+        gl.rotate_labels=0
+
+        ax.set_extent([-85, -5, 5, 80], crs=ccrs.PlateCarree())
+
+        # Рисуем поля геопотенциала
+        zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, smooth_z, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
+        zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, smooth_z, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
+        # plt.contourf(smooth_z,transform=proj)
+        
+        cbar = plt.colorbar(zfil, shrink=0.95, pad=0.01)
+        cbar.ax.tick_params(labelsize=6)
+        cbar.set_label('Geopotential height [hPa]', labelpad=-26, fontsize=6, y=0.5, rotation=90)
+
+        # Разбрасываем точки на текущий момент
+        if ds_trk.horizontal:
+            cs = plt.scatter(lons, lats, color="black", s=[0.6], transform=proj)
+        else:
+            cs = plt.scatter(lons, lats, c=hgts, 
+                           vmin=level_min, vmax=level_max, cmap=cmaps.BlueYellowRed, s=[0.6], transform=proj)
+
+        # Рисуем хвоста за последние ltrajectory шагов
+        if tracking:
+            ts = it - np.min([daystep,it])
+            for ip in range(0,npts):
+                plt.plot(data[ts:it,ip,0], data[ts:it,ip,1],'-', color="black", alpha=0.9, linewidth=0.2, transform=proj)
+                # plt.text(data[it,   ip,0], data[   it,ip,1], ip, fontsize=5, transform=proj)
+
+        # print(time_trk[it])
+        titlestrL = f"{time_trk[it]}"
+        titlestrR = f"{(float(lons.count())/float(lons.shape[0])*100.):4.1f}%"
+        plt.title(titlestrL,loc='left', fontsize=6, y=0.98)
+        plt.title(titlestrR,loc='right', fontsize=6, y=0.98)
 
     print(f"{time_trk[it]}   {titlestrR}", end='\r', flush=True)
 
     # plt.tight_layout()
-    figname = f"./pics/grid_{filename}_{it:07d}.png"
+    figname = f"./grid_{filename}_{it:07d}.png"
     # plt.show()
     plt.savefig(figname, dpi=150)
     plt.close()

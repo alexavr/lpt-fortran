@@ -29,7 +29,7 @@ public :: locate
 contains 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 
+! получаем координаты 4-х окружающих точек
 subroutine get_cell_hor ( point1d, lon2d, lat2d, ij, mask)
 implicit none ! religion first
 real(kind=real32), intent(inout) :: point1d(3)
@@ -66,13 +66,18 @@ logical :: skip = .false.
 
         allocate( dist(xdim, ydim) ) 
 
-! print*,' *** 4.2', xdim, ydim, npoints
-        dist = haversine(lon2d, lat2d, plon, plat)
-! print*,' *** 4.3 lon2d:', minval(lon2d), maxval(lon2d)
-! print*,' *** 4.3 lat2d:', minval(lat2d), maxval(lat2d)
-! print*,' *** 4.3 plon, plat:', plon, plat
-      call get_grid(dist, lon2d, lat2d, plon, plat, grid)
-! print*,' *** 4.4', grid
+        if (cartesian_grid) then ! Если сетка равных расстояний, то считаем обычным Пифагором
+
+            ! ПИФАГОР
+            dist = sqrt( (lon2d-plon)**2 + (lat2d - plat)**2)
+            call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+
+        else ! иначе считаем на сфере честно
+
+            dist = haversine(lon2d, lat2d, plon, plat)    
+            call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+
+        endif
 
         if(cell_detector.eq.0) then
             ! print*,"Simple scheme"
@@ -170,8 +175,13 @@ implicit none ! religion first
         end do
 
         do ic = 1, ncells
-            darea(ic) = darea_triangle( plon, plat, &
-                cell(ic,:,3), cell(ic,:,4) )
+
+            if (cartesian_grid) then
+                darea(ic) = darea_triangle_cartesian( plon, plat, cell(ic,:,3), cell(ic,:,4) )
+            else
+                darea(ic) = darea_triangle( plon, plat, cell(ic,:,3), cell(ic,:,4) )
+            endif
+
         end do
 
         ic_min = minloc(darea)
@@ -235,6 +245,61 @@ implicit none ! religion first
 
 end function darea_triangle
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! для равномерной по расстоянию сетки
+real(kind=real64) function darea_triangle_cartesian( plon, plat, lons1d, lats1d)
+implicit none ! religion first
+    real(kind=real32), intent(in) :: plon, plat
+    real(kind=real32), intent(in) :: lons1d(:), lats1d(:)
+
+    real(kind=real32) :: x0, x1, x2, x3, x4 
+    real(kind=real32) :: y0, y1, y2, y3, y4 
+    real(kind=real64) :: a_x, a_y, b_x, b_y, c_x, c_y, d_x, d_y
+    real(kind=real64) :: ao_x, ao_y, bo_x, bo_y, co_x, co_y, do_x, do_y
+    real(kind=real64) :: Sabc,Scda,Saob,Sboc,Scod,Sdoa,Sabcd,Ssum
+
+    x0 = plon
+    x1 = lons1d(1)
+    x2 = lons1d(2)
+    x3 = lons1d(3)
+    x4 = lons1d(4)
+    y0 = plat
+    y1 = lats1d(1)
+    y2 = lats1d(2)
+    y3 = lats1d(3)
+    y4 = lats1d(4)
+
+    a_x = abs(x1 - x2) 
+    a_y = abs(y1 - y2) 
+    b_x = abs(x2 - x3) 
+    b_y = abs(y2 - y3) 
+    c_x = abs(x3 - x4) 
+    c_y = abs(y3 - y4) 
+    d_x = abs(x4 - x1) 
+    d_y = abs(y4 - y1) 
+
+    ao_x = abs(x1 - x0)
+    ao_y = abs(y1 - y0)
+    bo_x = abs(x2 - x0)
+    bo_y = abs(y2 - y0)
+    co_x = abs(x3 - x0)
+    co_y = abs(y3 - y0)
+    do_x = abs(x4 - x0)
+    do_y = abs(y4 - y0)
+
+    Sabc = abs(0.5d0*(a_x*b_y-a_y*b_x))
+    Scda = abs(0.5d0*(c_x*d_y-c_y*d_x))
+    Sabcd = Sabc + Scda
+
+    Saob = abs(0.5d0*(a_x*ao_y-a_y*ao_x))
+    Sboc = abs(0.5d0*(b_x*bo_y-b_y*bo_x))
+    Scod = abs(0.5d0*(c_x*co_y-c_y*co_x))
+    Sdoa = abs(0.5d0*(d_x*do_y-d_y*do_x))
+    Ssum = Saob+Sboc+Scod+Sdoa
+
+    darea_triangle_cartesian = abs( Sabcd-Ssum )
+
+end function darea_triangle_cartesian
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Gets GRID data as output and finds npoints 
 ! closest points. The npoints determines as 
 ! the dimention of the ij array. 
@@ -275,6 +340,11 @@ implicit none ! religion first
 
 end subroutine closest_distance
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! grid(:,:,1) - ii (global)
+! grid(:,:,2) - jj (global)
+! grid(:,:,3) - lon 
+! grid(:,:,4) - lat 
+! grid(:,:,5) - dist 
 subroutine get_grid(dist, lon2d, lat2d, plon, plat, grid)
 implicit none ! religion first
     real(kind=real64), intent(in) :: dist(:,:)
@@ -495,8 +565,19 @@ implicit none ! religion first
         ii = 1
         do ik = 1, nk
         do in = 1, nn
-            dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
-            dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+            
+            if (cartesian_grid) then
+            
+                dlon = abs(plon - lon2d(ij(in,1),ij(in,2)))*dx ! haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
+                dlat = abs(plat - lat2d(ij(in,1),ij(in,2)))*dy ! haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+
+            else
+
+                dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
+                dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+
+            endif
+            
             dhgt = z(ij(in,1),ij(in,2), kk(in,ik)) - phgt
             dist(ii) = sqrt( dlon**2 + dlat**2 + dhgt**2  )
             ii = ii + 1
@@ -571,10 +652,22 @@ implicit none ! religion first
 
         ii = 1
         do in = 1, nn
-            dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
-            dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+
+            if (cartesian_grid) then
+            
+                dlon = abs(plon - lon2d(ij(in,1),ij(in,2))) ! haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
+                dlat = abs(plat - lat2d(ij(in,1),ij(in,2))) ! haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+            
+            else
+            
+                dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
+                dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+            
+            endif
+
             dist(ii) = sqrt( dlon**2 + dlat**2  )
             ii = ii + 1
+
         end do
 
         sum_dist = sum(dist)
@@ -621,11 +714,14 @@ end function earth_radius
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Поиск координат частицы исходя из прошых координат и скорости точки
 ! dt - in min
-subroutine locate(point1d, pu, pv, pw, dt)
+! nlon, nlat - для ideal_case (чтобы выкидывать точки при достижении границ домена)
+!              ПЕРИОДИЧЕСКИЕ ГРАНИЦЫ В ИДЕАЛИЗИРОВАННЫХ СЛУЧЯХ ПОКА НЕ РАССМАТРИВАЕМ!
+subroutine locate(point1d, pu, pv, pw, dt, nlon, nlat)
 implicit none ! religion first
     real(kind=real32), intent(inout) :: point1d(3)
     real(kind=real32), intent(in)    :: pu, pv, pw 
-    real(kind=real32), intent(in)    :: dt 
+    real(kind=real32), intent(in)    :: dt
+    integer,           intent(in)    :: nlon, nlat
     logical :: skip = .false.
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: R
@@ -638,33 +734,47 @@ implicit none ! religion first
         plat = fFillValue
         phgt = fFillValue
 
-        ! R = 6371.0088
-        R = earth_radius(point1d(2))
-        R = R*1000.d0
+        if (ideal_case) then
 
-        plon = point1d(1) + pu*60*dt/(pi*R/180.d0*cos(point1d(2)*pi/180.d0))
-        plat = point1d(2) + pv*60*dt/(pi*R/180.d0)
-        phgt = point1d(3) + pw*60*dt
-        ! print*,plon,plat
+            plon = point1d(1) + pu !*dt*60
+            plat = point1d(2) + pv !*dt*60
+            phgt = point1d(3) + pw !*dt*60
 
-        ! Forbits to go over abs(360)
-        if (abs(plon) > 360) plon = mod(plon,360.)
+            if ( plon <= 1 .OR. plon >= nlon ) plon = fFillValue
+            if ( plat <= 1 .OR. plat >= nlat ) plat = fFillValue
 
-        ! Если вылетели выше полюса, то переходим в другое полушарие
-        if (plat.gt.90) then 
-            plat = 180. - plat
-            plon = plon - 180.
-        else if (plat .lt. -90) then
-            plat = -180. - plat
-            plon = plon - 180.
-        end if
+        else
 
-        ! придерживаемся -180..+180 координатной сетки
-        if (plon .gt. 180) then 
-            plon = plon - 360.
-        else if (plon .lt. -180) then
-            plon = plon + 360.
-        end if
+            ! R = 6371.0088
+            R = earth_radius(point1d(2))
+            R = R*1000.d0
+
+            plon = point1d(1) + pu*60*dt/(pi*R/180.d0*cos(point1d(2)*pi/180.d0))
+            plat = point1d(2) + pv*60*dt/(pi*R/180.d0)
+            phgt = point1d(3) + pw*60*dt
+            ! print*,plon,plat
+
+            ! Forbits to go over abs(360)
+            if (abs(plon) > 360) plon = mod(plon,360.)
+
+            ! Если вылетели выше полюса, то переходим в другое полушарие
+            if (plat.gt.90) then 
+                plat = 180. - plat
+                plon = plon - 180.
+            else if (plat .lt. -90) then
+                plat = -180. - plat
+                plon = plon - 180.
+            end if
+
+            ! придерживаемся -180..+180 координатной сетки
+            if (plon .gt. 180) then 
+                plon = plon - 360.
+            else if (plon .lt. -180) then
+                plon = plon + 360.
+            end if
+
+        endif
+
 
         point1d(1) = plon
         point1d(2) = plat

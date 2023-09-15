@@ -1,7 +1,12 @@
 &data
  stime = "2007-09-01 00:00:00",
  etime = "2007-09-07 00:00:00",
- global = .FALSE. ! Default FALSE
+ global = .FALSE. 			! Default FALSE
+ unstructured_grid = .FALSE.! Triangular, etc; Default FALSE
+ cartesian_grid = .TRUE.	! Equidistant grid (in meters or grid units); Default TRUE
+ dx = 15000					! Gridstep in data units (meter,degrees)
+ dy = 15000					! Gridstep in data units (meter,degrees)
+ ideal_case = .TRUE.		! No Earth coorditate in file; Default FALSE
 /
 
 &wrf_prep
@@ -12,14 +17,14 @@
 &scheme 
  accuracy = .FALSE.,       ! False - Coarse scheme; True - Fine scheme (Interpolates between time step)
  timestep = 15,            ! interpolation step size (in MINUTES) if accuracy
- cell_detector = 1         ! 0 - nearest neighbor ; 1 - trianlge method
+ cell_detector = 1         ! 0 - nearest neighbor (fast); 1 - trianlge method (slow but accurate)
  horizontal = .TRUE.,      ! Default is FALSE
- horizontal_level = 80000, ! (horizontal=.FALSE. only) Level for 2D simulation (default 0)
+ horizontal_level = 80000, ! (horizontal=.TRUE. only) Level for 2D simulation (default 0)
 /
 
 ! Optional for cteating grid if trasers in domain
 &particles
  pt_grid = .TRUE.,		! Default FALSE
  pt_height = 80000,		! if pt_grid = .TRUE.
- pt_step = 50 			! horizontal grid step
+ pt_step = 5 			! horizontal grid step
 /

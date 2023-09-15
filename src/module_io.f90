@@ -121,6 +121,11 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "pt_height"  , pt_height(:pt_nlevels)) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal" , merge(1, 0, horizontal)) )
     if (horizontal) call check( nf90_put_att(ncid_out, NF90_GLOBAL, "horizontal_level"   , horizontal_level) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "unstructured_grid" , merge(1, 0, unstructured_grid)) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cartesian_grid" , merge(1, 0, cartesian_grid)) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "ideal_case" , merge(1, 0, ideal_case)) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "dx"    , dx) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "dy"    , dy) )
 
     ! RESULT
     call check( nf90_def_var(ncid_out, name="points", xtype=NF90_FLOAT, dimids = (/vdim_id, pdim_id, tdim_id /), varid = var_id ) )
@@ -304,11 +309,11 @@ implicit none
     real(kind=real32),intent(out) :: lon2d(:,:), lat2d(:,:), z(:)
     real(kind=real64),intent(out) :: time(:)
 
-    character(len=20) :: lon_names(3) = (/"longitude","lon","XLONG"/)
-    character(len=20) :: lat_names(3) = (/"latitude","lat","XLAT"/)
-    character(len=20) :: z_names(1)   = (/"level"/)
+    character(len=20) :: lon_names(4) = (/"longitude","lon","west_east","x"/)
+    character(len=20) :: lat_names(4) = (/"latitude","lat","south_north","y"/)
+    character(len=20) :: z_names(4) = (/"level","bottom_top","z","hight"/)
     character(len=20) :: time_names(1) = (/"time"/)
-    
+
     integer :: ii, jj, xdim, ydim, zdim, tdim
     integer :: status, var_id
 
@@ -322,45 +327,61 @@ implicit none
     zdim = ubound(z,1) 
     tdim = ubound(time,1)
 
-    do ii = 1, ubound(lon_names,1)
-        status = nf90_inq_varid(ncid, trim(lon_names(ii)), var_id)
-        if(status == nf90_noerr) then
 
-            if( lon_names(ii).EQ."XLONG") then
-                call check( nf90_get_var(ncid, varid=var_id, values=lon2d ) )
-            else
-                ! It is 1D coordinates. So read vector and spread in 2D array
-                call check( nf90_get_var(ncid, varid=var_id, values=lon2d(:,1)) )
-                ! spread in 2d
-                do jj = 2, ydim
-                    lon2d(:,jj) = lon2d(:,1)
-                end do
+    if (cartesian_grid) then
+
+        do ii = 1, xdim 
+            lon2d(ii,:) = ii
+        enddo
+
+        do jj = 1, ydim 
+            lat2d(:,jj) = jj
+        enddo
+
+    else
+
+        do ii = 1, ubound(lon_names,1)
+            status = nf90_inq_varid(ncid, trim(lon_names(ii)), var_id)
+            if(status == nf90_noerr) then
+
+                if( lon_names(ii).EQ."XLONG") then
+                    call check( nf90_get_var(ncid, varid=var_id, values=lon2d ) )
+                else
+                    ! It is 1D coordinates. So read vector and spread in 2D array
+                    call check( nf90_get_var(ncid, varid=var_id, values=lon2d(:,1)) )
+                    ! spread in 2d
+                    do jj = 2, ydim
+                        lon2d(:,jj) = lon2d(:,1)
+                    end do
+                end if
+
+                exit
+
             end if
+        end do
 
-            exit
+        do ii = 1, ubound(lat_names,1)
+            status = nf90_inq_varid(ncid, trim(lat_names(ii)), var_id)
+            if(status == nf90_noerr) then
 
-        end if
-    end do
+                if( lat_names(ii).EQ."XLAT") then
+                    call check( nf90_get_var(ncid, varid=var_id, values=lat2d ) )
+                else
+                    ! It is 1D coordinates. So read vector and spread in 2D array
+                    call check( nf90_get_var(ncid, varid=var_id, values=lat2d(1,:)) )
+                    ! spread in 2d
+                    do jj = 2, xdim
+                        lat2d(jj,:) = lat2d(1,:)
+                    end do
+                end if
 
-    do ii = 1, ubound(lat_names,1)
-        status = nf90_inq_varid(ncid, trim(lat_names(ii)), var_id)
-        if(status == nf90_noerr) then
-
-            if( lat_names(ii).EQ."XLAT") then
-                call check( nf90_get_var(ncid, varid=var_id, values=lat2d ) )
-            else
-                ! It is 1D coordinates. So read vector and spread in 2D array
-                call check( nf90_get_var(ncid, varid=var_id, values=lat2d(1,:)) )
-                ! spread in 2d
-                do jj = 2, xdim
-                    lat2d(jj,:) = lat2d(1,:)
-                end do
+                exit
+                
             end if
+        
+        end do
 
-            exit
-            
-        end if
-    end do
+    endif
 
     ! no levels in WRF data, so leaving it blank
     ! also no coordinate spreading needed
@@ -387,9 +408,9 @@ implicit none
     integer,intent(in)  :: ncid
     integer,intent(out) :: nlon2d, nlat2d, nz, ntime
 
-    character(len=20) :: lon_names(3) = (/"longitude","lon","west_east"/)
-    character(len=20) :: lat_names(3) = (/"latitude","lat","south_north"/)
-    character(len=20) :: z_names(2) = (/"level","bottom_top"/)
+    character(len=20) :: lon_names(4) = (/"longitude","lon","west_east","x"/)
+    character(len=20) :: lat_names(4) = (/"latitude","lat","south_north","y"/)
+    character(len=20) :: z_names(4) = (/"level","bottom_top","z","hight"/)
     character(len=20) :: time_names(1) = (/"time"/)
     
     integer :: ii

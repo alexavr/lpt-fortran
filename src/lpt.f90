@@ -96,23 +96,23 @@ program lpt
 
   print*, "-> Getting coordinates..."
   call get_ndims(ncid_in, nlon, nlat, nz, ntime_in)
-  print*,    "   * Dimensions are "
-  write(*,'( "   * nlon = ",i3,"; nlat = ",i3,"; nz = ",i3,"; ntime = ",i3 )') nlon, nlat, nz, ntime_in
+  write(*,'("   * Dimensions are ")')
+  write(*,'("   * * nlon = ",i3,"; nlat = ",i3,"; nz = ",i3,"; ntime = ",i3 )') nlon, nlat, nz, ntime_in
 
   allocate( lon2d   ( nlon, nlat ) )
   allocate( lat2d   ( nlon, nlat ) )
   allocate( time_in ( ntime_in   ) )
   ! allocate( levels  ( nz         ) )
   call get_dims(ncid_in, lon2d, lat2d, levels(:nz), time_in)
-  print*, "   * Coordinates ... Ok"
-  print*, "#####################################################################"
+  write(*,'("   * Coordinates ... Ok")')
+  write(*,'("#####################################################################")')
 
   print*, "-> Finding stime and etime indexes in src..."
   stimeui = minloc( abs(time_in-stimeu),1 )
   etimeui = minloc( abs(time_in-etimeu),1 )
   duration = etimeui - stimeui
   write(*,'( "   * Working with ",i0," time steps ")') duration
-  print*, "#####################################################################"
+  write(*,'("#####################################################################")')
 
   iz = MINLOC(abs(levels(:nz)-horizontal_level), 1)
 
@@ -190,7 +190,6 @@ program lpt
 
   write(*,'("   * Reading data......")')
 
-
   first = .true.
 
   allocate ( u2d(nlon, nlat, duration) )
@@ -202,7 +201,6 @@ program lpt
   allocate ( u2d_tmp(nlon, nlat) )
   allocate ( v2d_tmp(nlon, nlat) )
   allocate ( mask(nlon, nlat) )
-
 
   write(*,'("   * Entering the parallel block......")')
 !$omp parallel private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe) ! shared(nthreads,npoints,stimeui,nlon,nlat,ntimesteps,duration,u2d,v2d,newtime_ind,horizontal,result,points)
@@ -226,13 +224,11 @@ program lpt
     prg = float(ipoint)/float(pe-ps+1)*100.
     if (tid .EQ. 0) write(*,'("   * * Progress appoximatley ",f5.1," % ")')  prg
 
-! print*, ipoint
     if (horizontal) then ! Если считаем только на проскости, то
 
-print*, "horizontal"
       inner: do itime = 1, duration*ntimesteps+1
 
-! print*, itime
+        ! ИНТЕРПОЛЯЦИЯ ПО ВРЕМЕНИ
         ! Считаем веса для интерполяции по времени
         t1 = floor(newtime_ind(itime))
         t2 = ceiling(newtime_ind(itime))
@@ -243,13 +239,9 @@ print*, "horizontal"
 
         ! write(*,'(i0" | ",i0," | ",i0, " " ,f15.10, " ",i0, " : ",f10.4)') tid, itime, t1, newtime_ind(itime), t2, ditime
 
-! print*,"HERE 1"
         mask = .false.
-! print*,"HERE 1.1"
-! print*,"HERE 2"
         do ii=1,nlon
           do jj=1,nlat
-! print*,ii,jj
             good = u2d(ii,jj,t1).NE.fFillValue .OR. v2d(ii,jj,t1).NE.fFillValue .OR. &
                    u2d(ii,jj,t2).NE.fFillValue .OR. v2d(ii,jj,t2).NE.fFillValue
 
@@ -265,18 +257,14 @@ print*, "horizontal"
           enddo
         enddo
 
-! print*,"HERE XXXX"
 ! !$omp critical
+        ! ИНТЕРПОЛЯЦИЯ ПО ПРОСТРАНСТВУ
         call get_cell_hor ( points(ipoint,:), lon2d, lat2d, ij, mask                    )
         call interpolate2d( points(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv)
-        call locate       ( points(ipoint,:), pu, pv, 0., timestep                      )
-
-! print*,tid,ipoint,points(ipoint,:)
+        call locate       ( points(ipoint,:), pu, pv, 0., timestep, nlon, nlat          )
 
 ! !$omp end single
 ! !$omp end critical
-
-! print*,tid,ipoint
 
 ! !$omp critical
         ! write(*,'(i0," ",i0," ", 8i12," | ", 3f10.2," | ", 2f7.2)') ipoint, itime, ij, points(ipoint,:), pu, pv
@@ -298,7 +286,6 @@ print*, "horizontal"
     endif
   enddo outer
 
-! print*,tid,"HERE!"
 !$omp end parallel
 
   print*, "#####################################################################"

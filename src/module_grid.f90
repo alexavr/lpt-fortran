@@ -30,10 +30,10 @@ contains
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! получаем координаты 4-х окружающих точек
-subroutine get_cell_hor ( point1d, lon2d, lat2d, ij, mask)
+subroutine get_cell_hor ( point1d, x2d, y2d, ij, mask)
 implicit none ! religion first
 real(kind=real32), intent(inout) :: point1d(3)
-real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
+real(kind=real32), intent(in)    :: x2d(:,:), y2d(:,:)
 logical,           intent(in)    :: mask(:,:)
 integer,           intent(out)   :: ij(4,2)
 real(kind=real64),dimension(:,:),allocatable :: dist
@@ -41,7 +41,7 @@ real(kind=real64)                :: grid(3,3,5) = dFillValue
 
 integer :: xdim, ydim, npoints
 integer :: ii
-real(kind=real32) :: plon, plat, dist_min
+real(kind=real32) :: pointx, pointy, dist_min
 logical :: south, north, east, west
 logical :: skip = .false.
 
@@ -57,11 +57,11 @@ logical :: skip = .false.
     if(.not.skip) then
 
 
-        plon = point1d(1)
-        plat = point1d(2)
+        pointx = point1d(1)
+        pointy = point1d(2)
 
-        xdim = ubound(lon2d,1)
-        ydim = ubound(lon2d,2)
+        xdim = ubound(x2d,1)
+        ydim = ubound(x2d,2)
         npoints = ubound(ij,1)
 
         allocate( dist(xdim, ydim) ) 
@@ -69,23 +69,23 @@ logical :: skip = .false.
         if (cartesian_grid) then ! Если сетка равных расстояний, то считаем обычным Пифагором
 
             ! ПИФАГОР
-            dist = sqrt( (lon2d-plon)**2 + (lat2d - plat)**2)
-            call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+            dist = sqrt( (x2d-pointx)**2 + (y2d - pointy)**2)
+            call get_grid(dist, x2d, y2d, pointx, pointy, grid)
 
         else ! иначе считаем на сфере честно
 
-            dist = haversine(lon2d, lat2d, plon, plat)    
-            call get_grid(dist, lon2d, lat2d, plon, plat, grid)
+            dist = haversine(x2d, y2d, pointx, pointy)    
+            call get_grid(dist, x2d, y2d, pointx, pointy, grid)
 
         endif
 
         if(cell_detector.eq.0) then
             ! print*,"Simple scheme"
-            call closest_distance(grid, plon, plat, ij)
+            call closest_distance(grid, pointx, pointy, ij)
         else if(cell_detector.eq.1) then
-            call triangle_method(grid, plon, plat, ij)
+            call triangle_method(grid, pointx, pointy, ij)
         else
-            print*,"get_cell_hor: Can not recognize the cell_detector option eq ",cell_detector
+            write(*,'("get_cell_hor: Can not recognize the cell_detector option eq ",i)') cell_detector
             stop
         end if
 
@@ -622,7 +622,7 @@ subroutine interpolate2d(point1d, u, v, ij, &
                             lon2d, lat2d, &
                             pu, pv)
 implicit none ! religion first
-    real(kind=real32), intent(in) :: point1d(3)
+    real(kind=real32), intent(in) :: point1d(:)
     real(kind=real32), intent(in)    :: u(:,:),v(:,:)
     real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
     integer, intent(in)    :: ij(:,:)
@@ -631,13 +631,12 @@ implicit none ! religion first
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: dlon, dlat, dhgt
     real(kind=real64),dimension(:),allocatable :: dist, wgt
-    integer :: nn, nk, ndist, ik, in, ii
+    integer :: nn, nk, ndist, ik, ind 
     real(kind=real32) :: dp, dz
     real(kind=real64) :: sum_dist
 
     skip = ( count( point1d.eq.fFillValue ) .NE. 0 )
-    ! skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
-
+ 
     if(.not.skip) then
 
         plon = point1d(1)
@@ -650,23 +649,21 @@ implicit none ! religion first
         allocate( dist(ndist) )
         allocate(  wgt(ndist) )
 
-        ii = 1
-        do in = 1, nn
+        do ind = 1, nn
 
             if (cartesian_grid) then
             
-                dlon = abs(plon - lon2d(ij(in,1),ij(in,2))) ! haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
-                dlat = abs(plat - lat2d(ij(in,1),ij(in,2))) ! haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+                dlon = plon - lon2d(ij(ind,1),ij(ind,2)) ! безразмерные
+                dlat = plat - lat2d(ij(ind,1),ij(ind,2)) ! безразмерные
             
             else
             
-                dlon = haversine(lon2d(ij(in,1),ij(in,2)), plat, plon, plat)*1000.d0 ! in m
-                dlat = haversine(plon, lat2d(ij(in,1),ij(in,2)), plon, plat)*1000.d0 ! in m
+                dlon = haversine(lon2d(ij(ind,1),ij(ind,2)), plat, plon, plat)*1000.d0 ! in m
+                dlat = haversine(plon, lat2d(ij(ind,1),ij(ind,2)), plon, plat)*1000.d0 ! in m
             
             endif
 
-            dist(ii) = sqrt( dlon**2 + dlat**2  )
-            ii = ii + 1
+            dist(ind) = sqrt( dlon**2 + dlat**2  )
 
         end do
 
@@ -675,19 +672,18 @@ implicit none ! religion first
 
         pu = 0.
         pv = 0.
-        ii = 1
-        do in = 1, nn
-            if ( u( ij(in,1),ij(in,2) ).EQ.fFillValue .OR. v( ij(in,1),ij(in,2) ).EQ.fFillValue ) then
+
+        do ind = 1, nn
+            if ( u( ij(ind,1),ij(ind,2) ).EQ.fFillValue .OR. v( ij(ind,1),ij(ind,2) ).EQ.fFillValue ) then
                 pu = fFillValue
                 pv = fFillValue
             else
-                pu = pu + wgt(ii)*u( ij(in,1),ij(in,2) )
-                pv = pv + wgt(ii)*v( ij(in,1),ij(in,2) )
+                pu = pu + wgt(ind)*u( ij(ind,1),ij(ind,2) )
+                pv = pv + wgt(ind)*v( ij(ind,1),ij(ind,2) )
             endif
-            
 
-            ! print*,pu,pv,wgt(ii),ij(in,1),ij(in,2),u( ij(in,1),ij(in,2) )
-            ii = ii + 1
+           ! print*, count( u==0 ) ! write(*,'( i4, " | pv:",f4.2," | wgt:",f4.2," |  dist:",f4.2," | u:" ,f5.2," | xy:",2i4 )') ii,pv,wgt(ii),dist(ii),u( ij(in,1),ij(in,2) ), ij(in,1), ij(in,2)
+
         end do
 
         deallocate( dist )
@@ -736,9 +732,9 @@ implicit none ! religion first
 
         if (ideal_case) then
 
-            plon = point1d(1) + pu !*dt*60
-            plat = point1d(2) + pv !*dt*60
-            phgt = point1d(3) + pw !*dt*60
+            plon = point1d(1) + pu*dt*60/dx
+            plat = point1d(2) + pv*dt*60/dy
+            phgt = point1d(3) + pw ! *dt*60
 
             if ( plon <= 1 .OR. plon >= nlon ) plon = fFillValue
             if ( plat <= 1 .OR. plat >= nlat ) plat = fFillValue

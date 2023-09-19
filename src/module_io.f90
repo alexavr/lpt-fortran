@@ -75,9 +75,11 @@ implicit none
     call date_and_time(DATE=str_date,ZONE=str_time)
     write(str_datetime,'("Created ",a,a)') str_date,str_time
 
-    tdim  = UBOUND(result,3)
+    tdim  = UBOUND(result,1)
     pdim  = UBOUND(result,2)
-    vdim  = UBOUND(result,1)
+    vdim  = UBOUND(result,3)
+
+    ! print*,tdim,pdim,vdim
 
     open(newunit=unit, file=trim(file_out), status="unknown")
     close(unit,status='delete')
@@ -128,7 +130,7 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "dy"    , dy) )
 
     ! RESULT
-    call check( nf90_def_var(ncid_out, name="points", xtype=NF90_FLOAT, dimids = (/vdim_id, pdim_id, tdim_id /), varid = var_id ) )
+    call check( nf90_def_var(ncid_out, name="points", xtype=NF90_FLOAT, dimids = (/ tdim_id, pdim_id, vdim_id /), varid = var_id ) )
         call check( nf90_put_att(ncid_out, var_id, "long_name", "Tracing points") )
         call check( nf90_put_att(ncid_out, var_id, "_FillValue", fFillValue) )
         call check( nf90_put_att(ncid_out, var_id, "missing_value", fFillValue) )

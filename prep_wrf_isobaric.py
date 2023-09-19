@@ -44,7 +44,8 @@ def prep_var(ds, name):
 print(f"   Infile: {src_filename}")
 file_name = Path(src_filename).stem
 file_name_split = file_name.split("_")
-outfile = f"_pt_{file_name_split[2]}_{file_name_split[3]}.nc"
+# outfile = f"_pt_{file_name_split[2]}_{file_name_split[3]}.nc"
+outfile = f"_pt_{file_name}.nc"
 print(f"  Outfile: {outfile}")
 
 with open('./lpt.nml') as nml_file:

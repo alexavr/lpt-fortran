@@ -1,11 +1,11 @@
 &data
- stime = "2007-09-01 00:00:00",
- etime = "2007-09-07 00:00:00",
+ stime = "2001-01-01 00:00:00",
+ etime = "2001-01-01 08:00:00",
  global = .FALSE. 			! Default FALSE
  unstructured_grid = .FALSE.! Triangular, etc; Default FALSE
  cartesian_grid = .TRUE.	! Equidistant grid (in meters or grid units); Default TRUE
- dx = 15000					! Gridstep in data units (meter,degrees)
- dy = 15000					! Gridstep in data units (meter,degrees)
+ dx = 2000					! Gridstep in data units (meter,degrees,etc) for cartesian_grid = .TRUE.
+ dy = 2000					! Gridstep in data units (meter,degrees,etc) for cartesian_grid = .TRUE.
  ideal_case = .TRUE.		! No Earth coorditate in file; Default FALSE
 /
 
@@ -25,6 +25,6 @@
 ! Optional for cteating grid if trasers in domain
 &particles
  pt_grid = .TRUE.,		! Default FALSE
- pt_height = 80000,		! if pt_grid = .TRUE.
- pt_step = 5 			! horizontal grid step
+ pt_height = 80000,		! (if pt_grid = .TRUE.) in levels/type units
+ pt_step = 1 			! horizontal grid step
 /

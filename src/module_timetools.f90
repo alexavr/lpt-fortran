@@ -38,6 +38,8 @@ implicit none
 
   if (index(tunits,"seconds").NE.0) then
     dtime = 1.D0
+  else if (index(tunits,"minutes").NE.0) then
+    dtime = 60.D0
   else if (index(tunits,"hours").NE.0) then
     dtime = 3600.D0
   else if (index(tunits,"days").NE.0) then

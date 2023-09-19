@@ -7,20 +7,10 @@ import cartopy.feature as cfeature
 import cmaps                        # conda install -y -c conda-forge cmaps
 import sys
 
-################################################################################
-
-def get_time_ind( time, time_step_hours ):
-
-    HH = np.asarray([t.hour   for t in time[:]])
-    MM = np.asarray([t.minute for t in time[:]])
-    SS = np.asarray([t.second for t in time[:]])
-
-    time_ind = np.where( (HH==time_step_hours) & (MM == 0) & (SS==0) )
-
-    return time_ind
+import pandas as pd
 
 ################################################################################
-################################################################################
+
 ################################################################################
 
 filename = sys.argv[1]
@@ -40,23 +30,35 @@ npts = len(ds_trk.n)
 ntime = len(ds_trk.time)
 
 
+plt.figure(figsize=(5,5), dpi=150)
+
 if ideal_case:
 
-    plt.figure(figsize=(6,4), dpi=150)
-
     for ip in range(0,npts):
-        lons = ds_trk.points[:,ip,0]
-        lats = ds_trk.points[:,ip,1]
-        hgts = ds_trk.points[:,ip,2]
+        lons = ds_trk.points[0,ip,:]
+        lats = ds_trk.points[1,ip,:]
+        hgts = ds_trk.points[2,ip,:]
 
-        plt.plot(lons, lats, alpha=1, color="tab:red")
+
+        # Check the longest tracks (all timers) for data consistency
+        # d = {'lons': lons, 'lats': lats, 'hgts': hgts}
+        # df = pd.DataFrame(data=d)
+        # filtered_df = df[df['lons'].notnull()]
+        # if len(filtered_df) ==  ntime:
+        #     print(df)
+
+        plt.xlim([0, ds_src.dims['west_east']]) 
+        plt.ylim([0, ds_src.dims['south_north']]) 
+        ax = plt.gca()
+        ax.set_aspect('equal', adjustable='box')
+        ax.tick_params(axis='both',direction="in", which='major', labelsize=6)
+        plt.grid(linestyle = ':', linewidth = 0.5)
+        plt.plot(lons, lats, alpha=1, color="tab:red",linewidth = 0.5)
         # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)
         # plt.scatter(lons[::8], lats[::8], alpha=1, s=10, marker='x',  color="black", zorder=10)
 
 
 else:
-
-    plt.figure(figsize=(6,4), dpi=150)
 
     proj = ccrs.PlateCarree()
 
@@ -82,9 +84,9 @@ else:
 
 
     for ip in range(0,npts):
-        lons = ds_trk.points[:,ip,0]
-        lats = ds_trk.points[:,ip,1]
-        hgts = ds_trk.points[:,ip,2]
+        lons = ds_trk.points[0,ip,:]
+        lats = ds_trk.points[1,ip,:]
+        hgts = ds_trk.points[2,ip,:]
 
         plt.plot(lons, lats, alpha=1, transform=proj, color="tab:red")
         # plt.scatter(lons, lats, alpha=1, transform=proj, s=10, marker='x', color="black", zorder=10)

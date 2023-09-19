@@ -62,39 +62,38 @@ program lpt
   ! file_out = trim(file_in)
   file_out = file_in(1:len(trim(file_in))-3)//"_tracks.nc"
 
-  print*,"-> Files:"
-  print*,"   Input file:      ",trim(file_in)
-  print*,"   Output file: "    ,trim(file_out)
+  write(*,'("-> Files:")')
+  write(*,'("   Input file:      ",a)') trim(file_in)
+  write(*,'("   Output file:     ",a)')     trim(file_out)
 
-  print*,"-> Reading namelist..."
+  write(*,'("-> Reading namelist...")')
   call read_namelist
 
   if (horizontal) then
-    print*,"-> DOING HORIZONTAL SIMULATION"
+    write(*,'("-> DOING HORIZONTAL SIMULATION")')
   else
-    print*,"-> DOING 3D SIMULATION"
+    write(*,'("-> DOING 3D SIMULATION")')
   endif
 
-  print*,"-> Particles..."
+  write(*,'("-> Particles...")')
   if(pt_grid) then
-    print*,"    * Particles are spread all over the domain"
-    print*,"           with step  : ",pt_step
-    print*,"           at level(s): ",pt_height(:pt_nlevels)
+    write(*,'("    * Particles are spread all over the domain")')
+    write(*,'("           with step  : ",i10)') pt_step
+    write(*,'("           at level(s): ",f10.2)') pt_height(:pt_nlevels)
   else 
-    print*,"    * Input stat points file: ",trim(file_start_particles)
+    write(*,'("    * Input stat points file: ",a)') trim(file_start_particles)
   endif
 
-  print*, "-> Opening src file..."
+  write(*,'("-> Opening src file...")')
   call open_nc(file_in,ncid_in)
-  print*, "#####################################################################"
-  print*, "-> Converting stime and etime to src time..."
+  write(*,'("#####################################################################")')
+  write(*,'("-> Converting stime and etime to src time...")')
   tunits = get_attr_str(ncid_in,"time","units")
-  print*, "   ",trim(tunits)
   stimeu = strtime2units(stime,tunits)
   etimeu = strtime2units(etime,tunits)
-  print*, "#####################################################################"
+  write(*,'("#####################################################################")')
 
-  print*, "-> Getting coordinates..."
+  write(*,'("-> Getting coordinates...")')
   call get_ndims(ncid_in, nlon, nlat, nz, ntime_in)
   write(*,'("   * Dimensions are ")')
   write(*,'("   * * nlon = ",i3,"; nlat = ",i3,"; nz = ",i3,"; ntime = ",i3 )') nlon, nlat, nz, ntime_in
@@ -107,16 +106,16 @@ program lpt
   write(*,'("   * Coordinates ... Ok")')
   write(*,'("#####################################################################")')
 
-  print*, "-> Finding stime and etime indexes in src..."
+  write(*,'("-> Finding stime and etime indexes in src...")') 
   stimeui = minloc( abs(time_in-stimeu),1 )
   etimeui = minloc( abs(time_in-etimeu),1 )
-  duration = etimeui - stimeui
+  duration = etimeui - stimeui + 1
   write(*,'( "   * Working with ",i0," time steps ")') duration
   write(*,'("#####################################################################")')
 
   iz = MINLOC(abs(levels(:nz)-horizontal_level), 1)
 
-  print*, "-> Read or create start points..."
+  write(*,'("-> Read or create start points...")') 
   if(pt_grid) then
     npoints =  get_pointgrid_num(3, nlon, nlat, pt_nlevels, pt_step)
     allocate( points(npoints,3) )
@@ -129,10 +128,10 @@ program lpt
   ! points = fFillValue
   ! npoints = 96 ! npoints - 1
 
-  print*, "   * Number of points: ", npoints
-  print*, "#####################################################################"
+  write(*,'( "   * Number of points: ",i)') npoints
+  write(*,'("#####################################################################")')
 
-  print*, "-> Time driver..."
+  write(*,'( "-> Time driver...")') 
  ! If accuracy: calculate number in timesteps between src timesteps
  ! Since timestep is in mins, than we need to convert in min (dtm)
   dt = time_in(2) - time_in(1)
@@ -148,7 +147,7 @@ program lpt
     dtm = dt*24*60
   endif
 
-  ! Шаги по времени (если accuracy, то учитываем шаги между шагами в исходном файле)
+  ! Шаги по времени (если accuracy, то учитываем время между выдачей исходного файла)
   ntimesteps = 1
   if (accuracy) then
     ntimesteps = int(dtm)/int(timestep)
@@ -158,18 +157,21 @@ program lpt
 
   dtt = dt/ntimesteps   ! минимальный шаг по времени
 
-  allocate( result           (3,npoints,duration*ntimesteps+1)  )
-  allocate( newtime_ind      (          duration*ntimesteps+1)  )
-  allocate( newtime          (          duration*ntimesteps+1)  )
-  allocate( newtime_datatime (          duration*ntimesteps+1)  )
+  allocate( result           (duration*ntimesteps,npoints,3) )
+  allocate( newtime_ind      (duration*ntimesteps)           )
+  allocate( newtime          (duration*ntimesteps)           )
+  ! allocate( newtime_datatime (duration*ntimesteps)           )
 
   result = fFillValue
+  result(1,:,:) = points
 
   timestep_r = 1./ntimesteps
-  newtime = [ (time_in(stimeui)+(ii-1)*dtt, ii=1,(duration*ntimesteps+1) ) ]
-  newtime_ind = [ (stimeui+(ii-1)*timestep_r, ii=1,(duration*ntimesteps+1) ) ]
+  newtime = [ (time_in(stimeui)+(ii-1)*dtt, ii=1,(duration*ntimesteps) ) ]
+  newtime_ind = [ (stimeui+(ii-1)*timestep_r, ii=1,(duration*ntimesteps) ) ]
 
-  call convert_utime2str(newtime,tunits,newtime_datatime)
+  ! call convert_utime2str(newtime,tunits,newtime_datatime)
+
+  ! write(*,'( "   * Period: ",a," - ",a)') newtime_datatime(0),newtime_datatime(-1)
 
   ! allocate ( w(nlon, nlat, nz, ntime_in) )  ! if (.not.horizontal)
   ! allocate ( z(nlon, nlat, nz, ntime_in) )  ! if (.not.horizontal)
@@ -198,18 +200,17 @@ program lpt
   call get_var_xyt(ncid_in, "u", iz, stimeui, duration, u2d)
   call get_var_xyt(ncid_in, "v", iz, stimeui, duration, v2d)
 
+  ! print*,minval(u2d),maxval(u2d),count( u2d==0 )
+
   allocate ( u2d_tmp(nlon, nlat) )
   allocate ( v2d_tmp(nlon, nlat) )
   allocate ( mask(nlon, nlat) )
 
   write(*,'("   * Entering the parallel block......")')
-!$omp parallel private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe) ! shared(nthreads,npoints,stimeui,nlon,nlat,ntimesteps,duration,u2d,v2d,newtime_ind,horizontal,result,points)
-! !$omp parallel default(none) private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe) shared(nthreads,npoints,stimeui,nlon,nlat,ntimesteps,duration,u2d,v2d,newtime_ind,horizontal,result,points,lon2d,lat2d,timestep)
-! !$omp parallel default(none) private(tid,ps,pe,t1,t2,ditime,mask,good,u2d_tmp,              &
-                                    !  v2d_tmp,ij,pu,pv,ipoint,itime,ii,jj) shared(nthreads,  &
-                                    ! npoints,stimeui,nlon,nlat,ntimesteps,duration,          &
-                                    ! u2d,v2d,newtime_ind,horizontal,result,points,           &
-                                    ! lon2d,lat2d,timestep)
+!$omp parallel private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe,prg)
+! !$omp parallel default( none ) &
+! !$omp& private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe,prg) &
+! !$omp& shared(nthreads,npoints,stimeui,nlon,nlat,lon2d,lat2d,ntimesteps,duration,timestep,u2d,v2d,newtime_ind,horizontal,result,points)
 
   tid = OMP_GET_THREAD_NUM()
   nthreads = OMP_GET_NUM_THREADS()
@@ -217,22 +218,26 @@ program lpt
   ps = 1+(tid*npoints/nthreads)
   pe = (tid+1)*npoints/nthreads
 
-  write(*,'("   * OpenMP calculations on ",i3," core of ",i3," | from  ",i6," to ",i6 " / ",i3)') tid, nthreads, ps, pe, (pe - ps + 1)
+  write(*,'("   * OpenMP calculations on ",i3," core of ",i3," | from  ",i6," to ",i6 " / ",i10)') tid, nthreads, ps, pe, (pe - ps + 1)
 
+  ! outer: do ipoint = 1, 1
   outer: do ipoint = ps, pe
 
-    prg = float(ipoint)/float(pe-ps+1)*100.
-    if (tid .EQ. 0) write(*,'("   * * Progress appoximatley ",f5.1," % ")')  prg
+    if (tid .EQ. 0) then
+      prg = float(ipoint)/float(pe-ps+1)*100.
+      write(*,'("   * * Progress ",f7.2," % ")')  prg
+    endif
 
     if (horizontal) then ! Если считаем только на проскости, то
 
-      inner: do itime = 1, duration*ntimesteps+1
+      inner: do itime = 2, duration*ntimesteps
 
         ! ИНТЕРПОЛЯЦИЯ ПО ВРЕМЕНИ
         ! Считаем веса для интерполяции по времени
         t1 = floor(newtime_ind(itime))
         t2 = ceiling(newtime_ind(itime))
         ditime = newtime_ind(itime)-t1   !
+
         ! А теперь считаем индексы для обрезанного массива (с 1 до duration)
         t1 = t1 - stimeui + 1
         t2 = t2 - stimeui + 1
@@ -257,19 +262,33 @@ program lpt
           enddo
         enddo
 
-! !$omp critical
+
         ! ИНТЕРПОЛЯЦИЯ ПО ПРОСТРАНСТВУ
+!$omp critical
         call get_cell_hor ( points(ipoint,:), lon2d, lat2d, ij, mask                    )
         call interpolate2d( points(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv)
         call locate       ( points(ipoint,:), pu, pv, 0., timestep, nlon, nlat          )
+!$omp end critical
+
+        ! points(ipoint,4) = pu
+        ! points(ipoint,5) = pv
 
 ! !$omp end single
-! !$omp end critical
 
 ! !$omp critical
         ! write(*,'(i0," ",i0," ", 8i12," | ", 3f10.2," | ", 2f7.2)') ipoint, itime, ij, points(ipoint,:), pu, pv
-        if( any(points(ipoint,:).eq.fFillValue) ) points(ipoint,:) = fFillValue
-        result(:,ipoint,itime) = points(ipoint,:)
+        if( any(points(ipoint,:).EQ.fFillValue) ) points(ipoint,:) = fFillValue
+        result(itime,ipoint,:) = points(ipoint,:)
+
+        ! if ( points(ipoint,1).EQ.fFillValue ) print*,ipoint,itime, result(itime,ipoint,2), result(itime-1,ipoint,2) ! abs(result(itime,ipoint,1)-result(itime-1,ipoint,1))
+        ! if( abs(result(itime,ipoint,1)-result(itime-1,ipoint,1)) .GT. 10 ) print*,ipoint,itime,abs(result(itime,ipoint,1)-result(itime-1,ipoint,1))
+
+        ! if (ipoint == 1 ) write(*,'( 2i4, " | ",2f10.2," | "," ( ",2i4," ) " ," ( ",2i4," ) " ," ( ",2i4," ) " ," ( ",2i4," ) " )') &
+        !                         itime,ipoint,pu,pv, &
+        !                         ij(1,1),ij(1,2), &
+        !                         ij(2,1),ij(2,2), &
+        !                         ij(3,1),ij(3,2), &
+        !                         ij(4,1),ij(4,2)
 
 ! !$omp barrier
 
@@ -288,16 +307,24 @@ program lpt
 
 !$omp end parallel
 
+! stop
+
   print*, "#####################################################################"
 
   ! do ii=1, npoints
-  !   print*,ii,minval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
-  !             maxval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
-  !             minval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue), &
-  !             maxval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue)
+  !   if ( result(145,ii,1).NE.fFillValue ) then
+  !     write(*,'( i4, f7.0," ",f7.2," | ",f7.2," , ",f7.2," | ",f7.2," , ",f7.2 )') ii, result(145,ii,1), result(144,ii,1),result(145,ii,4), result(145,ii,5),result(144,ii,4), result(144,ii,5)
+  !   endif
+  !   ! print*,ii,minval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
+  !   !           maxval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
+  !   !           minval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue), &
+  !   !           maxval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue)
   ! enddo
 
   ! print*,result
+  write(*,'("   * Output into NetCDF... ")') 
+
+  ! print*,result(-1,145,:)
   call save_results(file_out,file_in,ncid_in,result,newtime)
 
   deallocate( result )
@@ -305,7 +332,7 @@ program lpt
   deallocate( time_in )
   deallocate( newtime_ind      )
   deallocate( newtime          )
-  deallocate( newtime_datatime )
+  ! deallocate( newtime_datatime )
   deallocate( lon2d   )
   deallocate( lat2d   )
   deallocate( u2d,v2d )

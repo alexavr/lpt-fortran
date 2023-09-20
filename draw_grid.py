@@ -11,6 +11,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from scipy.ndimage import gaussian_filter
 import pandas as pd 
+from pathlib import Path
 
 ### CHANGE THIS ################################################################
 
@@ -39,6 +40,9 @@ def get_z_ind( ncid, zarray ):
 ################################################################################
 
 filename = sys.argv[1]
+
+filename_short = Path(filename).stem
+
 
 ds_trk = xr.open_dataset(filename)
 ds_src = xr.open_dataset(ds_trk.src_file)
@@ -109,7 +113,7 @@ for it in range(0,ntime): # ntime
 
 
     plt.figure(figsize=(5,5), dpi=150)
-    psize = 0.3
+    psize = 0.05
 
     if ds_trk.ideal_case:
 
@@ -219,13 +223,13 @@ for it in range(0,ntime): # ntime
     print(f"{time_trk[it]}   {titlestrR}", end='\r', flush=True)
 
     plt.tight_layout()
-    figname = f"./grid_{filename}_{it:07d}.png"
+    figname = f"./{filename_short}_grid_{it:07d}.png"
     # plt.show()
-    plt.savefig(figname, dpi=150)
+    plt.savefig(figname, dpi=450)
     plt.close()
 
 print(f"Create video:")
-print(f"ffmpeg -framerate 20 -i grid_{filename}_%07d.png \\"        )
-print(f"   -c:v libx264 -r 30 -pix_fmt yuv420p grid_{filename}.mp4"  )
+print(f"ffmpeg -framerate 20 -i {filename_short}_grid_%07d.png \\"        )
+print(f"   -c:v libx264 -r 30 -pix_fmt yuv420p {filename_short}_grid.mp4"  )
 print(f"or gif animation:"                                          )
-print(f"convert -delay 20 grid_{filename}_00*.png grid_{filename}.gif")
+print(f"convert -delay 20 {filename_short}_grid_00*.png grid_{filename_short}.gif")

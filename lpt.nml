@@ -1,6 +1,6 @@
 &data
- stime = "2001-01-01 00:00:00",
- etime = "2001-01-01 08:00:00",
+ stime = "2007-09-01 00:00:00",
+ etime = "2007-09-07 08:00:00",
  global = .FALSE. 			! Default FALSE
  unstructured_grid = .FALSE.! Triangular, etc; Default FALSE
  cartesian_grid = .TRUE.	! Equidistant grid (in meters or grid units); Default TRUE

@@ -13,6 +13,7 @@ implicit none ! religion first
 
 private
 
+public :: create_grid 
 public :: haversine 
 public :: get_cell_hor 
 public :: get_cell_vert
@@ -27,6 +28,27 @@ public :: locate
     end interface haversine
     
 contains 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! создаем коордтнатную сетку индексов, если нет своей
+subroutine create_grid ( x2d, y2d)
+implicit none ! religion first
+real(kind=real32), intent(inout)    :: x2d(:,:), y2d(:,:)
+integer :: ii,jj, xdim, ydim
+
+xdim = ubound(x2d,1)
+ydim = ubound(x2d,2)
+
+do ii = 1, xdim
+do jj = 1, ydim
+
+    x2d(ii,jj) = ii
+    y2d(ii,jj) = jj
+
+enddo
+enddo
+
+end subroutine create_grid
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! получаем координаты 4-х окружающих точек
@@ -91,25 +113,22 @@ logical :: skip = .false.
 
         skip = ( count( ij.eq.iFillValue ) .NE. 0 ) 
 
-        if (skip) then
-            point1d = fFillValue
-        else
 
-            if(.not.global) then ! If point reached the border, that loosing it
-                west  = (count( ij(:,1).EQ.1 ) .NE. 0)
-                south = (count( ij(:,2).EQ.1 ) .NE. 0)
-                east  = (count( ij(:,1).EQ.xdim ) .NE. 0)
-                north = (count( ij(:,2).EQ.ydim ) .NE. 0)
-                if( south .or. north .or. east .or. west ) point1d = fFillValue
-            end if
-
-            skip = ( mask( ij(1,1),ij(1,2)) .OR. mask( ij(2,1),ij(2,2)) .OR. &
-                     mask( ij(3,1),ij(3,2)) .OR. mask( ij(4,1),ij(4,2))  )
-            ! print*,skip
-            if(skip) point1d = fFillValue ! If point reached the missing area
-        
+        if(.not.global .OR. .not.periodic) then ! If point reached the border, that loosing it
+            west  = (count( ij(:,1).EQ.1 ) .NE. 0)
+            south = (count( ij(:,2).EQ.1 ) .NE. 0)
+            east  = (count( ij(:,1).EQ.xdim ) .NE. 0)
+            north = (count( ij(:,2).EQ.ydim ) .NE. 0)
+            if( south .or. north .or. east .or. west ) point1d = fFillValue
         end if
 
+        skip = ( mask( ij(1,1),ij(1,2)) .OR. mask( ij(2,1),ij(2,2)) .OR. &
+                 mask( ij(3,1),ij(3,2)) .OR. mask( ij(4,1),ij(4,2))  )
+
+
+            ! print*,skip
+        if(skip) point1d = fFillValue ! If point reached the missing area
+        
         deallocate (dist)
 
 
@@ -390,24 +409,10 @@ implicit none ! religion first
 ! print*,' *** 4.3.2', iii, iiip1, iiim1, jjj, jjjp1, jjjm1
 
 
-    if( .not. global ) then
+    if ( global ) then
+        ! глобальная сетка в координатах щирота/долгота
+        ! подразумевают периодические условия по умолчанию
 
-       ! If closest grid is at the border, than loose the particle else do:
-        if (.not. (((ii == 1) .or. (ii == xdim) .or. (jj == 1) .or. (jj == ydim)))) then
-            grid(3,1,:) = (/ dble(iiim1), dble(jjj+1), dble(lon2d(iiim1,jjj+1)), dble(lat2d(iiim1,jjj+1)), dist(iiim1,jjj+1) /)
-            grid(3,2,:) = (/ dble(iii  ), dble(jjj+1), dble(lon2d(iii  ,jjj+1)), dble(lat2d(iii  ,jjj+1)), dist(iii  ,jjj+1) /)
-            grid(3,3,:) = (/ dble(iiip1), dble(jjj+1), dble(lon2d(iiip1,jjj+1)), dble(lat2d(iiip1,jjj+1)), dist(iiip1,jjj+1) /)
-            grid(2,1,:) = (/ dble(iiim1), dble(jjj  ), dble(lon2d(iiim1,jjj  )), dble(lat2d(iiim1,jjj  )), dist(iiim1,jjj  ) /)
-            grid(2,2,:) = (/ dble(iii  ), dble(jjj  ), dble(lon2d(iii  ,jjj  )), dble(lat2d(iii  ,jjj  )), dist(iii  ,jjj  ) /)
-            grid(2,3,:) = (/ dble(iiip1), dble(jjj  ), dble(lon2d(iiip1,jjj  )), dble(lat2d(iiip1,jjj  )), dist(iiip1,jjj  ) /)
-            grid(1,1,:) = (/ dble(iiim1), dble(jjj-1), dble(lon2d(iiim1,jjj-1)), dble(lat2d(iiim1,jjj-1)), dist(iiim1,jjj-1) /)
-            grid(1,2,:) = (/ dble(iii  ), dble(jjj-1), dble(lon2d(iii  ,jjj-1)), dble(lat2d(iii  ,jjj-1)), dist(iii  ,jjj-1) /)
-            grid(1,3,:) = (/ dble(iiip1), dble(jjj-1), dble(lon2d(iiip1,jjj-1)), dble(lat2d(iiip1,jjj-1)), dist(iiip1,jjj-1) /)
-        end if
-
-    else ! global data (periodic boundaries)
-
-        ! periodic boundary
         if(ii == xdim) iiip1 = 1
         if(ii == 1   ) iiim1 = xdim
 
@@ -419,15 +424,15 @@ implicit none ! religion first
         iiim1_jjjp1 = iiim1
 
         ! handling the N/S Poles
-        if(jj == 1) then 
+        if(jj == 1) then
             if (lon2d(ii,jj+1) > 0) then
                 lon2 = lon2d(ii,jj+1)-180.
-            else 
+            else
                 lon2 = lon2d(ii,jj+1)+180.
             end if
 
             jjjm1 = jj+1
-            
+
             tmp1 = minloc( abs(lon2d(:, jjjm1)-lon2) )
             iii_jjjm1 = tmp1(1)
             iiip1_jjjm1 = iii_jjjm1 - 1
@@ -435,11 +440,11 @@ implicit none ! religion first
 
         end if
 
-        if(jj == ydim) then 
+        if(jj == ydim) then
 
             if (lon2d(ii,jj-1) >  0) then
                 lon2 = lon2d(ii,jj-1)-180.
-            else 
+            else
                 lon2 = lon2d(ii,jj-1)+180.
             end if
 
@@ -460,6 +465,89 @@ implicit none ! religion first
         grid(1,1,:) = (/dble(iiim1_jjjm1) , dble(jjjm1), dble(lon2d(iiim1_jjjm1,jjjm1)), dble(lat2d(iiim1_jjjm1,jjjm1)), dist(iiim1_jjjm1,jjjm1)/)
         grid(1,2,:) = (/dble(iii_jjjm1  ) , dble(jjjm1), dble(lon2d(iii_jjjm1  ,jjjm1)), dble(lat2d(iii_jjjm1  ,jjjm1)), dist(iii_jjjm1  ,jjjm1)/)
         grid(1,3,:) = (/dble(iiip1_jjjm1) , dble(jjjm1), dble(lon2d(iiip1_jjjm1,jjjm1)), dble(lat2d(iiip1_jjjm1,jjjm1)), dist(iiip1_jjjm1,jjjm1)/)
+
+    else if( .not.global .AND. .not.periodic ) then
+        ! региональная модель со свободными границами (все из домена утекает вникуда)
+
+       ! If closest grid is at the border, than loose the particle else do:
+        if (.not. (((ii == 1) .or. (ii == xdim) .or. (jj == 1) .or. (jj == ydim)))) then
+            grid(3,1,:) = (/ dble(iiim1), dble(jjj+1), dble(lon2d(iiim1,jjj+1)), dble(lat2d(iiim1,jjj+1)), dist(iiim1,jjj+1) /)
+            grid(3,2,:) = (/ dble(iii  ), dble(jjj+1), dble(lon2d(iii  ,jjj+1)), dble(lat2d(iii  ,jjj+1)), dist(iii  ,jjj+1) /)
+            grid(3,3,:) = (/ dble(iiip1), dble(jjj+1), dble(lon2d(iiip1,jjj+1)), dble(lat2d(iiip1,jjj+1)), dist(iiip1,jjj+1) /)
+            grid(2,1,:) = (/ dble(iiim1), dble(jjj  ), dble(lon2d(iiim1,jjj  )), dble(lat2d(iiim1,jjj  )), dist(iiim1,jjj  ) /)
+            grid(2,2,:) = (/ dble(iii  ), dble(jjj  ), dble(lon2d(iii  ,jjj  )), dble(lat2d(iii  ,jjj  )), dist(iii  ,jjj  ) /)
+            grid(2,3,:) = (/ dble(iiip1), dble(jjj  ), dble(lon2d(iiip1,jjj  )), dble(lat2d(iiip1,jjj  )), dist(iiip1,jjj  ) /)
+            grid(1,1,:) = (/ dble(iiim1), dble(jjj-1), dble(lon2d(iiim1,jjj-1)), dble(lat2d(iiim1,jjj-1)), dist(iiim1,jjj-1) /)
+            grid(1,2,:) = (/ dble(iii  ), dble(jjj-1), dble(lon2d(iii  ,jjj-1)), dble(lat2d(iii  ,jjj-1)), dist(iii  ,jjj-1) /)
+            grid(1,3,:) = (/ dble(iiip1), dble(jjj-1), dble(lon2d(iiip1,jjj-1)), dble(lat2d(iiip1,jjj-1)), dist(iiip1,jjj-1) /)
+        end if
+
+    else if( .not.global .AND. periodic ) then
+
+        if(ii == xdim) iiim1 = 1; iii = 2; iiip1 = 3
+        if(ii == 1   ) iiim1 = xdim-1; iii = xdim-1; iiip1 = xdim
+
+        iii_jjjm1 = iii
+        iii_jjjp1 = iii
+        iiip1_jjjm1 = iiip1
+        iiim1_jjjm1 = iiim1
+        iiip1_jjjp1 = iiip1
+        iiim1_jjjp1 = iiim1
+
+        ! handling the N/S Poles
+        if(jj == ydim) jjjm1 = 1; jjj = 2; jjjp1 = 3
+        if(jj == 1   ) jjjm1 = ydim-1; jjj = ydim-1; jjjp1 = ydim
+        ! if(jj == 1) then
+        !     if (lon2d(ii,jj+1) > 0) then
+        !         lon2 = lon2d(ii,jj+1)-180.
+        !     else
+        !         lon2 = lon2d(ii,jj+1)+180.
+        !     end if
+
+        !     jjjm1 = jj+1
+
+        !     tmp1 = minloc( abs(lon2d(:, jjjm1)-lon2) )
+        !     iii_jjjm1 = tmp1(1)
+        !     iiip1_jjjm1 = iii_jjjm1 - 1
+        !     iiim1_jjjm1 = iii_jjjm1 + 1
+
+        ! end if
+
+        ! if(jj == ydim) then
+
+        !     if (lon2d(ii,jj-1) >  0) then
+        !         lon2 = lon2d(ii,jj-1)-180.
+        !     else
+        !         lon2 = lon2d(ii,jj-1)+180.
+        !     end if
+
+        !     jjjp1 = jj-1
+
+        !     tmp1 = minloc( abs(lon2d(:, jjjp1)-lon2) )
+        !     iii_jjjp1 = tmp1(1)
+        !     iiip1_jjjp1 = iii_jjjp1 - 1
+        !     iiim1_jjjp1 = iii_jjjp1 + 1
+        ! end if
+
+        grid(3,1,:) = (/dble(iiim1_jjjp1) , dble(jjjp1), dble(lon2d(iiim1_jjjp1,jjjp1)), dble(lat2d(iiim1_jjjp1,jjjp1)), dist(iiim1_jjjp1,jjjp1)/)
+        grid(3,2,:) = (/dble(iii_jjjp1  ) , dble(jjjp1), dble(lon2d(iii_jjjp1  ,jjjp1)), dble(lat2d(iii_jjjp1  ,jjjp1)), dist(iii_jjjp1  ,jjjp1)/)
+        grid(3,3,:) = (/dble(iiip1_jjjp1) , dble(jjjp1), dble(lon2d(iiip1_jjjp1,jjjp1)), dble(lat2d(iiip1_jjjp1,jjjp1)), dist(iiip1_jjjp1,jjjp1)/)
+        grid(2,1,:) = (/dble(iiim1      ) , dble(jjj  ), dble(lon2d(iiim1      ,jjj  )), dble(lat2d(iiim1      ,jjj  )), dist(iiim1      ,jjj  )/)
+        grid(2,2,:) = (/dble(iii        ) , dble(jjj  ), dble(lon2d(iii        ,jjj  )), dble(lat2d(iii        ,jjj  )), dist(iii        ,jjj  )/)
+        grid(2,3,:) = (/dble(iiip1      ) , dble(jjj  ), dble(lon2d(iiip1      ,jjj  )), dble(lat2d(iiip1      ,jjj  )), dist(iiip1      ,jjj  )/)
+        grid(1,1,:) = (/dble(iiim1_jjjm1) , dble(jjjm1), dble(lon2d(iiim1_jjjm1,jjjm1)), dble(lat2d(iiim1_jjjm1,jjjm1)), dist(iiim1_jjjm1,jjjm1)/)
+        grid(1,2,:) = (/dble(iii_jjjm1  ) , dble(jjjm1), dble(lon2d(iii_jjjm1  ,jjjm1)), dble(lat2d(iii_jjjm1  ,jjjm1)), dist(iii_jjjm1  ,jjjm1)/)
+        grid(1,3,:) = (/dble(iiip1_jjjm1) , dble(jjjm1), dble(lon2d(iiip1_jjjm1,jjjm1)), dble(lat2d(iiip1_jjjm1,jjjm1)), dist(iiip1_jjjm1,jjjm1)/)
+
+
+    else
+        print*,"get_cell_hor -> get_grid: ERROR!"
+        print*,"                          Configuration in namelist global=",global," AND periodic="
+        print*,"                          global=",global," AND periodic=",periodic
+        print*,"                          is unacceptable"
+        print*,"                          STOP"
+        stop
+
     end if
 
 end subroutine get_grid
@@ -544,7 +632,7 @@ implicit none ! religion first
     real(kind=real64) :: dlon, dlat, dhgt
     real(kind=real64),dimension(:),allocatable :: dist, wgt
     integer :: nn, nk, ndist, ik, in, ii
-    real(kind=real32) :: dp, dz
+    real(kind=real32) :: dp, dz, dx, dy
     real(kind=real64) :: sum_dist
 
     skip = ( count( point.eq.fFillValue ) .NE. 0 ) 
@@ -617,16 +705,16 @@ implicit none ! religion first
 
 end subroutine interpolate3d
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!   ADD DESCRIPTION 
+!   Имея координаты окружающих точек, интеполируем скорость искомой точки
 subroutine interpolate2d(point1d, u, v, ij, &
                             lon2d, lat2d, &
                             pu, pv)
 implicit none ! religion first
-    real(kind=real32), intent(in) :: point1d(:)
-    real(kind=real32), intent(in)    :: u(:,:),v(:,:)
-    real(kind=real32), intent(in)    :: lon2d(:,:), lat2d(:,:)
+    real(kind=real32), intent(in)   :: point1d(:)
+    real(kind=real32), intent(in)   :: u(:,:),v(:,:)
+    real(kind=real32), intent(in)   :: lon2d(:,:), lat2d(:,:)
     integer, intent(in)    :: ij(:,:)
-    real(kind=real32), intent(out)   :: pu, pv
+    real(kind=real32), intent(out)  :: pu, pv
     logical :: skip = .false.
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: dlon, dlat, dhgt
@@ -712,12 +800,12 @@ end function earth_radius
 ! dt - in min
 ! nlon, nlat - для ideal_case (чтобы выкидывать точки при достижении границ домена)
 !              ПЕРИОДИЧЕСКИЕ ГРАНИЦЫ В ИДЕАЛИЗИРОВАННЫХ СЛУЧЯХ ПОКА НЕ РАССМАТРИВАЕМ!
-subroutine locate(point1d, pu, pv, pw, dt, nlon, nlat)
+subroutine locate(point1d, pu, pv, pw, dt, dx, dy, dz, nlon, nlat, nlevel)
 implicit none ! religion first
     real(kind=real32), intent(inout) :: point1d(3)
     real(kind=real32), intent(in)    :: pu, pv, pw 
-    real(kind=real32), intent(in)    :: dt
-    integer,           intent(in)    :: nlon, nlat
+    real(kind=real32), intent(in)    :: dt, dx, dy, dz
+    integer,           intent(in)    :: nlon, nlat, nlevel
     logical :: skip = .false.
     real(kind=real32) :: plon, plat, phgt
     real(kind=real64) :: R
@@ -726,29 +814,41 @@ implicit none ! religion first
 
     if(.not.skip) then
 
+
         plon = fFillValue
         plat = fFillValue
         phgt = fFillValue
 
-        if (ideal_case) then
+        if (cartesian_grid) then
 
+
+            ! знаем прошлые координаты, получаем скорости в метрах -> переводим в расстояние
+            !       и переводим в градусы (поскольку исходящие данные в градусах)
             plon = point1d(1) + pu*dt*60/dx
             plat = point1d(2) + pv*dt*60/dy
-            phgt = point1d(3) + pw ! *dt*60
+            phgt = 0 !point1d(3) + pw*dt*60/dz ! *dt*60
 
-            if ( plon <= 1 .OR. plon >= nlon ) plon = fFillValue
-            if ( plat <= 1 .OR. plat >= nlat ) plat = fFillValue
+            ! if (periodic) then
+            !     ! if ( plon <= 1 )    plon = nlon - plon
+            !     if ( plon <= 1 )    print*,plon, (nlon - plon)
+            !     if ( plat <= 1 )    plat = nlat - plat
+            !     ! if ( plon >= nlon ) plon = 1 + plon
+            !     if ( plon >= nlon ) print*,plon, (nlon + plon)
+            !     if ( plat >= nlat ) plat = 1 + plat
+            ! else
+            !     if ( plon <= 1 .OR. plon >= nlon ) plon = fFillValue
+            !     if ( plat <= 1 .OR. plat >= nlat ) plat = fFillValue
+            ! endif
 
         else
 
-            ! R = 6371.0088
+            ! R = 6371.0088 (simple)
             R = earth_radius(point1d(2))
-            R = R*1000.d0
+            R = R*1000.d0 ! в метры
 
-            plon = point1d(1) + pu*60*dt/(pi*R/180.d0*cos(point1d(2)*pi/180.d0))
-            plat = point1d(2) + pv*60*dt/(pi*R/180.d0)
-            phgt = point1d(3) + pw*60*dt
-            ! print*,plon,plat
+            plon = point1d(1) + pu*60.d0*dt/(pi*R/180.d0*cos(point1d(2)*pi/180.d0))
+            plat = point1d(2) + pv*60.d0*dt/(pi*R/180.d0)
+            phgt = 0 !point1d(3) + pw*60.d0*dt
 
             ! Forbits to go over abs(360)
             if (abs(plon) > 360) plon = mod(plon,360.)
@@ -771,7 +871,9 @@ implicit none ! religion first
 
         endif
 
+        ! if (phgt <= 1 .OR. phgt >= nlevel )  phgt = fFillValue !!!!!!!!!!!!!!!!!!!!!!!
 
+        ! write(*,'(6f7.2)') pu,pv,pw,plon,plat,phgt
         point1d(1) = plon
         point1d(2) = plat
         point1d(3) = phgt

@@ -2,6 +2,9 @@
 ! export OMP_NUM_THREADS=16 
 ! ./lpt.exe src_file.nc
 
+! TODO
+! * periodic borders for ideal cases
+! * 3D simulations
 
 program lpt
   use,intrinsic :: iso_fortran_env,only:real32,real64
@@ -25,6 +28,7 @@ program lpt
   real(kind=real64),dimension(:),allocatable :: time_in
 
   real(kind=real64)  :: dt,dtm,dtt, timestep_r, ditime
+  real(kind=real32)  :: dx,dy,dz
   integer  :: ntimesteps, duration, npoints
   integer  :: iz
 
@@ -101,9 +105,19 @@ program lpt
   allocate( lon2d   ( nlon, nlat ) )
   allocate( lat2d   ( nlon, nlat ) )
   allocate( time_in ( ntime_in   ) )
-  ! allocate( levels  ( nz         ) )
+  
+  if (cartesian_grid) then
+    call create_grid ( lon2d, lat2d)
+  else
+    call get_var_xy(ncid_in,"XLONG",lon2d)
+    call get_var_xy(ncid_in,"XLAT",lat2d)
+  endif
+
   call get_dims(ncid_in, lon2d, lat2d, levels(:nz), time_in)
-  write(*,'("   * Coordinates ... Ok")')
+  dx = get_attr_float(ncid_in,"global","DX")
+  dy = get_attr_float(ncid_in,"global","DY")
+  write(*,'("   * * dx = ",f10.2,"; dy = ",f10.2)') dx,dy
+  write(*,'("   Coordinates ... Ok")')
   write(*,'("#####################################################################")')
 
   write(*,'("-> Finding stime and etime indexes in src...")') 
@@ -125,8 +139,6 @@ program lpt
     allocate( points(npoints,3) )
     call get_pointtxt(file_start_particles,points)
   endif
-  ! points = fFillValue
-  ! npoints = 96 ! npoints - 1
 
   write(*,'( "   * Number of points: ",i)') npoints
   write(*,'("#####################################################################")')
@@ -144,7 +156,7 @@ program lpt
   else if(trim(tunit).eq."hours") then
     dtm = dt*60
   else if(trim(tunit).eq."days") then
-    dtm = dt*24*60
+    dtm = dt*60*24
   endif
 
   ! Шаги по времени (если accuracy, то учитываем время между выдачей исходного файла)
@@ -200,8 +212,6 @@ program lpt
   call get_var_xyt(ncid_in, "u", iz, stimeui, duration, u2d)
   call get_var_xyt(ncid_in, "v", iz, stimeui, duration, v2d)
 
-  ! print*,minval(u2d),maxval(u2d),count( u2d==0 )
-
   allocate ( u2d_tmp(nlon, nlat) )
   allocate ( v2d_tmp(nlon, nlat) )
   allocate ( mask(nlon, nlat) )
@@ -229,6 +239,9 @@ program lpt
     endif
 
     if (horizontal) then ! Если считаем только на проскости, то
+
+      dz = 0
+      pw = 0
 
       inner: do itime = 2, duration*ntimesteps
 
@@ -265,9 +278,9 @@ program lpt
 
         ! ИНТЕРПОЛЯЦИЯ ПО ПРОСТРАНСТВУ
 !$omp critical
-        call get_cell_hor ( points(ipoint,:), lon2d, lat2d, ij, mask                    )
-        call interpolate2d( points(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv)
-        call locate       ( points(ipoint,:), pu, pv, 0., timestep, nlon, nlat          )
+        call get_cell_hor ( points(ipoint,:), lon2d, lat2d, ij, mask )
+        call interpolate2d( points(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv )
+        call locate       ( points(ipoint,:), pu, pv, pw, timestep, dx, dy, dz, nlon, nlat, nz )
 !$omp end critical
 
         ! points(ipoint,4) = pu
@@ -324,7 +337,6 @@ program lpt
   ! print*,result
   write(*,'("   * Output into NetCDF... ")') 
 
-  ! print*,result(-1,145,:)
   call save_results(file_out,file_in,ncid_in,result,newtime)
 
   deallocate( result )

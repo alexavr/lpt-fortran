@@ -21,9 +21,11 @@ public :: get_offset
 public :: get_var_xyz
 public :: get_var_xyzt
 public :: get_var_xyt
+public :: get_var_xy
 public :: get_dims
 public :: get_ndims
 public :: get_attr_str
+public :: get_attr_float
 public :: check
 public :: open_nc
 public :: close_nc
@@ -69,6 +71,7 @@ implicit none
     character(len=120) :: dirname, str_datetime
     character(len=8)  :: str_date
     character(len=10) :: str_time
+    real(kind=real32) :: dx,dy
 
     call getcwd( dirname )
     write(dirname,'(a,"/")') trim(dirname)
@@ -224,7 +227,7 @@ implicit none
 end subroutine get_var_xyz
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Прочитать данные одной горизонтальной плоскости
+! Прочитать данные одной горизонтальной плоскости за tduration период времени
 subroutine get_var_xyt(ncid,var_name,level,st,tduration,array)
 implicit none
     integer,intent(in)  :: ncid,st,tduration,level
@@ -253,7 +256,7 @@ implicit none
     add_offset = get_offset(ncid,var_id)
     scale_factor = get_scale(ncid,var_id)
 
-    if(add_offset .eq. 0) add_offset = 1
+    ! if(add_offset .eq. 0) add_offset = 1
     if(scale_factor .eq. 0) scale_factor = 1
 
     allocate( sarray(xdim,ydim,tdim) )
@@ -270,6 +273,43 @@ implicit none
     ! print*,trim(var_name),var_id,minval(array),maxval(array)
 
 end subroutine get_var_xyt
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Прочитать данные одной горизонтальной 2Д проскости
+subroutine get_var_xy(ncid,var_name,array)
+implicit none
+    integer,intent(in)  :: ncid
+    character(len=*), intent(in)  :: var_name
+    real(kind=real32),intent(out) :: array(:,:)
+    integer :: var_id, xdim, ydim
+    real(kind=real64) :: scale_factor,add_offset
+    real(kind=real32),dimension(:,:),allocatable :: sarray
+    ! real(kind=real32),dimension(:),    allocatable :: levels
+
+    xdim  = UBOUND(array,1)
+    ydim  = UBOUND(array,2)
+
+    call check( nf90_inq_varid(ncid, trim(var_name), var_id) )
+
+    add_offset = get_offset(ncid,var_id)
+    scale_factor = get_scale(ncid,var_id)
+
+    if(add_offset .eq. 0) add_offset = 1
+    if(scale_factor .eq. 0) scale_factor = 1
+
+    allocate( sarray(xdim,ydim) )
+
+    call check( nf90_get_var(ncid, var_id, sarray, &
+                    start = (/ 1, 1 /), &
+                    count = (/ xdim, ydim /)   ) )
+
+    array = sarray*scale_factor+add_offset  ! Unscaling если нужно
+
+    deallocate( sarray )
+    ! deallocate( levels )
+
+    ! print*,trim(var_name),var_id,minval(array),maxval(array)
+
+end subroutine get_var_xy
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine get_var_xyzt(ncid,var_name,st,et,array)
 ! array has 4D: xdim,ydim,zdim,tdim
@@ -465,11 +505,31 @@ implicit none
     character(len=120) :: get_attr_str
     integer :: VarId
     
-    call check( nf90_inq_varid(ncid, trim(var_name), VarId) )
-    call check( nf90_get_att(ncid, VarId, att_name, get_attr_str ))
+
+        call check( nf90_inq_varid(ncid, trim(var_name), VarId) )
+        call check( nf90_get_att(ncid, VarId, att_name, get_attr_str ))
 
 
 end function get_attr_str
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function get_attr_float(ncid,var_name,att_name)
+implicit none
+    integer,intent(in) :: ncid
+    character(len=*), intent(in) :: var_name
+    character(len=*), intent(in) :: att_name
+    real(kind=real32) :: get_attr_float
+    integer :: VarId
+
+
+    if (var_name == "global") then
+        ! call check( nf90_inq_varid(ncid, trim(var_name), VarId) )
+        call check( nf90_get_att(ncid, NF90_GLOBAL, att_name, get_attr_float ))
+    else
+        call check( nf90_inq_varid(ncid, trim(var_name), VarId) )
+        call check( nf90_get_att(ncid, VarId, att_name, get_attr_float ))
+    endif
+
+end function get_attr_float
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine check(status)
 implicit none

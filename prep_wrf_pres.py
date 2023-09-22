@@ -45,24 +45,21 @@ def prep_var(ds, name):
 
 	return ds
 
-print(f"   Infile: {src_filename}")
+print(f"Infile: {src_filename}")
 file_name = Path(src_filename).stem
 # file_name_split = file_name.split("_")
 # outfile = f"_pt_{file_name_split[2]}_{file_name_split[3]}.nc"
 outfile = f"{file_name}_pl.nc"
-print(f"  Outfile: {outfile}")
+print(f"Outfile: {outfile}")
 
 with open('./lpt.nml') as nml_file:
 	nml = f90nml.read(nml_file)
 	levels = nml['wrf_prep']['levels']
 	cartesian = nml['data']['cartesian_grid']
+	ideal_case = nml['data']['ideal_case']
 
 ds = xr.open_dataset(src_filename)
 f = Dataset(src_filename)
-
-print(" * Reading coordinates...")
-lon2d = ds.XLONG.isel(Time=0)
-lat2d = ds.XLAT.isel(Time=0)
 
 print(" * Reading p...")
 p = wrf.getvar(f, "p",wrf.ALL_TIMES)
@@ -95,8 +92,32 @@ z = prep_var(z, "z")
 z.to_netcdf(outfile, mode='a')
 del z
 
-lon2d = prep_var(lon2d, "XLONG")
-lat2d = prep_var(lat2d, "XLAT")
+
+
+print(" * Coordinates...")
+if ideal_case: print(" * * It's ideal case -> replacing coordinates with indexes of grid")
+
+if ideal_case:
+    nx = ds.XLAT.shape[2]
+    ny = ds.XLAT.shape[1]
+    x = np.arange(1, nx+1)
+    y = np.arange(1, ny+1)
+    X, Y = np.meshgrid(x, y)
+    lon2d = xr.Dataset({'XLONG': (('south_north', 'west_east'), X)})
+    lat2d = xr.Dataset({'XLAT': (('south_north', 'west_east'), Y)})
+else:
+	lon2d = ds.XLONG.isel(Time=0)
+	lat2d = ds.XLAT.isel(Time=0)
+	lon2d = prep_var(lon2d, "XLONG")
+	lat2d = prep_var(lat2d, "XLAT")
 
 lon2d.to_netcdf(outfile, mode='a')
 lat2d.to_netcdf(outfile, mode='a')
+
+f.close()
+
+with Dataset(src_filename) as src, Dataset(outfile, "a") as dst:
+	dst.setncatts(src.__dict__)
+
+print(f"END ###########################################################")
+

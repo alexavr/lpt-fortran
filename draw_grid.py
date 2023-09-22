@@ -12,6 +12,8 @@ import cartopy.feature as cfeature
 from scipy.ndimage import gaussian_filter
 import pandas as pd 
 from pathlib import Path
+from matplotlib.ticker import FuncFormatter
+
 
 ### CHANGE THIS ################################################################
 
@@ -52,14 +54,14 @@ time_src = [ pd.to_datetime(str(i.values)) for i in ds_src.time]
 
 data  = ds_trk.points
 
-try:
-    lon2d = ds_src.XLONG
-    lat2d = ds_src.XLAT
-except:
-    lat1d = ds_src.latitude
-    lon1d = ds_src.longitude
-    lon2d, lat2d = np.meshgrid(lon1d,lat1d)
-    del lat1d, lon1d
+# try:
+#     lon2d = ds_src.XLONG
+#     lat2d = ds_src.XLAT
+# except:
+#     lat1d = ds_src.latitude
+#     lon1d = ds_src.longitude
+#     lon2d, lat2d = np.meshgrid(lon1d,lat1d)
+#     del lat1d, lon1d
 
 
 # get N timesteps in daystep (1 day)
@@ -83,57 +85,68 @@ else:
 
 
 # For colorbar
-# level_real = level_real/100
-# levs = np.arange(np.floor(ds_src.z.isel(level=level).min()/100), np.ceil(ds_src.z.isel(level=level).max()/100), 1)
-levs = np.arange(0, 50,1)
-# levs = np.linspace(10, 50, 201)
-# print(levs)
+fmt = lambda x, pos: '{:.0f}'.format(x)
 
 # Main loop
 for it in range(0,ntime): # ntime
-# for it in range(ntime-2,ntime): # ntime
+# for it in range(int(ntime/2-2),int(ntime/2)): # ntime
  
 
     lons = data[0,:,it]
     lats = data[1,:,it]
     hgts = data[2,:,it]
 
-    try:
-        itt = time_src.index(time_trk[it])
-        u = ds_src.u.isel(time=itt,level=level)
-        v = ds_src.v.isel(time=itt,level=level)
-        smooth_z = np.sqrt(u**2 + v**2)
-        del z
-        # itt = time_src.index(time_trk[it])
-        # z = ds_src.z.isel(time=itt,level=level)/100
-        # smooth_z = gaussian_filter(z, sigma=1)
-        # del z
-    except:
-        pass
+    itt = time_src.index(time_trk[it])
+
+    levs = np.linspace(0, 60, 121) # wind
+    u = ds_src.u.isel(time=itt,level=level)
+    v = ds_src.v.isel(time=itt,level=level)
+    fillvar = np.sqrt(u**2 + v**2)
+
+    # levs = np.linspace(182, 192, 101) # height
+    # z = ds_src.z.isel(time=itt,level=level)/100
+    # fillvar = gaussian_filter(z, sigma=1)
+    # del z
+
+    # if ds_trk.cartesian_grid and ds_trk.ideal_case: # переводим узлы сетки в км от начала координат
+
+    nx = fillvar.shape[1]
+    ny = fillvar.shape[0]
+    x = np.arange(0, nx)*ds_src.DX/1000.
+    y = np.arange(0, ny)*ds_src.DY/1000.
+
+    lons = lons*ds_src.DX/1000.
+    lats = lats*ds_src.DY/1000.
+
+
 
 
     plt.figure(figsize=(5,5), dpi=150)
-    psize = 0.05
+    psize = 1
 
     if ds_trk.ideal_case:
 
-        plt.xlim([0, ds_src.dims['west_east']]) 
-        plt.ylim([0, ds_src.dims['south_north']]) 
+        plt.xlim([ np.min(x), np.max(x)]) 
+        plt.ylim([ np.min(y), np.max(y)]) 
 
-        # # Рисуем поля геопотенциала
+        plt.xlabel("km",fontsize=6)
+        plt.ylabel("km",fontsize=6)
+
+        # # Рисуем поля геопотенциала/скорости ветра/линий тока
         ax = plt.gca()
-        # c = ax.pcolor(smooth_z, alpha=0.5, cmap="YlGn_r")
-        zfil = plt.contourf(smooth_z, alpha=0.8, levels=levs, cmap=cmaps.WhiteBlueGreenYellowRed)
-        # zcnt = plt.contour(smooth_z, linestyles='-', colors="g", linewidths=0.1)
-        # # plt.contourf(smooth_z,transform=proj)
-        
-        cbar = plt.colorbar(zfil, shrink=0.8, pad=0.01)
+
+        # c = ax.pcolor(fillvar, alpha=0.5, cmap="YlGn_r")
+        zfil = plt.contourf(x,y,fillvar, alpha=1, levels=levs, cmap=cmaps.WhiteBlueGreenYellowRed)
+        zcnt = plt.contour(x,y,fillvar, linestyles='-', colors="g", linewidths=0.1)
+        # cbar = plt.colorbar(zfil, shrink=0.8, pad=0.01)
+        cbar = plt.colorbar(zfil, shrink=0.78, pad=0.01,format=FuncFormatter(fmt))
         cbar.ax.tick_params(labelsize=6)
-        cbar.set_label('WSPD [ms-1]', labelpad=-25, fontsize=6, y=0.5, rotation=90)
+        cbar.set_label('WSPD [ms-1]', labelpad=-25, fontsize=6, y=0.5, rotation=90)  # y-: left
+        # cbar.set_label('HGT [m]', labelpad=-23, fontsize=6, y=0.5, rotation=90)  # y-: left
 
         # Разбрасываем точки на текущий момент
         if ds_trk.horizontal:
-            cs = plt.scatter(lons, lats, color="black", s=psize)
+            cs = plt.scatter(lons, lats, color="black", s=psize, marker=".")
         else:
             cs = plt.scatter(lons, lats, c=hgts, 
                            vmin=level_min, vmax=level_max, cmap=cmaps.MPL_Oranges, s=psize)
@@ -192,9 +205,9 @@ for it in range(0,ntime): # ntime
         ax.set_extent([-85, -5, 5, 80], crs=ccrs.PlateCarree())
 
         # Рисуем поля геопотенциала
-        zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, smooth_z, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
-        zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, smooth_z, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
-        # plt.contourf(smooth_z,transform=proj)
+        zfil = plt.contourf(ds_src.XLONG, ds_src.XLAT, fillvar, alpha=0.5, levels=levs, cmap="YlGn_r", transform=proj)
+        zcnt = plt.contour(ds_src.XLONG, ds_src.XLAT, fillvar, levels=levs, linestyles='-', colors="g", linewidths=0.1, transform=proj)
+        # plt.contourf(fillvar,transform=proj)
         
         cbar = plt.colorbar(zfil, shrink=0.95, pad=0.01)
         cbar.ax.tick_params(labelsize=6)

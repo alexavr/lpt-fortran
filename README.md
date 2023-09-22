@@ -36,19 +36,23 @@ The source file should contain 3D velocity and geopotential fields. But it has t
 
 First, all data has to be merged into a single file. The file should have 3D variables for wind velocity components and geopotential named as *u*,*v*,*w*,*z* and coordinates (time and location). 
 
-The time dimension has to be relative (`second/minutes/hours since YYYY-MM-DD HH:mm:SS`) with attributes: units and calendar (normally its "gregorian").
+Variables *dx* and *dy* has to be as global attributes in NetCDF file.
 
-If your data is global (reanalyzes?) then vertical velocity (*w*) is expected to have Pa/s unit (as reanalyzes are normally provide) and coordinates are: *longitude* or *lon* and *latitude* or *lat* for horizontal location. For vertical coordinate: *levels* (in Pa). All has to be vector (1D).
+The time dimension has to be named as *time* and relative (epoch) (eg, `second/minutes/hours/days since YYYY-MM-DD HH:mm:SS`) with attributes: units and calendar (normally its "gregorian").
+
+If your data is global (reanalyzes?) then vertical velocity (*w*) is expected to have Pa/s unit (reanalyzes are normally provide data at pressure levels) and coordinates are: *longitude* or *lon* and *latitude* or *lat* for horizontal location. For vertical coordinate: *levels* (in Pa). All has to be vector (1D).
 
 If you data is regional (assuming the WRF output for now, but could be anything with little modifications) then coordinates should be names as: *XLONG* and *XLAT* and expected to be 2D (moving domains are not allowed for now). 
 
 All this preparation could be accomplished by using the [cdo](https://code.mpimet.mpg.de/projects/cdo/) library. For preprocessing of WRF output you might want to use *prep_wrf.py* script (works, but written in a very hurry). 
 
+
+
 ## Configuration
 
-The configuration is done using the file *namelist.pt*.
+The configuration is done using the file *lpt.nml*.
 
-The domain could be regional (`regional = .TRUE.`) or global (periodic boundary, `regional = .FALSE.`). You need also set the time interval using `stime` and `etime` (this interval has to be present in the source file!).
+The domain has to be regional (`global = .FALSE.`) or global (periodic boundary, `global = .TRUE.`). You need also set the time interval using `stime` and `etime`. This interval could be within the acctual time present in your data, . (this interval has to be present in the source file!). You don't
 
 The particles could be initiated manually (`pt_grid = .FALSE.`) in ASCII file named *init_particles.dat* (see *init_particles_test_Reykjavik.dat* or *init_particles_test_NorthPole.dat* as an example). 
 

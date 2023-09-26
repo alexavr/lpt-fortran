@@ -27,25 +27,26 @@ program lpt
   ! real(kind=real32),dimension(:),allocatable :: levels
   real(kind=real64),dimension(:),allocatable :: time_in
 
-  real(kind=real64)  :: dt,dtm,dtt, timestep_r, ditime
+  real(kind=real32)  :: dt,dtm,dtt, timestep_r, ditime
   real(kind=real32)  :: dx,dy,dz
   integer  :: ntimesteps, duration, npoints
   integer  :: iz
 
   real(kind=real32),dimension(:,:),allocatable :: points
 
-  integer  :: ii, jj, itime, it, ip, ipoint, ps, pe
+  integer  :: ii, jj, kk, itime, it, ip, ipoint, ps, pe
 
   real(kind=real32),dimension(:,:,:)      ,allocatable :: result
   real(kind=real64),dimension(:)          ,allocatable :: newtime_ind,newtime
   character(len=19),dimension(:),allocatable :: newtime_datatime
   
-  logical :: first, good
+  logical :: good
 
   real(kind=real32),dimension(:,:,:),allocatable :: u2d,v2d
   logical,dimension(:,:),allocatable :: mask
   real(kind=real32),dimension(:,:),allocatable :: u2d_tmp,v2d_tmp
-  ! real(kind=real32),dimension(:,:,:,:),allocatable :: u,v,w,z
+  real(kind=real32),dimension(:,:,:,:),allocatable :: u3d,v3d,w3d,z3d
+  real(kind=real32),dimension(:,:,:,:),allocatable :: u3d_tmp,v3d_tmp,w3d_tmp,z3d_tmp
   ! real(kind=real32),dimension(:,:,:,:),allocatable :: u1,v1,w1,z1
   ! real(kind=real32),dimension(:,:,:,:),allocatable :: u2,v2,w2,z2
   real(kind=real32) :: pu, pv, pw
@@ -54,7 +55,7 @@ program lpt
   ! For interpolation used rodust scheme:
   ! horisontal: min distance to 4 points (x,y) [ij(4,2)]
   ! vertical: takes ij points and finds levels below and above [4,2]
-  integer :: status, ij(4,2), kk(4,2) 
+  integer :: status, ij(4,2), kkk(4,2) 
 
   integer :: tid, nthreads, nmaxthreads ! OpenMP OMP
 
@@ -161,17 +162,13 @@ program lpt
 
   ! Шаги по времени (если accuracy, то учитываем время между выдачей исходного файла)
   ntimesteps = 1
-  if (accuracy) then
-    ntimesteps = int(dtm)/int(timestep)
-  else
-    timestep = dtm
-  endif
-
+  if (accuracy) ntimesteps = int(dtm)/int(accuracy_timestep)
+  
   dtt = dt/ntimesteps   ! минимальный шаг по времени
 
-  allocate( result           (duration*ntimesteps,npoints,3) )
-  allocate( newtime_ind      (duration*ntimesteps)           )
-  allocate( newtime          (duration*ntimesteps)           )
+  allocate( result      (duration*ntimesteps,npoints,3) )
+  allocate( newtime_ind (duration*ntimesteps)           )
+  allocate( newtime     (duration*ntimesteps)           )
   ! allocate( newtime_datatime (duration*ntimesteps)           )
 
   result = fFillValue
@@ -204,17 +201,38 @@ program lpt
 
   write(*,'("   * Reading data......")')
 
-  first = .true.
+  if (horizontal) then ! Если считаем только на проскости, то
+    
+    allocate ( u2d(nlon, nlat, duration) )
+    allocate ( v2d(nlon, nlat, duration) )
 
-  allocate ( u2d(nlon, nlat, duration) )
-  allocate ( v2d(nlon, nlat, duration) )
+    call get_var_xyt(ncid_in, "u", iz, stimeui, duration, u2d)
+    call get_var_xyt(ncid_in, "v", iz, stimeui, duration, v2d)
 
-  call get_var_xyt(ncid_in, "u", iz, stimeui, duration, u2d)
-  call get_var_xyt(ncid_in, "v", iz, stimeui, duration, v2d)
+    allocate ( u2d_tmp(nlon, nlat) )
+    allocate ( v2d_tmp(nlon, nlat) )
 
-  allocate ( u2d_tmp(nlon, nlat) )
-  allocate ( v2d_tmp(nlon, nlat) )
+  else
+
+    allocate ( u3d(nlon, nlat, nz, duration) )
+    allocate ( v3d(nlon, nlat, nz, duration) )
+    allocate ( w3d(nlon, nlat, nz, duration) )
+    allocate ( z3d(nlon, nlat, nz, duration) )
+    allocate ( u3d_tmp(nlon, nlat, nz, duration) )
+    allocate ( v3d_tmp(nlon, nlat, nz, duration) )
+    allocate ( w3d_tmp(nlon, nlat, nz, duration) )
+    allocate ( z3d_tmp(nlon, nlat, nz, duration) )
+
+    call get_var_xyzt(ncid_in,"u",stimeui, duration, u3d)
+    call get_var_xyzt(ncid_in,"v",stimeui, duration, v3d)
+    call get_var_xyzt(ncid_in,"w",stimeui, duration, w3d)
+    call get_var_xyzt(ncid_in,"z",stimeui, duration, z3d)
+
+  end if
+
   allocate ( mask(nlon, nlat) )
+
+
 
   write(*,'("   * Entering the parallel block......")')
 !$omp parallel private(tid,mask,u2d_tmp,v2d_tmp,itime,ij,pu, pv,t1,t2,ipoint,ditime,ii,jj,good,ps, pe,prg)
@@ -279,62 +297,71 @@ program lpt
         ! ИНТЕРПОЛЯЦИЯ ПО ПРОСТРАНСТВУ
 !$omp critical
         call get_cell_hor ( points(ipoint,:), lon2d, lat2d, ij, mask )
-        call interpolate2d( points(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv )
-        call locate       ( points(ipoint,:), pu, pv, pw, timestep, dx, dy, dz, nlon, nlat, nz )
+        call interpolate2d( poxints(ipoint,:), u2d_tmp, v2d_tmp, ij, lon2d, lat2d, pu, pv )
+        call locate       ( points(ipoint,:), pu, pv, pw, dtm, dx, dy, dz, nlon, nlat, nz )
 !$omp end critical
 
-        ! points(ipoint,4) = pu
-        ! points(ipoint,5) = pv
-
-! !$omp end single
-
-! !$omp critical
-        ! write(*,'(i0," ",i0," ", 8i12," | ", 3f10.2," | ", 2f7.2)') ipoint, itime, ij, points(ipoint,:), pu, pv
         if( any(points(ipoint,:).EQ.fFillValue) ) points(ipoint,:) = fFillValue
         result(itime,ipoint,:) = points(ipoint,:)
 
-        ! if ( points(ipoint,1).EQ.fFillValue ) print*,ipoint,itime, result(itime,ipoint,2), result(itime-1,ipoint,2) ! abs(result(itime,ipoint,1)-result(itime-1,ipoint,1))
-        ! if( abs(result(itime,ipoint,1)-result(itime-1,ipoint,1)) .GT. 10 ) print*,ipoint,itime,abs(result(itime,ipoint,1)-result(itime-1,ipoint,1))
-
-        ! if (ipoint == 1 ) write(*,'( 2i4, " | ",2f10.2," | "," ( ",2i4," ) " ," ( ",2i4," ) " ," ( ",2i4," ) " ," ( ",2i4," ) " )') &
-        !                         itime,ipoint,pu,pv, &
-        !                         ij(1,1),ij(1,2), &
-        !                         ij(2,1),ij(2,2), &
-        !                         ij(3,1),ij(3,2), &
-        !                         ij(4,1),ij(4,2)
-
-! !$omp barrier
-
-! !$omp end critical
-
       enddo inner
 
-! else
-!     !   call get_var_xyzt(ncid_in,"u",u)
-!     !   call get_var_xyzt(ncid_in,"v",v)
-!     !   call get_var_xyzt(ncid_in,"w",w)
-!     !   call get_var_xyzt(ncid_in,"z",z)
+    else   ! It's 3D case
+
+
+      inner: do itime = 2, duration*ntimesteps
+
+        ! ИНТЕРПОЛЯЦИЯ ПО ВРЕМЕНИ
+        ! Считаем веса для интерполяции по времени
+        t1 = floor(newtime_ind(itime))
+        t2 = ceiling(newtime_ind(itime))
+        ditime = newtime_ind(itime)-t1   !
+
+        ! А теперь считаем индексы для обрезанного массива (с 1 до duration)
+        t1 = t1 - stimeui + 1
+        t2 = t2 - stimeui + 1
+
+        ! write(*,'(i0" | ",i0," | ",i0, " " ,f15.10, " ",i0, " : ",f10.4)') tid, itime, t1, newtime_ind(itime), t2, ditime
+
+        mask = .false.
+        do kk=1,nz
+        do ii=1,nlon
+          do jj=1,nlat
+            good = u3d(ii,jj,t1).NE.fFillValue .OR. v3d(ii,jj,t1).NE.fFillValue .OR. w3d(ii,jj,t1).NE.fFillValue .OR. &
+                   u3d(ii,jj,t2).NE.fFillValue .OR. v3d(ii,jj,t2).NE.fFillValue .OR. w3d(ii,jj,t2).NE.fFillValue
+
+            if ( good ) then
+              u3d_tmp(ii,jj,kk) = (1.-ditime)*u3d(ii,jj,t1) + (ditime)*u3d(ii,jj,t2)
+              v3d_tmp(ii,jj,kk) = (1.-ditime)*v3d(ii,jj,t1) + (ditime)*v3d(ii,jj,t2)
+              w3d_tmp(ii,jj,kk) = (1.-ditime)*w3d(ii,jj,t1) + (ditime)*w3d(ii,jj,t2)
+            else
+              u3d_tmp(ii,jj,kk) = fFillValue
+              v3d_tmp(ii,jj,kk) = fFillValue
+              w3d_tmp(ii,jj,kk) = fFillValue
+              mask(ii,jj) = .true.
+            endif
+
+          enddo
+        enddo
+        enddo
+
+
+!$omp critical
+      call get_cell_hor ( points(ip,:), lon2d, lat2d, ij, mask)
+      call get_cell_vert( points(ip,:), ij, z, kkk )
+      call interpolate3d( points(ip,:), u, v, w, z, ij, kkk, &
+                          lon2d, lat2d, levels, pu, pv, pw)
+      call locate       ( points(ip,:), pu, pv, pw, timestep )
+!$omp end critical
 
     endif
+  
   enddo outer
 
 !$omp end parallel
 
-! stop
-
   print*, "#####################################################################"
 
-  ! do ii=1, npoints
-  !   if ( result(145,ii,1).NE.fFillValue ) then
-  !     write(*,'( i4, f7.0," ",f7.2," | ",f7.2," , ",f7.2," | ",f7.2," , ",f7.2 )') ii, result(145,ii,1), result(144,ii,1),result(145,ii,4), result(145,ii,5),result(144,ii,4), result(144,ii,5)
-  !   endif
-  !   ! print*,ii,minval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
-  !   !           maxval(result(1,ii,:),mask=result(1,ii,:).NE.fFillValue), &
-  !   !           minval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue), &
-  !   !           maxval(result(2,ii,:),mask=result(2,ii,:).NE.fFillValue)
-  ! enddo
-
-  ! print*,result
   write(*,'("   * Output into NetCDF... ")') 
 
   call save_results(file_out,file_in,ncid_in,result,newtime)
@@ -342,13 +369,19 @@ program lpt
   deallocate( result )
   deallocate( points )
   deallocate( time_in )
-  deallocate( newtime_ind      )
-  deallocate( newtime          )
+  deallocate( newtime_ind )
+  deallocate( newtime     )
   ! deallocate( newtime_datatime )
   deallocate( lon2d   )
   deallocate( lat2d   )
-  deallocate( u2d,v2d )
-  deallocate( u2d_tmp,v2d_tmp,mask )
+  deallocate( mask   )
+  if (horizontal) then ! Если считаем только на проскости, то
+    deallocate( u2d,v2d )
+    deallocate( u2d_tmp,v2d_tmp )
+  else
+    deallocate( u3d,v3d,w3d,z3d )
+    deallocate( u3d_tmp,v3d_tmp,w3d_tmp,z3d_tmp )
+
 
 !       if (update) then
 

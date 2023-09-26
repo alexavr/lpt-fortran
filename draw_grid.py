@@ -88,7 +88,7 @@ else:
 fmt = lambda x, pos: '{:.0f}'.format(x)
 
 # Main loop
-for it in range(0,ntime): # ntime
+for it in range(0,ntime-1): # ntime
 # for it in range(int(ntime/2-2),int(ntime/2)): # ntime
  
 
@@ -141,12 +141,12 @@ for it in range(0,ntime): # ntime
         # cbar = plt.colorbar(zfil, shrink=0.8, pad=0.01)
         cbar = plt.colorbar(zfil, shrink=0.78, pad=0.01,format=FuncFormatter(fmt))
         cbar.ax.tick_params(labelsize=6)
-        cbar.set_label('WSPD [ms-1]', labelpad=-25, fontsize=6, y=0.5, rotation=90)  # y-: left
+        cbar.set_label('Wind speed [ms-1]', labelpad=-25, fontsize=6, y=0.5, rotation=90)  # y-: left
         # cbar.set_label('HGT [m]', labelpad=-23, fontsize=6, y=0.5, rotation=90)  # y-: left
 
         # Разбрасываем точки на текущий момент
         if ds_trk.horizontal:
-            cs = plt.scatter(lons, lats, color="black", s=psize, marker=".")
+            cs = plt.scatter(lons, lats, color="black", s=psize, marker="8")
         else:
             cs = plt.scatter(lons, lats, c=hgts, 
                            vmin=level_min, vmax=level_max, cmap=cmaps.MPL_Oranges, s=psize)

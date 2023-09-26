@@ -51,6 +51,19 @@ implicit none
   read(unit,nml=particles)
   close(unit)
 
+  if (global) then
+    if (.not.periodic) then
+        periodic = .TRUE.
+        write(*,'("read_namelist: periodic HAS TO BE TRUE FOR GLOBAL DATA!")')
+        write(*,'("read_namelist:        SET periodic TO TRUE")')
+    end if
+    if (.not.cartesian_grid) then
+        cartesian_grid = .FALSE.
+        write(*,'("read_namelist: cartesian_grid HAS TO BE FALSE FOR GLOBAL DATA!")')
+        write(*,'("read_namelist:        SET cartesian_grid TO FALSE)")')
+    end if
+end if
+
   pt_nlevels = count(pt_height.ne.fFillValue)
 
 end subroutine read_namelist
@@ -116,8 +129,8 @@ implicit none
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "out_file"   , file_out) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "start_time" , stime) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "end_time"   , etime) )
-    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "timestep"   , timestep) )
-    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cell_detector", cell_detector) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "timestep"   , accuracy_timestep) )
+    call check( nf90_put_att(ncid_out, NF90_GLOBAL, "cell_detector", accuracy_celldetector) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "accuracy"   , merge(1, 0, accuracy  )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "global"   , merge(1, 0, global  )) )
     call check( nf90_put_att(ncid_out, NF90_GLOBAL, "zoutput"    , merge(1, 0, zoutput   )) )
@@ -311,10 +324,10 @@ implicit none
 
 end subroutine get_var_xy
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine get_var_xyzt(ncid,var_name,st,et,array)
+subroutine get_var_xyzt(ncid,var_name,st,tduration,array)
 ! array has 4D: xdim,ydim,zdim,tdim
 implicit none
-    integer,intent(in)  :: ncid,st,et
+    integer,intent(in)  :: ncid,st,tduration
     character(len=*),intent(in)  :: var_name
     real(kind=real32),intent(out) :: array(:,:,:,:)
     integer :: status, var_id, xdim, ydim, zdim, tdim
@@ -331,13 +344,17 @@ implicit none
     add_offset = get_offset(ncid,var_id)
     scale_factor = get_scale(ncid,var_id)
 
-    if(add_offset .eq. 0) add_offset = 1
+    ! if(add_offset .eq. 0) add_offset = 1
     if(scale_factor .eq. 0) scale_factor = 1
 
     allocate( sarray(xdim,ydim,zdim,tdim) )
 
-    call check( nf90_get_var(ncid, var_id, sarray, start = (/ 1, 1, 1, st /), count = (/ xdim, ydim, zdim, et /) ) )
-    array = sarray*scale_factor+add_offset
+
+    call check( nf90_get_var(ncid, var_id, sarray, &
+                    start = (/ 1, 1, 1, st /), &
+                    count = (/ xdim, ydim, zdim, tduration /)   ) )
+    
+    array = sarray*scale_factor+add_offset  ! Unscaling (если нужно)
 
     deallocate( sarray )
 
@@ -353,7 +370,7 @@ implicit none
 
     character(len=20) :: lon_names(4) = (/"longitude","lon","west_east","x"/)
     character(len=20) :: lat_names(4) = (/"latitude","lat","south_north","y"/)
-    character(len=20) :: z_names(4) = (/"level","bottom_top","z","hight"/)
+    character(len=20) :: z_names(4) = (/"level","bottom_top","z","height"/)
     character(len=20) :: time_names(1) = (/"time"/)
 
     integer :: ii, jj, xdim, ydim, zdim, tdim
@@ -452,7 +469,7 @@ implicit none
 
     character(len=20) :: lon_names(4) = (/"longitude","lon","west_east","x"/)
     character(len=20) :: lat_names(4) = (/"latitude","lat","south_north","y"/)
-    character(len=20) :: z_names(4) = (/"level","bottom_top","z","hight"/)
+    character(len=20) :: z_names(4) = (/"level","bottom_top","z","height"/)
     character(len=20) :: time_names(1) = (/"time"/)
     
     integer :: ii

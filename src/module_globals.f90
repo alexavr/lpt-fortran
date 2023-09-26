@@ -19,18 +19,18 @@ implicit none
   character(len=80)  :: type = "model_levels"
   real(kind=real32)  :: levels(maxheightlevels)
 ! NAMELIST SCHEME
-  logical :: accuracy=.true., horizontal=.false., &
+  logical :: accuracy=.false., horizontal=.false., &
              perfomance=.false., zoutput=.false., periodic=.false.
-  real(kind=real32) :: timestep=12
+  real(kind=real32) :: accuracy_timestep=12
   real(kind=real32) :: horizontal_level=0
 ! NAMELIST PACTICLES
   logical :: pt_grid=.false., cartesian_grid=.true., unstructured_grid =.false., ideal_case=.false.
   real(kind=real32) :: pt_height(maxheightlevels)
-  integer :: pt_step,cell_detector=0
+  integer :: pt_step,accuracy_celldetector=0
 
   namelist /data/   stime,etime,global,cartesian_grid,unstructured_grid,ideal_case,periodic
   namelist /wrf_prep/ type,levels
-  namelist /scheme/ accuracy,timestep,horizontal,horizontal_level,perfomance,zoutput,cell_detector
+  namelist /scheme/ accuracy,accuracy_timestep,horizontal,horizontal_level,perfomance,zoutput,accuracy_celldetector
   namelist /particles/ pt_grid,pt_height,pt_step
 
 end module module_globals
